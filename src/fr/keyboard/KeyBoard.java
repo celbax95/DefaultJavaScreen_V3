@@ -1,4 +1,4 @@
-package fr.screen.keyboard;
+package fr.keyboard;
 
 import java.util.List;
 import java.awt.event.KeyEvent;

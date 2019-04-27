@@ -1,4 +1,4 @@
-package fr.screen;
+package fr.window;
 
 import java.awt.Color;
 import java.awt.event.WindowAdapter;
@@ -9,20 +9,20 @@ import javax.swing.JPanel;
 import javax.swing.WindowConstants;
 
 @SuppressWarnings("serial")
-public class Screen extends JFrame {
+public class Window extends JFrame {
 
-	private static Screen instance;
+	private static Window instance;
 
 	static {
-		instance = new Screen();
+		instance = new Window();
 	}
 
 	private boolean initialized;
 
-	private JPanel mainJpanel;
+	private JPanel mainPanel;
 
-	private Screen() {
-		this.mainJpanel = null;
+	private Window() {
+		this.mainPanel = null;
 		this.initialized = false;
 	}
 
@@ -31,7 +31,7 @@ public class Screen extends JFrame {
 		if (mainJpanel == null)
 			throw new IllegalArgumentException("L'argument 1 : mainJpanel ne doit pas etre null");
 
-		(this.mainJpanel = mainJpanel).setLocation(marginTotal, marginTotal);
+		(this.mainPanel = mainJpanel).setLocation(marginTotal, marginTotal);
 
 		// Quand on ferme la fenetre
 		this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
@@ -57,7 +57,7 @@ public class Screen extends JFrame {
 		JPanel jp = new JPanel();
 		jp.setLayout(null);
 		jp.setBackground(Color.black);
-		jp.add(this.mainJpanel);
+		jp.add(this.mainPanel);
 		this.setContentPane(jp);
 
 		this.initialized = true;
@@ -71,7 +71,7 @@ public class Screen extends JFrame {
 		this.setVisible(true);
 	}
 
-	public static Screen getInstance() {
+	public static Window getInstance() {
 		return instance;
 	}
 }

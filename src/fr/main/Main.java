@@ -1,7 +1,9 @@
 package fr.main;
 
-import fr.screen.MainJPanel;
-import fr.screen.Screen;
+import fr.panelstates.MenuState;
+import fr.statepanel.AppStateManager;
+import fr.statepanel.StatePanel;
+import fr.window.Window;
 
 public class Main {
 
@@ -14,16 +16,21 @@ public class Main {
 
 	public static void main(String[] args) {
 
-		MainJPanel mainJpanel = MainJPanel.getInstance();
-		mainJpanel.init(WIDTH, HEIGHT);
+		AppStateManager stator = AppStateManager.getInstance();
+		stator.addState(new MenuState());
 
-		Screen screen = Screen.getInstance();
-		screen.init(mainJpanel, MARGE_RIGHT, MARGE_BOTTOM, MARGE_TOTAL);
+		StatePanel mainPanel = StatePanel.getInstance();
+		mainPanel.init(WIDTH, HEIGHT);
 
-		try {
-			screen.start();
-		} catch (Exception e) {
-			System.err.println(e);
-		}
+		stator.setStatable(mainPanel);
+
+		Window screen = Window.getInstance();
+		screen.init(mainPanel, MARGE_RIGHT, MARGE_BOTTOM, MARGE_TOTAL);
+
+		stator.applyState("menu");
+
+		screen.start();
+
+		mainPanel.repaint();
 	}
 }
