@@ -1,6 +1,5 @@
 package fr.main;
 
-import fr.appli.appli.Appli;
 import fr.screen.Screen;
 
 public class Main {
@@ -15,6 +14,6 @@ public class Main {
 	Screen scr;
 
 	public static void main(String[] args) {
-		Screen.create(new Appli(), WIDTH, HEIGHT, MARGE_W, MARGE_H, MARGE_T);
+		// Screen.create(new Appli(), WIDTH, HEIGHT, MARGE_W, MARGE_H, MARGE_T);
 	}
 }
