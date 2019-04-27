@@ -4,7 +4,7 @@ import javax.swing.JPanel;
 
 import fr.statepanel.Repainter;
 
-public class DefautRepainter implements Repainter {
+public class DefaultRepainter implements Repainter {
 
 	private static final int DEFAULT_RATE = 17;
 
@@ -14,21 +14,25 @@ public class DefautRepainter implements Repainter {
 
 	private Thread myThread;
 
-	private Boolean repaint;
+	private boolean repaint;
 
-	public DefautRepainter() {
+	private Object waiter;
+
+	public DefaultRepainter() {
 		super();
-		this.myThread = new Thread();
+		this.myThread = new Thread(this);
 		this.rate = DEFAULT_RATE;
 		this.panel = null;
+		this.repaint = true;
+		this.waiter = new Object();
 	}
 
-	public DefautRepainter(JPanel requestor) {
+	public DefaultRepainter(JPanel requestor) {
 		this();
 		this.panel = requestor;
 	}
 
-	public DefautRepainter(JPanel requestor, int rate) {
+	public DefaultRepainter(JPanel requestor, int rate) {
 		this();
 		this.rate = rate;
 		this.panel = requestor;
@@ -43,8 +47,8 @@ public class DefautRepainter implements Repainter {
 	public void repaint() {
 		this.repaint = true;
 
-		synchronized (this.repaint) {
-			this.repaint.notifyAll();
+		synchronized (this.waiter) {
+			this.waiter.notifyAll();
 		}
 	}
 
@@ -54,9 +58,9 @@ public class DefautRepainter implements Repainter {
 		while (!Thread.currentThread().isInterrupted()) {
 
 			while (this.rate < 0 && !this.repaint) {
-				synchronized (this.repaint) {
+				synchronized (this.waiter) {
 					try {
-						this.repaint.wait();
+						this.waiter.wait();
 					} catch (InterruptedException e) {
 						return;
 					}
@@ -79,6 +83,11 @@ public class DefautRepainter implements Repainter {
 			}
 		}
 
+	}
+
+	@Override
+	public void setPanel(JPanel panel) {
+		this.panel = panel;
 	}
 
 	@Override

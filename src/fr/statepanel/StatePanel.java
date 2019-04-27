@@ -1,11 +1,10 @@
 package fr.statepanel;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 
 import javax.swing.JPanel;
-
-import fr.repainter.DefautRepainter;
 
 @SuppressWarnings("serial")
 public class StatePanel extends JPanel implements Statable {
@@ -20,7 +19,7 @@ public class StatePanel extends JPanel implements Statable {
 
 	private IAppState state;
 
-	private DefautRepainter repainter;
+	private Repainter repainter;
 
 	private int repaintRequesting;
 
@@ -30,11 +29,15 @@ public class StatePanel extends JPanel implements Statable {
 		this.HEIGHT = 0;
 
 		this.setSize(this.WIDTH, this.HEIGHT);
+		this.setBackground(Color.black);
 	}
 
-	public void init(int width, int height) {
+	public void init(int width, int height, Repainter repainter) {
 		this.WIDTH = width;
 		this.HEIGHT = height;
+
+		this.repainter = repainter;
+		this.repainter.setPanel(this);
 
 		this.setSize(this.WIDTH, this.HEIGHT);
 	}
@@ -45,12 +48,15 @@ public class StatePanel extends JPanel implements Statable {
 	 */
 	@Override
 	public void paintComponent(Graphics g2) {
-		super.paintComponent(g2);
+		Graphics2D g = (Graphics2D) g2;
+		super.paintComponent(g);
 
-		this.setBackground(this.state.getBackgroundColor());
+		g.setColor(this.state.getBackgroundColor());
+		g.fillRect(0, 0, this.WIDTH, this.HEIGHT);
+		g.setColor(Color.black);
 
 		try {
-			this.state.draw((Graphics2D) g2);
+			this.state.draw(g);
 		} catch (StateRequest stateRequest) {
 			AppStateManager.getInstance().applyState(stateRequest.getState());
 		}
@@ -62,9 +68,8 @@ public class StatePanel extends JPanel implements Statable {
 			this.state.setActive(false);
 		}
 
-		this.repainter = new DefautRepainter(this);
-		state.setRepainter(this.repainter);
 		this.state = state;
+		this.state.setRepainter(this.repainter);
 		this.state.setActive(true);
 	}
 

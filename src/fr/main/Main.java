@@ -1,6 +1,7 @@
 package fr.main;
 
 import fr.panelstates.MenuState;
+import fr.repainter.DefaultRepainter;
 import fr.statepanel.AppStateManager;
 import fr.statepanel.StatePanel;
 import fr.window.Window;
@@ -19,8 +20,10 @@ public class Main {
 		AppStateManager stator = AppStateManager.getInstance();
 		stator.addState(new MenuState());
 
+		DefaultRepainter repainter = new DefaultRepainter();
+
 		StatePanel mainPanel = StatePanel.getInstance();
-		mainPanel.init(WIDTH, HEIGHT);
+		mainPanel.init(WIDTH, HEIGHT, repainter);
 
 		stator.setStatable(mainPanel);
 
@@ -30,7 +33,5 @@ public class Main {
 		stator.applyState("menu");
 
 		screen.start();
-
-		mainPanel.repaint();
 	}
 }

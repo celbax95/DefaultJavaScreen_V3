@@ -12,6 +12,9 @@
 *.sar
 *.class
 
+# UML
+*.ucls
+
 # eclipse project file
 .settings/
 .classpath

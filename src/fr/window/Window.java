@@ -38,7 +38,7 @@ public class Window extends JFrame {
 		this.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {
-				instance.dispose();
+				System.exit(0);
 			}
 		});
 

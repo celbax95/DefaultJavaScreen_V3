@@ -8,18 +8,22 @@ import fr.statepanel.StateRequest;
 
 public class MenuState extends AppState {
 
+	private Color backgroundColor;
+
+	private int ok;
+
 	public MenuState() {
 		super();
+		this.backgroundColor = Color.PINK;
 	}
 
 	@Override
 	public void draw(Graphics2D g) throws StateRequest {
-		g.setBackground(Color.black);
 	}
 
 	@Override
 	public Color getBackgroundColor() {
-		return Color.blue;
+		return this.backgroundColor;
 	}
 
 	@Override
@@ -29,11 +33,6 @@ public class MenuState extends AppState {
 
 	@Override
 	public int getRepaintRate() {
-		return 50;
-	}
-
-	@Override
-	public void setActive(boolean active) throws RuntimeException {
-		super.setActive(active);
+		return -1;
 	}
 }
