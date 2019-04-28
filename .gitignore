@@ -11,6 +11,7 @@
 *.ear
 *.sar
 *.class
+bin/*
 
 # UML
 *.ucls
