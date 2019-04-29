@@ -18,12 +18,12 @@ public interface KeyBoard {
 	/**
 	 * Objet notifie quand une touche est pressee
 	 */
-	public Object getPressedSignal();
+	Object getPressedSignal();
 
 	/**
 	 * Objet notifie quand une touche est relachee
 	 */
-	public Object getReleasedSignal();
+	Object getReleasedSignal();
 
 	/**
 	 * @return true si une touche est pressee et false sinon
@@ -36,7 +36,7 @@ public interface KeyBoard {
 	 */
 	boolean isPressed(int key);
 
-	public static KeyBoard getInstance() {
+	static KeyBoard getInstance() {
 		return KeyBoardManager.getInstance();
 	}
 }

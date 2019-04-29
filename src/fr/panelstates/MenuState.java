@@ -8,7 +8,7 @@ import fr.statepanel.StateRequest;
 
 public class MenuState extends AppState {
 
-	private Color backgroundColor;
+	private final Color backgroundColor;
 
 	private int ok;
 

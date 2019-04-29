@@ -6,18 +6,18 @@ public class Timer {
 	private long sec;
 
 	public Timer() {
-		sec = System.nanoTime();
+		this.sec = System.nanoTime();
 	}
 
 	public double lastTick() {
-		return lastTick;
+		return this.lastTick;
 	}
 
 	public double tick() {
-		long time = System.nanoTime();
-		long tmp = System.nanoTime() - sec;
-		sec = time;
-		lastTick = (double) tmp / 1000000000;
-		return lastTick;
+		final long time = System.nanoTime();
+		final long tmp = System.nanoTime() - this.sec;
+		this.sec = time;
+		this.lastTick = (double) tmp / 1000000000;
+		return this.lastTick;
 	}
 }

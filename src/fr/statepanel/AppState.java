@@ -13,7 +13,8 @@ public abstract class AppState implements IAppState {
 		this.active = active;
 		if (this.active) {
 			if (this.repainter == null)
-				throw new IllegalStateException("Utilisez la methode setRepainter pour initialiser le repainter");
+				throw new IllegalStateException(
+						"Utilisez la methode setRepainter pour initialiser le repainter");
 			this.repainter.setRate(this.getRepaintRate());
 			this.repainter.start();
 		} else {

@@ -15,14 +15,14 @@ public class KeyBoardManager implements KeyBoard {
 		instance = new KeyBoardManager();
 	}
 
-	private Object pressedSignal;
+	private final Object pressedSignal;
 
-	private Object releasedSignal;
+	private final Object releasedSignal;
 
-	private List<Integer> keys;
+	private final List<Integer> keys;
 
 	private KeyBoardManager() {
-		this.keys = new Vector<Integer>();
+		this.keys = new Vector<>();
 		this.pressedSignal = new Object();
 		this.releasedSignal = new Object();
 	}

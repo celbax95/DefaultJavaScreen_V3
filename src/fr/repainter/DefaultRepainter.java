@@ -12,11 +12,11 @@ public class DefaultRepainter implements Repainter {
 
 	private JPanel panel;
 
-	private Thread myThread;
+	private final Thread myThread;
 
 	private boolean repaint;
 
-	private Object waiter;
+	private final Object waiter;
 
 	public DefaultRepainter() {
 		super();
@@ -61,7 +61,7 @@ public class DefaultRepainter implements Repainter {
 				synchronized (this.waiter) {
 					try {
 						this.waiter.wait();
-					} catch (InterruptedException e) {
+					} catch (final InterruptedException e) {
 						return;
 					}
 				}
@@ -78,7 +78,7 @@ public class DefaultRepainter implements Repainter {
 			} else if (tmpRate > 0) {
 				try {
 					Thread.sleep(tmpRate);
-				} catch (InterruptedException e) {
+				} catch (final InterruptedException e) {
 				}
 			}
 		}

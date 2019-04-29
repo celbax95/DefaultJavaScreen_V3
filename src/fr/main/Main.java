@@ -17,17 +17,17 @@ public class Main {
 
 	public static void main(String[] args) {
 
-		AppStateManager stator = AppStateManager.getInstance();
+		final AppStateManager stator = AppStateManager.getInstance();
 		stator.addState(new MenuState());
 
-		DefaultRepainter repainter = new DefaultRepainter();
+		final DefaultRepainter repainter = new DefaultRepainter();
 
-		StatePanel mainPanel = StatePanel.getInstance();
+		final StatePanel mainPanel = StatePanel.getInstance();
 		mainPanel.init(WIDTH, HEIGHT, repainter);
 
 		stator.setStatable(mainPanel);
 
-		Window screen = Window.getInstance();
+		final Window screen = Window.getInstance();
 		screen.init(mainPanel, MARGE_RIGHT, MARGE_BOTTOM, MARGE_TOTAL);
 
 		stator.applyState("menu");

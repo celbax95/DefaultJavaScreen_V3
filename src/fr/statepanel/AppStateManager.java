@@ -24,13 +24,15 @@ public class AppStateManager {
 	/* GETTERS & SETTERS */
 
 	public void addState(IAppState... appState) {
-		for (IAppState element : appState)
+		for (final IAppState element : appState) {
 			this.states.put(element.getName().toLowerCase(), element);
+		}
 	}
 
 	public void applyState(String name) throws RuntimeException {
 		if (this.statable == null)
-			throw new IllegalStateException("Utilisez la methode setStatable() pour initialiser l'element statable");
+			throw new IllegalStateException(
+					"Utilisez la methode setStatable() pour initialiser l'element statable");
 
 		if (!this.states.containsKey(name))
 			throw new IllegalArgumentException("Le state \"" + name + "\" est inconnu");

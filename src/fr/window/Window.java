@@ -54,7 +54,7 @@ public class Window extends JFrame {
 //		this.addKeyListener(new KeyBoardHolder());
 
 		// Interieur de la fenetre
-		JPanel jp = new JPanel();
+		final JPanel jp = new JPanel();
 		jp.setLayout(null);
 		jp.setBackground(Color.black);
 		jp.add(this.mainPanel);

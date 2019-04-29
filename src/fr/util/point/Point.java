@@ -43,7 +43,7 @@ public class Point {
 	 * Calcul de la distance entre le point courant et le point p
 	 */
 	public double distance(Point p) {
-		Point o = new Point(p).sub(this);
+		final Point o = new Point(p).sub(this);
 		return Math.sqrt(o.x * o.x + o.y * o.y);
 	}
 
@@ -73,7 +73,7 @@ public class Point {
 			return false;
 		if (this.getClass() != obj.getClass())
 			return false;
-		Point other = (Point) obj;
+		final Point other = (Point) obj;
 		if (Double.doubleToLongBits(this.x) != Double.doubleToLongBits(other.x))
 			return false;
 		if (Double.doubleToLongBits(this.y) != Double.doubleToLongBits(other.y))
@@ -139,8 +139,8 @@ public class Point {
 	 */
 	public void rotate(double angle) {
 
-		double cos = Math.cos(angle);
-		double sin = Math.sin(angle);
+		final double cos = Math.cos(angle);
+		final double sin = Math.sin(angle);
 
 		this.x = this.x * cos + this.y * -sin;
 		this.y = this.x * sin + this.y * cos;
@@ -180,7 +180,7 @@ public class Point {
 	 * soit egal a 1
 	 */
 	public Point trigNorm() {
-		double angle = this.getAngle();
+		final double angle = this.getAngle();
 		this.x = Math.cos(angle);
 		this.y = Math.sin(angle);
 		return this;
