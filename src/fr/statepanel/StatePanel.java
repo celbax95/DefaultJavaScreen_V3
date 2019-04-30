@@ -21,8 +21,6 @@ public class StatePanel extends JPanel implements Statable {
 
 	private Repainter repainter;
 
-	private int repaintRequesting;
-
 	private StatePanel() {
 		super();
 		this.WIDTH = 0;
@@ -48,7 +46,7 @@ public class StatePanel extends JPanel implements Statable {
 	 */
 	@Override
 	public void paintComponent(Graphics g2) {
-		Graphics2D g = (Graphics2D) g2;
+		final Graphics2D g = (Graphics2D) g2;
 		super.paintComponent(g);
 
 		g.setColor(this.state.getBackgroundColor());
@@ -57,7 +55,7 @@ public class StatePanel extends JPanel implements Statable {
 
 		try {
 			this.state.draw(g);
-		} catch (StateRequest stateRequest) {
+		} catch (final StateRequest stateRequest) {
 			AppStateManager.getInstance().applyState(stateRequest.getState());
 		}
 	}
