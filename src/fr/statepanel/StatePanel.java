@@ -21,8 +21,6 @@ public class StatePanel extends JPanel implements Statable {
 
 	private Repainter repainter;
 
-	private int repaintRequesting;
-
 	private StatePanel() {
 		super();
 		this.WIDTH = 0;

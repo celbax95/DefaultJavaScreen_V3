@@ -10,8 +10,6 @@ public class MenuState extends AppState {
 
 	private final Color backgroundColor;
 
-	private int ok;
-
 	public MenuState() {
 		super();
 		this.backgroundColor = Color.PINK;
