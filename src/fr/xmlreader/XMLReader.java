@@ -15,6 +15,7 @@ import javax.xml.xpath.XPathFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+// TODO doc
 public class XMLReader {
 
 	private static XMLReader instance;
