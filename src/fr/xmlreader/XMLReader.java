@@ -1,35 +1,35 @@
 package fr.xmlreader;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 // TODO doc
 public class XMLReader {
 
-	private static XMLReader instance;
-
-	static {
-		instance = new XMLReader();
-	}
+	/**
+	 * static Singleton instance.
+	 */
+	private static volatile XMLReader instance;
 
 	private DocumentBuilder builder;
 
 	private XPath xpath;
 
-	private Map<String, String> files;
-
+	/**
+	 * Private constructor for singleton.
+	 */
 	public XMLReader() {
 		try {
 			this.builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
@@ -38,65 +38,61 @@ public class XMLReader {
 		}
 
 		this.setXpath(XPathFactory.newInstance().newXPath());
-
-		this.setFiles(new HashMap<>());
 	}
 
-	public void addFile(String name, String path) throws FileNotFoundException {
-		if (new File(path).exists()) {
-			this.files.put(name, path);
-		} else
-			throw new FileNotFoundException();
+	public Object getAttribute(Node n, String a) {
+		return ((Element) n).getAttribute(a);
 	}
 
-	public void clearFiles() {
-		this.files.clear();
+	public Node getNode(Node n, String name) {
+		return this.getNode(n, name, 1);
 	}
 
-	public Map<String, String> getFiles() {
-		return this.files;
-	}
-
-	public XPath getXpath() {
-		return this.xpath;
-	}
-
-	public void removeFile(String name) {
-		this.files.remove(name);
-	}
-
-	public void removePath(String path) {
+	public Node getNode(Node n, String name, int nb) {
 		try {
-			final Iterator<String> keys = this.files.keySet().iterator();
-			final Iterator<String> values = this.files.values().iterator();
-			while (true) {
-				if (values.next().equals(path)) {
-					this.files.remove(keys.next());
-					break;
-				}
-			}
-		} catch (final Exception e) {
+			return (Node) this.xpath.evaluate("//" + name + "[" + nb + "]", n, XPathConstants.NODE);
+		} catch (final XPathExpressionException e) {
+			// e.printStackTrace();
 		}
+		return null;
 	}
 
-	public void setFiles(Map<String, String> files) {
-		this.files = files;
+	public Node getNodeByAttribute(Node n, String nodeName, String attribute, String value) {
+		try {
+			return (Node) this.xpath.evaluate("//" + nodeName + "@[" + attribute + "=" + value + "]", n,
+					XPathConstants.NODE);
+		} catch (final XPathExpressionException e) {
+			// e.printStackTrace();
+		}
+		return null;
 	}
 
-	public void setXpath(XPath xpath) {
-		this.xpath = xpath;
+	public NodeList getNodeList(Node n, String name) {
+		try {
+			return (NodeList) this.xpath.evaluate("//" + name, n, XPathConstants.NODESET);
+		} catch (final XPathExpressionException e) {
+			// e.printStackTrace();
+		}
+		return null;
+	}
+
+	public Node getParentNode(Node n) {
+		return n.getParentNode();
 	}
 
 	@SuppressWarnings("unused")
-	private Element getRoot(String fileName) {
+	private Node getRoot(String fileName) {
 		try {
+<<<<<<< HEAD
 			final File fileXML = new File("fileName");
+=======
+			final File fileXML = new File(fileName);
+>>>>>>> Avancement XMLReader
 
 			if (!fileXML.exists())
-
 				return null;
-			Document xml;
-			xml = this.builder.parse(fileXML);
+
+			final Document xml = this.builder.parse(fileXML);
 			return xml.getDocumentElement();
 
 		} catch (final Exception e) {
@@ -105,7 +101,42 @@ public class XMLReader {
 		}
 	}
 
+	public String getText(Node n) {
+		return n.getTextContent();
+	}
+
+	public XPath getXpath() {
+		return this.xpath;
+	}
+
+	public void setXpath(XPath xpath) {
+		this.xpath = xpath;
+	}
+
+	/**
+	 * Return a singleton instance of XMLReader.
+	 */
 	public static XMLReader getInstance() {
+		// Double lock for thread safety.
+		if (instance == null) {
+			synchronized (XMLReader.class) {
+				if (instance == null) {
+					instance = new XMLReader();
+				}
+			}
+		}
 		return instance;
+	}
+
+	public static void main(String[] args) {
+		final XMLReader x = XMLReader.getInstance();
+
+		final Node root = x.getRoot("test.xml");
+
+		System.out.println(root);
+
+		final Node n = x.getNode(root, "param", 1);
+
+		System.out.println(n.getNodeName());
 	}
 }
