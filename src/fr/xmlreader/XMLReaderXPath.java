@@ -1,8 +1,6 @@
 package fr.xmlreader;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -17,8 +15,10 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import com.sun.org.apache.xpath.internal.NodeSet;
+
 // TODO doc
-public class XMLReaderXPath {
+public class XMLReaderXPath implements XMLReader {
 
 	/**
 	 * static Singleton instance.
@@ -42,10 +42,12 @@ public class XMLReaderXPath {
 		this.setXpath(XPathFactory.newInstance().newXPath());
 	}
 
+	@Override
 	public String getAttribute(Object node, String attributeName) {
 		return ((Element) node).getAttribute(attributeName);
 	}
 
+	@Override
 	public Object getNode(Object node, String name) {
 		return this.getNode(node, name, 1);
 	}
@@ -59,44 +61,60 @@ public class XMLReaderXPath {
 		return null;
 	}
 
-	public Object getNodeByAttribute(Object node, String nodeName, String attribute, String value) {
+	@Override
+	public Object[] getNodes(Object from) {
+
+		Node n = (Node) from;
+
+		return this.nodeListToObjectcArray(n.getChildNodes());
+	}
+
+	@Override
+	public Object[] getNodes(Object from, String nodeName) {
+
+		NodeSet nl = null;
 		try {
-			return this.xpath.evaluate("//" + nodeName + "@[" + attribute + "=" + value + "]", node,
+			nl = (NodeSet) this.xpath.evaluate("//" + nodeName, from, XPathConstants.NODESET);
+		} catch (XPathExpressionException e) {
+		}
+
+		return this.nodeListToObjectcArray(nl);
+	}
+
+	@Override
+	public Object getParam(Object from, String paramName) {
+		Element e = null;
+		try {
+			e = (Element) this.xpath.evaluate("//param[@name = '" + paramName + "']", from,
 					XPathConstants.NODE);
-		} catch (XPathExpressionException e) {
-			// e.printStackTrace();
+		} catch (XPathExpressionException e1) {
 		}
-		return null;
+
+		return this.dynamicCast(e.getAttribute("value"), e.getAttribute("type"));
 	}
 
-	public NodeList getNodeList(Object node, String name) {
+	@Override
+	public Object[] getParams(Object from) {
+
+		NodeSet nl = null;
+
 		try {
-			return (NodeList) this.xpath.evaluate("//" + name, node, XPathConstants.NODESET);
+			nl = (NodeSet) this.xpath.evaluate("//param", from, XPathConstants.NODESET);
 		} catch (XPathExpressionException e) {
-			// e.printStackTrace();
 		}
-		return null;
-	}
 
-	public String[] getNodesAttribute(Object node, String nodeName, String attributeName) {
-		NodeList nl = this.getNodeList(node, nodeName);
-
-		List<String> nll = new ArrayList<>();
+		Object[] oa = new Object[nl.getLength()];
 
 		for (int i = 0, c = nl.getLength(); i < c; i++) {
-			String attr = this.getAttribute(nl.item(i), attributeName);
-			if (attr != null) {
-				nll.add(attr);
-			}
+			Element e = (Element) nl.item(i);
+
+			oa[i] = this.dynamicCast(e.getAttribute("name"), e.getAttribute("type"));
 		}
 
-		return nll.toArray(new String[nll.size()]);
+		return oa;
 	}
 
-	public Object getParentNode(Object node) {
-		return ((Node) node).getParentNode();
-	}
-
+	@Override
 	public Object getRoot(String fileName) {
 		try {
 			File fileXML = new File(fileName);
@@ -113,16 +131,36 @@ public class XMLReaderXPath {
 		}
 	}
 
-	public String getText(Object node) {
-		return ((Node) node).getTextContent();
-	}
-
 	public XPath getXpath() {
 		return this.xpath;
 	}
 
 	public void setXpath(XPath xpath) {
 		this.xpath = xpath;
+	}
+
+	private Object dynamicCast(String value, String type) {
+		switch (type.toLowerCase()) {
+		case "interger":
+			return Integer.valueOf(value);
+		case "number":
+			return Double.valueOf(value);
+		case "boolean":
+			return Boolean.valueOf(value);
+		case "string":
+			return value;
+		}
+		return null;
+	}
+
+	private Object[] nodeListToObjectcArray(NodeList nl) {
+		Object[] oa = new Object[nl.getLength()];
+
+		for (int i = 0, c = nl.getLength(); i < c; i++) {
+			oa[i] = nl.item(i);
+		}
+
+		return oa;
 	}
 
 	/**

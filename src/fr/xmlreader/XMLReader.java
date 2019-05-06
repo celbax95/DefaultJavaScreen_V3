@@ -1,11 +1,17 @@
 package fr.xmlreader;
 
 public interface XMLReader {
-	String getAttribute(Object node, String attributeName);
+	String getAttribute(Object from, String attrName);
 
-	Object getNodeByAttribute(Object node, String nodeName, String attribute, String value);
+	Object getNode(Object from, String nodeName);
 
-	String[] getNodesAttribute(Object node, String nodeName, String attributeName);
+	Object[] getNodes(Object from);
+
+	Object[] getNodes(Object from, String nodeName);
+
+	Object getParam(Object from, String paramName);
+
+	Object getParams(Object from);
 
 	Object getRoot(String fileName);
 }
