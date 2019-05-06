@@ -17,6 +17,8 @@ import org.w3c.dom.NodeList;
 
 import com.sun.org.apache.xpath.internal.NodeSet;
 
+import fr.datafilesmanager.XMLReader;
+
 // TODO doc
 public class XMLReaderXPath implements XMLReader {
 
