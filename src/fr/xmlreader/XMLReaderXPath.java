@@ -42,6 +42,20 @@ public class XMLReaderXPath implements XMLReader {
 		this.setXpath(XPathFactory.newInstance().newXPath());
 	}
 
+	private Object dynamicCast(String value, String type) {
+		switch (type.toLowerCase()) {
+		case "integer":
+			return Integer.valueOf(value);
+		case "number":
+			return Double.valueOf(value);
+		case "boolean":
+			return Boolean.valueOf(value);
+		case "string":
+			return value;
+		}
+		return null;
+	}
+
 	@Override
 	public String getAttribute(Object node, String attributeName) {
 		return ((Element) node).getAttribute(attributeName);
@@ -130,24 +144,6 @@ public class XMLReaderXPath implements XMLReader {
 		return this.xpath;
 	}
 
-	public void setXpath(XPath xpath) {
-		this.xpath = xpath;
-	}
-
-	private Object dynamicCast(String value, String type) {
-		switch (type.toLowerCase()) {
-		case "integer":
-			return Integer.valueOf(value);
-		case "number":
-			return Double.valueOf(value);
-		case "boolean":
-			return Boolean.valueOf(value);
-		case "string":
-			return value;
-		}
-		return null;
-	}
-
 	private Object[] nodeListToObjectcArray(NodeList nl) {
 		Object[] oa = new Object[nl.getLength()];
 
@@ -156,6 +152,10 @@ public class XMLReaderXPath implements XMLReader {
 		}
 
 		return oa;
+	}
+
+	public void setXpath(XPath xpath) {
+		this.xpath = xpath;
 	}
 
 	/**
@@ -171,9 +171,5 @@ public class XMLReaderXPath implements XMLReader {
 			}
 		}
 		return instance;
-	}
-
-	public static void main(String[] args) {
-		// XMLReaderXPath x = XMLReaderXPath.getInstance();
 	}
 }
