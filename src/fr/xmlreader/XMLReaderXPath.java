@@ -127,7 +127,6 @@ public class XMLReaderXPath implements XMLReader {
 
 	@Override
 	public Object getRootFromPath(String filePath) throws FileNotFoundException {
-		System.out.println(filePath);
 		File fileXML = new File(filePath);
 
 		if (!fileXML.exists())
