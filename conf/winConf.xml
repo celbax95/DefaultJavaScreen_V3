@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<conf>
+	<!-- Window parameters -->
+	<param name="width" value="1366" type="integer"/>
+	<param name="height" value="768" type="integer"/>
+	<param name="marginBottom" value="35" type="integer"/>
+	<param name="marginRight" value="6" type="integer"/>
+	<param name="margin" value="2" type="integer"/>
+</conf>

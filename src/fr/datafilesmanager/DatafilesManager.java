@@ -30,7 +30,8 @@ public class DatafilesManager {
 		if (file.exists() && this.getExtension(file).equals(".xml")) {
 			this.files.put(name, path);
 		} else {
-			System.err.println("Le fichier \"" + path + "\"n'existe pas.");
+			System.err.println("Ajout du fichier impossible :\n\tLe fichier \"" + path
+					+ "\"n'existe pas ou n'est pas un fichier .xml");
 		}
 	}
 
@@ -56,7 +57,7 @@ public class DatafilesManager {
 
 	public Object getRoot(String name) {
 		try {
-			return this.xmlReader.getRoot(this.files.get(name));
+			return this.xmlReader.getRootFromPath(this.files.get(name));
 		} catch (Exception e) {
 			System.err.println("La valeur \"" + name + "\" n'existe pas dans les fichiers connus.");
 			System.exit(0);

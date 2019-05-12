@@ -15,5 +15,5 @@ public interface XMLReader {
 
 	Object[] getParams(Object from);
 
-	Object getRoot(String fileName) throws FileNotFoundException;
+	Object getRootFromPath(String filePath) throws FileNotFoundException;
 }
