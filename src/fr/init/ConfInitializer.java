@@ -1,13 +1,13 @@
 package fr.init;
 
 import fr.datafilesmanager.DatafilesManager;
-import fr.datafilesmanager.XMLReader;
+import fr.datafilesmanager.XMLManager;
 import fr.panelstates.MenuState;
 import fr.repainter.DefaultRepainter;
 import fr.statepanel.AppStateManager;
 import fr.statepanel.StatePanel;
 import fr.window.Window;
-import fr.xmlreader.XMLReaderXPath;
+import fr.xmlmanager.XMLManagerDOM;
 
 public class ConfInitializer {
 
@@ -26,24 +26,6 @@ public class ConfInitializer {
 	}
 
 	/**
-	 * Recuperation de la racine du fichier xml de configuration de la fenetre
-	 */
-	private Object getWinConf() {
-		Object winConf = null;
-		winConf = this.dfm.getRoot("winConf");
-
-		return winConf;
-	}
-
-	/**
-	 * Ajout des fichiers de configuration
-	 */
-	private void initConfFiles() {
-		this.dfm.init(new XMLReaderXPath());
-		this.dfm.addFile("winConf", "conf/winConf.xml");
-	}
-
-	/**
 	 * Creation des elements a partir de la conf
 	 */
 	public void start() {
@@ -56,11 +38,29 @@ public class ConfInitializer {
 	}
 
 	/**
+	 * Recuperation de la racine du fichier xml de configuration de la fenetre
+	 */
+	private Object getWinConf() {
+		Object winConf = null;
+		winConf = this.dfm.getDocument("winConf");
+
+		return winConf;
+	}
+
+	/**
+	 * Ajout des fichiers de configuration
+	 */
+	private void initConfFiles() {
+		this.dfm.init(new XMLManagerDOM());
+		this.dfm.addFile("winConf", "conf/winConf.xml");
+	}
+
+	/**
 	 * Creation de l'ecran
 	 */
 	private void windowInitializers(Object configRoot) {
 
-		XMLReader reader = this.dfm.getXmlReader();
+		XMLManager reader = this.dfm.getXmlReader();
 
 		int width = (int) reader.getParam(configRoot, "width", 1366);
 
@@ -79,7 +79,7 @@ public class ConfInitializer {
 
 	private void windowStart(Object configRoot) {
 
-		XMLReader reader = this.dfm.getXmlReader();
+		XMLManager reader = this.dfm.getXmlReader();
 
 		int marginBottom = (int) reader.getParam(configRoot, "marginBottom", 35);
 		int marginRight = (int) reader.getParam(configRoot, "marginRight", 6);

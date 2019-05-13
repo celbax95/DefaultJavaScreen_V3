@@ -4,7 +4,7 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
-import fr.xmlreader.XMLReaderXPath;
+import fr.xmlmanager.XMLManagerDOM;
 
 public class DatafilesManager {
 
@@ -15,7 +15,7 @@ public class DatafilesManager {
 	 */
 	private static volatile DatafilesManager instance;
 
-	private XMLReader xmlReader;
+	private XMLManager xmlReader;
 
 	private Map<String, String> files;
 
@@ -33,6 +33,16 @@ public class DatafilesManager {
 			System.err.println("Ajout du fichier impossible :\n\tLe fichier \"" + path
 					+ "\"n'existe pas ou n'est pas un fichier .xml");
 		}
+	}
+
+	public Object getDocument(String name) {
+		try {
+			return this.xmlReader.getDocument(this.files.get(name));
+		} catch (Exception e) {
+			System.err.println("La valeur \"" + name + "\" n'existe pas dans les fichiers connus.");
+			System.exit(0);
+		}
+		return null; // Inaccessible
 	}
 
 	public String getExtension(File file) {
@@ -55,23 +65,13 @@ public class DatafilesManager {
 		return m;
 	}
 
-	public Object getRoot(String name) {
-		try {
-			return this.xmlReader.getRootFromPath(this.files.get(name));
-		} catch (Exception e) {
-			System.err.println("La valeur \"" + name + "\" n'existe pas dans les fichiers connus.");
-			System.exit(0);
-		}
-		return null; // Inaccessible
-	}
-
-	public XMLReader getXmlReader() throws RuntimeException {
+	public XMLManager getXmlReader() throws RuntimeException {
 		if (!initialized)
 			throw new RuntimeException("Appeler la methode init() pour initialiser DatafilesManager");
 		return this.xmlReader;
 	}
 
-	public void init(XMLReader xmlReader) {
+	public void init(XMLManager xmlReader) {
 		this.xmlReader = xmlReader;
 		initialized = true;
 	}
@@ -82,7 +82,7 @@ public class DatafilesManager {
 	public static DatafilesManager getInstance() {
 		// Double lock for thread safety.
 		if (instance == null) {
-			synchronized (XMLReaderXPath.class) {
+			synchronized (XMLManagerDOM.class) {
 				if (instance == null) {
 					instance = new DatafilesManager();
 				}
