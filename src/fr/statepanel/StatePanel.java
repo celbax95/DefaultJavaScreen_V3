@@ -6,6 +6,8 @@ import java.awt.Graphics2D;
 
 import javax.swing.JPanel;
 
+import fr.keyboard.KeyBoardHolder;
+
 @SuppressWarnings("serial")
 public class StatePanel extends JPanel implements Statable {
 
@@ -36,6 +38,13 @@ public class StatePanel extends JPanel implements Statable {
 
 		this.repainter = repainter;
 		this.repainter.setPanel(this);
+
+		this.setFocusable(true);
+		this.requestFocusInWindow();
+
+		this.addKeyListener(new KeyBoardHolder());
+
+		// this.addKeyListener(new MouseHolder());
 
 		this.setSize(this.WIDTH, this.HEIGHT);
 	}
