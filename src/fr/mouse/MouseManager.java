@@ -1,88 +1,102 @@
 package fr.mouse;
 
+import fr.init.ConfInitializer;
 import fr.util.point.Point;
 
 public class MouseManager {
+
+	private static final int LEFT_BUTTON = 1, MIDDLE_BUTTON = 2, RIGHT_BUTTON = 3;
 
 	/**
 	 * static Singleton instance.
 	 */
 	private static volatile MouseManager instance;
 
-	private Object mousePressed;
+	private Object pressedSignal;
 
-	private Object mouseReleased;
+	private Object releasedSignal;
 
-	private Object mouseMoved;
+	private Object movedSignal;
 
 	private Point mousePos;
 
-	private Point lastPressedPos;
-
-	private Point lastReleasedPos;
-
-	private Boolean[] buttons;
+	private boolean[] buttons;
 
 	/**
 	 * Private constructor for singleton.
 	 */
 	private MouseManager() {
-		this.mousePressed = new Object();
-		this.mouseReleased = new Object();
-		this.mouseMoved = new Object();
+		this.pressedSignal = new Object();
+		this.releasedSignal = new Object();
+		this.movedSignal = new Object();
 
-		this.buttons = new Boolean[3];
+		this.mousePos = new Point();
+
+		this.buttons = new boolean[3];
+		for (int i = 0; i < this.buttons.length; i++) {
+			this.buttons[i] = false;
+		}
+
 	}
 
-	public Boolean[] getButtons() {
+	public boolean[] getButtons() {
 		return this.buttons;
-	}
-
-	public Point getLastPressedPos() {
-		return this.lastPressedPos;
-	}
-
-	public Point getLastReleasedPos() {
-		return this.lastReleasedPos;
-	}
-
-	public Object getMouseMoved() {
-		return this.mouseMoved;
 	}
 
 	public Point getMousePos() {
 		return this.mousePos;
 	}
 
-	public Object getMousePressed() {
-		return this.mousePressed;
+	public Object getMovedSignal() {
+		return this.movedSignal;
 	}
 
-	public Object getMouseRealeased() {
-		return this.mouseReleased;
+	public Object getPressedSignal() {
+		return this.pressedSignal;
 	}
 
-	public void setButtons(Boolean[] buttons) {
-		this.buttons = buttons;
+	public Object getReleasedSignal() {
+		return this.releasedSignal;
 	}
 
-	public void setLastClickPos(Point lastClickPos) {
-		this.lastPressedPos = lastClickPos;
-	}
-
-	public void setLastPressedPos(Point lastPressedPos) {
-		this.lastPressedPos = lastPressedPos;
-	}
-
-	public void setLastReleasedPos(Point lastReleasedPos) {
-		this.lastReleasedPos = lastReleasedPos;
-	}
-
-	public void setMousePos(Point mousePos) {
-		this.mousePos = mousePos;
-		synchronized (this.mouseMoved) {
-			this.mouseMoved.notifyAll();
+	public boolean isPressed() {
+		for (Boolean b : this.buttons) {
+			if (b)
+				return true;
 		}
+		return false;
+	}
+
+	public void moved(int x, int y) {
+		this.mousePos = new Point(x, y);
+		synchronized (this.movedSignal) {
+			this.movedSignal.notifyAll();
+		}
+	}
+
+	protected void pressed(int x, int y, int button) {
+
+		this.mousePos = new Point(x, y);
+
+		this.buttons[button] = true;
+
+		synchronized (this.pressedSignal) {
+			this.pressedSignal.notifyAll();
+		}
+	}
+
+	protected void released(int x, int y, int button) {
+		this.mousePos = new Point(x, y);
+
+		this.buttons[button] = false;
+
+		synchronized (this.releasedSignal) {
+			this.releasedSignal.notifyAll();
+		}
+	}
+
+	protected void setMousePos(Point mousePos) {
+		this.mousePos = mousePos;
 	}
 
 	/**
@@ -100,4 +114,22 @@ public class MouseManager {
 		return instance;
 	}
 
+	public static void main(String[] args) {
+		ConfInitializer.getInstance().start();
+
+		MouseManager mm = MouseManager.getInstance();
+
+		Object ps = mm.getMovedSignal();
+		while (true) {
+			if (!mm.isPressed()) {
+				synchronized (ps) {
+					try {
+						ps.wait();
+					} catch (InterruptedException e) {
+					}
+				}
+			}
+			System.out.println(mm.getMousePos());
+		}
+	}
 }
