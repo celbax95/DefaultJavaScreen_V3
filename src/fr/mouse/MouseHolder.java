@@ -7,8 +7,6 @@ import java.awt.event.MouseWheelListener;
 
 import javax.swing.event.MouseInputListener;
 
-import fr.util.point.Point;
-
 public class MouseHolder implements MouseInputListener, MouseMotionListener, MouseWheelListener {
 
 	private static MouseManager mouseManager;
@@ -19,12 +17,11 @@ public class MouseHolder implements MouseInputListener, MouseMotionListener, Mou
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		mouseManager.setMousePos(new Point(e.getX(), e.getY()));
 	}
 
 	@Override
 	public void mouseDragged(MouseEvent e) {
-		mouseManager.setMousePos(new Point(e.getX(), e.getY()));
+		mouseManager.moved(e.getX(), e.getY());
 	}
 
 	@Override

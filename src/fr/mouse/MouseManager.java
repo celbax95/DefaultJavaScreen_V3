@@ -18,7 +18,7 @@ public class MouseManager {
 
 	private Object movedSignal;
 
-	private Point mousePos;
+	private Point pos;
 
 	private boolean[] buttons;
 
@@ -30,25 +30,24 @@ public class MouseManager {
 		this.releasedSignal = new Object();
 		this.movedSignal = new Object();
 
-		this.mousePos = new Point();
+		this.pos = new Point();
 
-		this.buttons = new boolean[3];
+		this.buttons = new boolean[4];
 		for (int i = 0; i < this.buttons.length; i++) {
 			this.buttons[i] = false;
 		}
-
 	}
 
 	public boolean[] getButtons() {
 		return this.buttons;
 	}
 
-	public Point getMousePos() {
-		return this.mousePos;
-	}
-
 	public Object getMovedSignal() {
 		return this.movedSignal;
+	}
+
+	public Point getPos() {
+		return this.pos;
 	}
 
 	public Object getPressedSignal() {
@@ -68,7 +67,7 @@ public class MouseManager {
 	}
 
 	public void moved(int x, int y) {
-		this.mousePos = new Point(x, y);
+		this.pos = new Point(x, y);
 		synchronized (this.movedSignal) {
 			this.movedSignal.notifyAll();
 		}
@@ -76,7 +75,7 @@ public class MouseManager {
 
 	protected void pressed(int x, int y, int button) {
 
-		this.mousePos = new Point(x, y);
+		this.pos = new Point(x, y);
 
 		this.buttons[button] = true;
 
@@ -86,7 +85,7 @@ public class MouseManager {
 	}
 
 	protected void released(int x, int y, int button) {
-		this.mousePos = new Point(x, y);
+		this.pos = new Point(x, y);
 
 		this.buttons[button] = false;
 
@@ -95,8 +94,8 @@ public class MouseManager {
 		}
 	}
 
-	protected void setMousePos(Point mousePos) {
-		this.mousePos = mousePos;
+	protected void setPos(Point mousePos) {
+		this.pos = mousePos;
 	}
 
 	/**
@@ -119,17 +118,16 @@ public class MouseManager {
 
 		MouseManager mm = MouseManager.getInstance();
 
-		Object ps = mm.getMovedSignal();
+		Object ps = mm.getPressedSignal();
+
+		Point save = new Point();
+
 		while (true) {
-			if (!mm.isPressed()) {
-				synchronized (ps) {
-					try {
-						ps.wait();
-					} catch (InterruptedException e) {
-					}
-				}
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
 			}
-			System.out.println(mm.getMousePos());
+			// System.out.println(mm.isMoving());
 		}
 	}
 }
