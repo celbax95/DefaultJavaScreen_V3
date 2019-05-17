@@ -5,7 +5,7 @@ import fr.util.point.Point;
 
 public class MouseManager {
 
-	private static final int LEFT_BUTTON = 1, MIDDLE_BUTTON = 2, RIGHT_BUTTON = 3;
+	private static final int TIME_MOVING = 150;
 
 	/**
 	 * static Singleton instance.
@@ -20,7 +20,13 @@ public class MouseManager {
 
 	private Point pos;
 
+	private boolean inWindow;
+
 	private boolean[] buttons;
+
+	private Thread mT;
+
+	private boolean moving;
 
 	/**
 	 * Private constructor for singleton.
@@ -32,10 +38,16 @@ public class MouseManager {
 
 		this.pos = new Point();
 
+		this.moving = false;
+
 		this.buttons = new boolean[4];
 		for (int i = 0; i < this.buttons.length; i++) {
 			this.buttons[i] = false;
 		}
+
+		// this.imt.start();
+
+		this.startMovingTester();
 	}
 
 	public boolean[] getButtons() {
@@ -58,6 +70,45 @@ public class MouseManager {
 		return this.releasedSignal;
 	}
 
+	public void interruptMovingTester() {
+		try {
+			this.mT.interrupt();
+		} catch (Exception e) {
+		}
+	}
+
+	public boolean isMoving() {
+		return this.moving;
+	}
+
+	public void isMovingTester() {
+		(this.mT = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				Point pos = MouseManager.this.getPos();
+
+				while (!Thread.currentThread().isInterrupted()) {
+					try {
+						synchronized (MouseManager.this.movedSignal) {
+							MouseManager.this.movedSignal.wait();
+						}
+						MouseManager.this.moving = true;
+						do {
+							pos = MouseManager.this.getPos();
+							Thread.sleep(TIME_MOVING);
+							if (!MouseManager.this.inWindow) {
+								Thread.currentThread().interrupt();
+							}
+						} while (pos.equals(MouseManager.this.getPos()));
+						MouseManager.this.moving = false;
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		})).start();
+	}
+
 	public boolean isPressed() {
 		for (Boolean b : this.buttons) {
 			if (b)
@@ -71,6 +122,19 @@ public class MouseManager {
 		synchronized (this.movedSignal) {
 			this.movedSignal.notifyAll();
 		}
+	}
+
+	public void startMovingTester() {
+		this.isMovingTester();
+	}
+
+	protected void enteredWindow() {
+		this.inWindow = true;
+		this.startMovingTester();
+	}
+
+	protected void exitedWindow() {
+		this.inWindow = false;
 	}
 
 	protected void pressed(int x, int y, int button) {
@@ -127,6 +191,7 @@ public class MouseManager {
 				Thread.sleep(100);
 			} catch (InterruptedException e) {
 			}
+			System.out.println(mm.mT.isInterrupted());
 			// System.out.println(mm.isMoving());
 		}
 	}

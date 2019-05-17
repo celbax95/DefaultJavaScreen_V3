@@ -26,10 +26,12 @@ public class MouseHolder implements MouseInputListener, MouseMotionListener, Mou
 
 	@Override
 	public void mouseEntered(MouseEvent e) {
+		mouseManager.enteredWindow();
 	}
 
 	@Override
 	public void mouseExited(MouseEvent e) {
+		mouseManager.exitedWindow();
 	}
 
 	@Override
