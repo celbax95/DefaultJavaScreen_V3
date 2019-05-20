@@ -51,5 +51,6 @@ public class MouseHolder implements MouseInputListener, MouseMotionListener, Mou
 
 	@Override
 	public void mouseWheelMoved(MouseWheelEvent e) {
+		mouseManager.wheelMoved(e.getWheelRotation());
 	}
 }

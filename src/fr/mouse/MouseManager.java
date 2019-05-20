@@ -5,7 +5,8 @@ import fr.util.point.Point;
 
 public class MouseManager {
 
-	private static final int TIME_MOVING = 150;
+	private static final int TIME_MOVING = 120;
+	private static final int TIME_WHEEL_RESET = 50;
 
 	/**
 	 * static Singleton instance.
@@ -18,6 +19,8 @@ public class MouseManager {
 
 	private Object movedSignal;
 
+	private Object wheelSignal;
+
 	private Point pos;
 
 	private boolean inWindow;
@@ -26,7 +29,13 @@ public class MouseManager {
 
 	private Thread mT;
 
+	private boolean movingTesterRunning;
+
 	private boolean moving;
+
+	private int wheelUp;
+
+	private int wheelDown;
 
 	/**
 	 * Private constructor for singleton.
@@ -35,19 +44,30 @@ public class MouseManager {
 		this.pressedSignal = new Object();
 		this.releasedSignal = new Object();
 		this.movedSignal = new Object();
+		this.wheelSignal = new Object();
 
 		this.pos = new Point();
 
 		this.moving = false;
+		this.movingTesterRunning = false;
+		this.wheelUp = 0;
+		this.wheelDown = 0;
 
 		this.buttons = new boolean[4];
 		for (int i = 0; i < this.buttons.length; i++) {
 			this.buttons[i] = false;
 		}
 
-		// this.imt.start();
-
 		this.startMovingTester();
+	}
+
+	protected void enteredWindow() {
+		this.inWindow = true;
+		this.startMovingTester();
+	}
+
+	protected void exitedWindow() {
+		this.inWindow = false;
 	}
 
 	public boolean[] getButtons() {
@@ -70,6 +90,18 @@ public class MouseManager {
 		return this.releasedSignal;
 	}
 
+	public int getWheelDown() {
+		return this.wheelDown;
+	}
+
+	public Object getWheelSignal() {
+		return this.wheelSignal;
+	}
+
+	public int getWheelUp() {
+		return this.wheelUp;
+	}
+
 	public void interruptMovingTester() {
 		try {
 			this.mT.interrupt();
@@ -82,6 +114,10 @@ public class MouseManager {
 	}
 
 	public void isMovingTester() {
+		if (this.movingTesterRunning)
+			return;
+		this.movingTesterRunning = true;
+
 		(this.mT = new Thread(new Runnable() {
 			@Override
 			public void run() {
@@ -97,9 +133,10 @@ public class MouseManager {
 							pos = MouseManager.this.getPos();
 							Thread.sleep(TIME_MOVING);
 							if (!MouseManager.this.inWindow) {
-								Thread.currentThread().interrupt();
+								MouseManager.this.movingTesterRunning = false;
+								return;
 							}
-						} while (pos.equals(MouseManager.this.getPos()));
+						} while (!pos.equals(MouseManager.this.pos));
 						MouseManager.this.moving = false;
 					} catch (Exception e) {
 						e.printStackTrace();
@@ -122,19 +159,6 @@ public class MouseManager {
 		synchronized (this.movedSignal) {
 			this.movedSignal.notifyAll();
 		}
-	}
-
-	public void startMovingTester() {
-		this.isMovingTester();
-	}
-
-	protected void enteredWindow() {
-		this.inWindow = true;
-		this.startMovingTester();
-	}
-
-	protected void exitedWindow() {
-		this.inWindow = false;
 	}
 
 	protected void pressed(int x, int y, int button) {
@@ -160,6 +184,38 @@ public class MouseManager {
 
 	protected void setPos(Point mousePos) {
 		this.pos = mousePos;
+	}
+
+	public void startMovingTester() {
+		this.isMovingTester();
+	}
+
+	protected void wheelMoved(int rotation) {
+		if (rotation == 0)
+			return;
+
+		this.wheelUp = 0;
+		this.wheelDown = 0;
+
+		if (rotation >= 0) {
+			this.wheelUp = rotation;
+		} else {
+			this.wheelDown = rotation;
+		}
+		long call = System.currentTimeMillis();
+
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				while (!Thread.currentThread().isInterrupted()) {
+					if (System.currentTimeMillis() > call + TIME_WHEEL_RESET) {
+						MouseManager.this.wheelDown = 0;
+						MouseManager.this.wheelUp = 0;
+						return;x
+					}
+				}
+			}
+		}).start();
 	}
 
 	/**
@@ -191,8 +247,8 @@ public class MouseManager {
 				Thread.sleep(100);
 			} catch (InterruptedException e) {
 			}
-			System.out.println(mm.mT.isInterrupted());
-			// System.out.println(mm.isMoving());
+			System.out.println("up : " + mm.getWheelUp());
+			System.out.println("down : " + mm.getWheelDown());
 		}
 	}
 }
