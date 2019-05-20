@@ -44,7 +44,9 @@ public class StatePanel extends JPanel implements Statable {
 
 		this.addKeyListener(new KeyBoardHolder());
 
-		// this.addKeyListener(new MouseHolder());
+		// this.addMouseListener(new MouseHolder());
+		// this.addMouseMotionListener(new MouseHolder());
+		// this.addMouseWheelListener(new MouseHolder());
 
 		this.setSize(this.WIDTH, this.HEIGHT);
 	}
