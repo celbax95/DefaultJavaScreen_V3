@@ -1,6 +1,5 @@
 package fr.mouse;
 
-import fr.init.ConfInitializer;
 import fr.util.point.Point;
 
 public class MouseManager {
@@ -59,15 +58,6 @@ public class MouseManager {
 		}
 
 		this.startMovingTester();
-	}
-
-	protected void enteredWindow() {
-		this.inWindow = true;
-		this.startMovingTester();
-	}
-
-	protected void exitedWindow() {
-		this.inWindow = false;
 	}
 
 	public boolean[] getButtons() {
@@ -161,8 +151,20 @@ public class MouseManager {
 		}
 	}
 
-	protected void pressed(int x, int y, int button) {
+	public void startMovingTester() {
+		this.isMovingTester();
+	}
 
+	protected void enteredWindow() {
+		this.inWindow = true;
+		this.startMovingTester();
+	}
+
+	protected void exitedWindow() {
+		this.inWindow = false;
+	}
+
+	protected void pressed(int x, int y, int button) {
 		this.pos = new Point(x, y);
 
 		this.buttons[button] = true;
@@ -182,40 +184,20 @@ public class MouseManager {
 		}
 	}
 
-	protected void setPos(Point mousePos) {
-		this.pos = mousePos;
-	}
-
-	public void startMovingTester() {
-		this.isMovingTester();
-	}
-
 	protected void wheelMoved(int rotation) {
-		if (rotation == 0)
-			return;
-
-		this.wheelUp = 0;
-		this.wheelDown = 0;
-
-		if (rotation >= 0) {
+		if (rotation == 0) {
+			this.wheelUp = 0;
+			this.wheelDown = 0;
+		} else if (rotation >= 0) {
+			this.wheelDown = 0;
 			this.wheelUp = rotation;
 		} else {
+			this.wheelUp = 0;
 			this.wheelDown = rotation;
 		}
-		long call = System.currentTimeMillis();
-
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				while (!Thread.currentThread().isInterrupted()) {
-					if (System.currentTimeMillis() > call + TIME_WHEEL_RESET) {
-						MouseManager.this.wheelDown = 0;
-						MouseManager.this.wheelUp = 0;
-						return;x
-					}
-				}
-			}
-		}).start();
+		synchronized (this.wheelSignal) {
+			this.wheelSignal.notifyAll();
+		}
 	}
 
 	/**
@@ -231,24 +213,5 @@ public class MouseManager {
 			}
 		}
 		return instance;
-	}
-
-	public static void main(String[] args) {
-		ConfInitializer.getInstance().start();
-
-		MouseManager mm = MouseManager.getInstance();
-
-		Object ps = mm.getPressedSignal();
-
-		Point save = new Point();
-
-		while (true) {
-			try {
-				Thread.sleep(100);
-			} catch (InterruptedException e) {
-			}
-			System.out.println("up : " + mm.getWheelUp());
-			System.out.println("down : " + mm.getWheelDown());
-		}
 	}
 }
