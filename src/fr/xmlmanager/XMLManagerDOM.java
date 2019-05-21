@@ -31,10 +31,13 @@ public class XMLManagerDOM implements XMLManager {
 	 */
 	private static volatile XMLManagerDOM instance;
 
+	// Utilise pour recuperer le fichier xml
 	private DocumentBuilder builder;
 
+	// Utilise pour la sauvegarde des fichiers xml
 	private Transformer transformer;
 
+	// Utilise pour la recherche dans le fichier xml
 	private XPath xpath;
 
 	/**
@@ -48,7 +51,7 @@ public class XMLManagerDOM implements XMLManager {
 			// e.printStackTrace();
 		}
 
-		this.setXpath(XPathFactory.newInstance().newXPath());
+		this.xpath = XPathFactory.newInstance().newXPath();
 	}
 
 	@Override
@@ -159,6 +162,11 @@ public class XMLManagerDOM implements XMLManager {
 		return ((Document) document).getDocumentElement();
 	}
 
+	/**
+	 * Recupere l'objet XPath
+	 *
+	 * @return l'objet XPath
+	 */
 	public XPath getXpath() {
 		return this.xpath;
 	}
@@ -184,10 +192,13 @@ public class XMLManagerDOM implements XMLManager {
 				.setTextContent(newValue);
 	}
 
-	public void setXpath(XPath xpath) {
-		this.xpath = xpath;
-	}
-
+	/**
+	 * Cast dynamiquement la chaine 'value' dans le type 'type'
+	 *
+	 * @param value : la chaine a caster
+	 * @param type  : le type dans lequel il faut caster
+	 * @return : value caste dans le type 'type'
+	 */
 	private Object dynamicCast(String value, String type) {
 		switch (type.toLowerCase()) {
 		case "integer":
@@ -202,11 +213,17 @@ public class XMLManagerDOM implements XMLManager {
 		return null;
 	}
 
-	private Object[] nodeListToObjectcArray(NodeList nl) {
-		Object[] oa = new Object[nl.getLength()];
+	/**
+	 * Transform une NodeList en tableau d'objet
+	 *
+	 * @param nodeList : liste de noeud
+	 * @return : le tableau de noeuds
+	 */
+	private Object[] nodeListToObjectcArray(NodeList nodeList) {
+		Object[] oa = new Object[nodeList.getLength()];
 
-		for (int i = 0, c = nl.getLength(); i < c; i++) {
-			oa[i] = nl.item(i);
+		for (int i = 0, c = nodeList.getLength(); i < c; i++) {
+			oa[i] = nodeList.item(i);
 		}
 
 		return oa;
