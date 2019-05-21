@@ -7,6 +7,13 @@ import java.awt.event.MouseWheelListener;
 
 import javax.swing.event.MouseInputListener;
 
+/**
+ *
+ * Recuperateur des evenements de la souris
+ *
+ * @author Loic.MACE
+ *
+ */
 public class MouseHolder implements MouseInputListener, MouseMotionListener, MouseWheelListener {
 
 	private static MouseManager mouseManager;

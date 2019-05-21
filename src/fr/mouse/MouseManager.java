@@ -3,6 +3,11 @@ package fr.mouse;
 import fr.init.ConfInitializer;
 import fr.util.point.Point;
 
+/**
+ * Gestionnaire de souris
+ *
+ * @author Loic.MACE
+ */
 public class MouseManager implements Mouse {
 
 	private static final int TIME_MOVING = 120;
@@ -12,12 +17,16 @@ public class MouseManager implements Mouse {
 	 */
 	private static volatile MouseManager instance;
 
+	// Signal
 	private Object pressedSignal;
 
+	// Signal
 	private Object releasedSignal;
 
+	// Signal
 	private Object movedSignal;
 
+	// Signal
 	private Object wheelSignal;
 
 	private Point pos;
@@ -129,6 +138,9 @@ public class MouseManager implements Mouse {
 		return this.buttons[2];
 	}
 
+	/**
+	 * Arrete le Thread cree dans la methode isMovingTester
+	 */
 	private void interruptMovingTester() {
 		try {
 			this.mT.interrupt();
@@ -136,6 +148,11 @@ public class MouseManager implements Mouse {
 		}
 	}
 
+	/**
+	 * Test si la souris est en train de bouger
+	 *
+	 * @see isMoving
+	 */
 	private void isMovingTester() {
 		if (this.movingTesterRunning)
 			return;
@@ -169,19 +186,35 @@ public class MouseManager implements Mouse {
 		})).start();
 	}
 
+	/**
+	 * Lance le testeur servant a mettre a jour le statut 'en mouvement' de la
+	 * souris
+	 */
 	private void startMovingTester() {
 		this.isMovingTester();
 	}
 
+	/**
+	 * Gere les actions a effectuer quand la souris rentre dans la fenetre
+	 */
 	protected void enteredWindow() {
 		this.inWindow = true;
 		this.startMovingTester();
 	}
 
+	/**
+	 * Gere les actions a effectuer quand la souris sort dans la fenetre
+	 */
 	protected void exitedWindow() {
 		this.inWindow = false;
 	}
 
+	/**
+	 * Gere les actions a effectuer quand la souris bouge
+	 *
+	 * @param x : coordonnee de la souris
+	 * @param y : coordonnee de la souris
+	 */
 	protected void moved(int x, int y) {
 		this.pos = new Point(x, y);
 		synchronized (this.movedSignal) {
@@ -189,6 +222,13 @@ public class MouseManager implements Mouse {
 		}
 	}
 
+	/**
+	 * Gere les actions a effectuer quand un bouton de la souris est presse
+	 *
+	 * @param x      : coordonnee de la souris
+	 * @param y      : coordonnee de la souris
+	 * @param button : bouton presse
+	 */
 	protected void pressed(int x, int y, int button) {
 		this.pos = new Point(x, y);
 
@@ -202,6 +242,13 @@ public class MouseManager implements Mouse {
 		}
 	}
 
+	/**
+	 * Gere les actions a effectuer quand un bouton de la souris est relache
+	 *
+	 * @param x      : coordonnee de la souris
+	 * @param y      : coordonnee de la souris
+	 * @param button : bouton relache
+	 */
 	protected void released(int x, int y, int button) {
 		this.pos = new Point(x, y);
 
@@ -215,6 +262,11 @@ public class MouseManager implements Mouse {
 		}
 	}
 
+	/**
+	 * Gere les actions a effectuer quand la molette de la souris est actionnee
+	 *
+	 * @param rotation : sens et cran de rotation [1 ; -1]
+	 */
 	protected void wheelMoved(int rotation) {
 		if (rotation == 0) {
 			this.wheelUp = 0;
@@ -246,10 +298,14 @@ public class MouseManager implements Mouse {
 		return instance;
 	}
 
+	/**
+	 * Methode de test des evennements
+	 */
 	public static void main(String[] args) {
 
 		ConfInitializer.getInstance().start();
 
+		// Pression des boutons
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
@@ -283,6 +339,7 @@ public class MouseManager implements Mouse {
 			}
 		}).start();
 
+		// Boutons relache
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
@@ -316,6 +373,7 @@ public class MouseManager implements Mouse {
 			}
 		}).start();
 
+		// Molette actionnee
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
@@ -345,6 +403,7 @@ public class MouseManager implements Mouse {
 			}
 		}).start();
 
+		// Souris deplacee
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
