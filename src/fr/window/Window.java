@@ -8,17 +8,27 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.WindowConstants;
 
-@SuppressWarnings("serial")
+/**
+ * Classe representant une fenetre
+ *
+ * @author Loic.MACE
+ *
+ */
 public class Window extends JFrame {
 
+	private static final long serialVersionUID = 1L;
+
+	// Instance unique de Window
 	private static Window instance;
 
 	static {
 		instance = new Window();
 	}
 
+	// Si Window est initialise
 	private boolean initialized;
 
+	// Panel principal de la fenetre
 	private JPanel mainPanel;
 
 	private Window() {
@@ -26,6 +36,15 @@ public class Window extends JFrame {
 		this.initialized = false;
 	}
 
+	/**
+	 * Initialisation de la fenetre
+	 *
+	 * @param mainJpanel   : panel principal de la fenetre
+	 * @param marginRight  : marge sur le bord a droite de la fenetre
+	 * @param marginBottom : marge sur le bord en bas de la fenetre
+	 * @param marginTotal  : marge sur les bord de la fenetre (en plus des marge en
+	 *                     bas et a droite)
+	 */
 	public void init(JPanel mainJpanel, int marginRight, int marginBottom, int marginTotal) {
 
 		if (mainJpanel == null)
@@ -48,11 +67,6 @@ public class Window extends JFrame {
 				marginBottom + mainJpanel.getHeight() + marginTotal * 2);
 		this.setLocationRelativeTo(null);
 
-		// Clavier
-//		this.setFocusable(true);
-//		this.requestFocusInWindow();
-//		this.addKeyListener(new KeyBoardHolder());
-
 		// Interieur de la fenetre
 		final JPanel jp = new JPanel();
 		jp.setLayout(null);
@@ -63,6 +77,13 @@ public class Window extends JFrame {
 		this.initialized = true;
 	}
 
+	/**
+	 * Demarre et affiche la fenetre
+	 *
+	 * @throws IllegalStateException
+	 *
+	 * @see init
+	 */
 	public void start() throws IllegalStateException {
 
 		if (!this.initialized)
