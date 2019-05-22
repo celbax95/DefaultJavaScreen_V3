@@ -1,8 +1,17 @@
 package fr.statepanel;
 
+/**
+ * Classe abstraite representant un etat
+ *
+ * @author Loic.MACE
+ *
+ */
 public abstract class AppState implements IAppState {
 
+	// Si le state est utilise
 	public boolean active;
+
+	// Classe servant a repaint l'etat
 	public Repainter repainter;
 
 	public AppState() {
