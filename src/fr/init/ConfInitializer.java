@@ -16,6 +16,7 @@ public class ConfInitializer {
 	 */
 	private static volatile ConfInitializer instance;
 
+	// Fichiers de configuration
 	private DatafilesManager dfm;
 
 	/**
@@ -57,6 +58,8 @@ public class ConfInitializer {
 
 	/**
 	 * Creation de l'ecran
+	 *
+	 * @param configRoot : racine du fichier de configuration
 	 */
 	private void windowInitializers(Object configRoot) {
 
@@ -77,6 +80,11 @@ public class ConfInitializer {
 		stator.applyState("menu");
 	}
 
+	/**
+	 * Lance l'affichage de la fenetre
+	 *
+	 * @param configRoot : racine du fichier de configuration
+	 */
 	private void windowStart(Object configRoot) {
 
 		XMLManager reader = this.dfm.getXmlReader();
