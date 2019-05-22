@@ -4,18 +4,30 @@ import javax.swing.JPanel;
 
 import fr.statepanel.Repainter;
 
+/**
+ * Repainter à deux etats, repeint un JPanel sur demande ou toutes les x
+ * millisecondes
+ *
+ * @author Loic.MACE
+ *
+ */
 public class DefaultRepainter implements Repainter {
 
 	private static final int DEFAULT_RATE = 17;
 
+	// Utilise comme signal, rythme de repaint
 	private Integer rate;
 
+	// Panel a repaint
 	private JPanel panel;
 
+	// Thread de la classe
 	private final Thread myThread;
 
+	// Doit-on repeindre en continue
 	private boolean repaint;
 
+	// Signal pour repaint sur demande
 	private final Object waiter;
 
 	public DefaultRepainter() {
