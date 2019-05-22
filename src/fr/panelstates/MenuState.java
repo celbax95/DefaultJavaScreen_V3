@@ -6,6 +6,12 @@ import java.awt.Graphics2D;
 import fr.statepanel.AppState;
 import fr.statepanel.StateRequest;
 
+/**
+ * Etat utilise pour le menu
+ *
+ * @author Loic.MACE
+ *
+ */
 public class MenuState extends AppState {
 
 	private final Color backgroundColor;
