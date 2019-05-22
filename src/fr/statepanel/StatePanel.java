@@ -8,19 +8,29 @@ import javax.swing.JPanel;
 
 import fr.keyboard.KeyBoardHolder;
 
+/**
+ * Panel principal pouvant changer d'etat
+ *
+ * @author Loic.MACE
+ *
+ */
 @SuppressWarnings("serial")
 public class StatePanel extends JPanel implements Statable {
 
+	// Instance unique de StatePanel
 	private static StatePanel instance;
 
 	static {
 		instance = new StatePanel();
 	}
 
+	// Taille de la fenetre
 	private int WIDTH, HEIGHT;
 
+	// Etat
 	private IAppState state;
 
+	// Repainter servant a repaint
 	private Repainter repainter;
 
 	private StatePanel() {
@@ -32,6 +42,13 @@ public class StatePanel extends JPanel implements Statable {
 		this.setBackground(Color.black);
 	}
 
+	/**
+	 * Initialisation du StatePanel
+	 *
+	 * @param width     : largeur de la fenetre
+	 * @param height    : hauteur de la fenetre
+	 * @param repainter : repainter a utiliser
+	 */
 	public void init(int width, int height, Repainter repainter) {
 		this.WIDTH = width;
 		this.HEIGHT = height;
@@ -82,6 +99,11 @@ public class StatePanel extends JPanel implements Statable {
 		this.state.setActive(true);
 	}
 
+	/**
+	 * Recupere l'instance unique de StatePanel
+	 *
+	 * @return l'instance unique de StatePanel
+	 */
 	public static StatePanel getInstance() {
 		return instance;
 	}
