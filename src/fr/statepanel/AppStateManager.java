@@ -148,6 +148,50 @@ public class AppStateManager {
 	}
 
 	/**
+	 * Gere l'etat d'activation du clavier
+	 *
+	 * @param activation : etat d'activation
+	 * @throws RuntimeException : l'objet hardwareListner n'est pas intialise
+	 */
+	public void setKeyboardEnabeled(boolean activation) throws RuntimeException {
+		this.isHardwareListnerSet();
+		this.hardwareListner.setKeyboardEnabeled(activation);
+	}
+
+	/**
+	 * Gere l'etat d'activation des clics souris
+	 *
+	 * @param activation : etat d'activation
+	 * @throws RuntimeException : l'objet hardwareListner n'est pas intialise
+	 */
+	public void setMouseClicksEnabeled(boolean activation) throws RuntimeException {
+		this.isHardwareListnerSet();
+		this.hardwareListner.setMouseClicksEnabeled(activation);
+	}
+
+	/**
+	 * Gere l'etat d'activation des mouvements de la souris
+	 *
+	 * @param activation : etat d'activation
+	 * @throws RuntimeException : l'objet hardwareListner n'est pas intialise
+	 */
+	public void setMouseMovesEnabeled(boolean activation) throws RuntimeException {
+		this.isHardwareListnerSet();
+		this.hardwareListner.setMouseMovesEnabeled(activation);
+	}
+
+	/**
+	 * Gere l'etat d'activation de la molette
+	 *
+	 * @param activation : etat d'activation
+	 * @throws RuntimeException : l'objet hardwareListner n'est pas intialise
+	 */
+	public void setMouseWheelEnabeled(boolean activation) throws RuntimeException {
+		this.isHardwareListnerSet();
+		this.hardwareListner.setMouseWheelEnabeled(activation);
+	}
+
+	/**
 	 * Initialise l'objet Statable
 	 *
 	 * @param statable : l'objet Statable
@@ -176,50 +220,6 @@ public class AppStateManager {
 			throw new IllegalStateException(
 					"Utilisez la methode init ou setHardwareListner pour initialiser l'element hardwareListner");
 		return true;
-	}
-
-	/**
-	 * Gere l'etat d'activation du clavier
-	 *
-	 * @param activation : etat d'activation
-	 * @throws RuntimeException : l'objet hardwareListner n'est pas intialise
-	 */
-	void setKeyboardEnabeled(boolean activation) throws RuntimeException {
-		this.isHardwareListnerSet();
-		this.hardwareListner.setKeyboardEnabeled(activation);
-	}
-
-	/**
-	 * Gere l'etat d'activation des clics souris
-	 *
-	 * @param activation : etat d'activation
-	 * @throws RuntimeException : l'objet hardwareListner n'est pas intialise
-	 */
-	void setMouseClicksEnabeled(boolean activation) throws RuntimeException {
-		this.isHardwareListnerSet();
-		this.hardwareListner.setMouseClicksEnabeled(activation);
-	}
-
-	/**
-	 * Gere l'etat d'activation des mouvements de la souris
-	 *
-	 * @param activation : etat d'activation
-	 * @throws RuntimeException : l'objet hardwareListner n'est pas intialise
-	 */
-	void setMouseMovesEnabeled(boolean activation) throws RuntimeException {
-		this.isHardwareListnerSet();
-		this.hardwareListner.setMouseMovesEnabeled(activation);
-	}
-
-	/**
-	 * Gere l'etat d'activation de la molette
-	 *
-	 * @param activation : etat d'activation
-	 * @throws RuntimeException : l'objet hardwareListner n'est pas intialise
-	 */
-	void setMouseWheelEnabeled(boolean activation) throws RuntimeException {
-		this.isHardwareListnerSet();
-		this.hardwareListner.setMouseWheelEnabeled(activation);
 	}
 
 	/**
