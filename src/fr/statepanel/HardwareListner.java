@@ -1,5 +1,12 @@
 package fr.statepanel;
 
+/**
+ * Interface implementee par les classes pouvant modifier l'etat d'activation
+ * des listners (clavier / souris)
+ *
+ * @author Loic.MACE
+ *
+ */
 public interface HardwareListner {
 	void setAllListnersEnabeled(boolean activation);
 
