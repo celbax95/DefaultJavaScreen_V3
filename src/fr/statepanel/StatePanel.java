@@ -16,7 +16,7 @@ import fr.mouse.MouseHolder;
  *
  */
 @SuppressWarnings("serial")
-public class StatePanel extends JPanel implements Statable {
+public class StatePanel extends JPanel implements Statable, HardwareListner {
 
 	// Instance unique de StatePanel
 	private static StatePanel instance;
@@ -57,14 +57,11 @@ public class StatePanel extends JPanel implements Statable {
 		this.repainter = repainter;
 		this.repainter.setPanel(this);
 
+		// Pour les listners
 		this.setFocusable(true);
 		this.requestFocusInWindow();
 
-		this.addKeyListener(new KeyBoardHolder());
-
-		this.addMouseListener(new MouseHolder());
-		this.addMouseMotionListener(new MouseHolder());
-		this.addMouseWheelListener(new MouseHolder());
+		this.setAllListnersEnabeled(true);
 
 		this.setSize(this.WIDTH, this.HEIGHT);
 	}
@@ -87,6 +84,38 @@ public class StatePanel extends JPanel implements Statable {
 		} catch (final StateRequest stateRequest) {
 			AppStateManager.getInstance().applyState(stateRequest.getState());
 		}
+	}
+
+	/**
+	 * Change l'etat da'ctivation de tous les listners
+	 *
+	 * @param activation : nouvel etat d'activation
+	 */
+	public void setAllListnersEnabeled(boolean activation) {
+		this.setKeyboardEnabeled(false);
+		this.setMouseClicksEnabeled(false);
+		this.setMouseMovesEnabeled(false);
+		this.setMouseWheelEnabeled(false);
+	}
+
+	@Override
+	public void setKeyboardEnabeled(boolean activation) {
+		this.addKeyListener(new KeyBoardHolder());
+	}
+
+	@Override
+	public void setMouseClicksEnabeled(boolean activation) {
+		this.addMouseListener(new MouseHolder());
+	}
+
+	@Override
+	public void setMouseMovesEnabeled(boolean activation) {
+		this.addMouseMotionListener(new MouseHolder());
+	}
+
+	@Override
+	public void setMouseWheelEnabeled(boolean activation) {
+		this.addMouseWheelListener(new MouseHolder());
 	}
 
 	@Override
