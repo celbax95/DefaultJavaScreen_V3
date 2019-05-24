@@ -1,7 +1,6 @@
 package fr.statepanel;
 
 public interface HardwareListner {
-
 	void setKeyboardEnabeled(boolean activation);
 
 	void setMouseClicksEnabeled(boolean activation);
