@@ -91,31 +91,48 @@ public class StatePanel extends JPanel implements Statable, HardwareListner {
 	 *
 	 * @param activation : nouvel etat d'activation
 	 */
+	@Override
 	public void setAllListnersEnabeled(boolean activation) {
-		this.setKeyboardEnabeled(false);
-		this.setMouseClicksEnabeled(false);
-		this.setMouseMovesEnabeled(false);
-		this.setMouseWheelEnabeled(false);
+		this.setKeyboardEnabeled(activation);
+		this.setMouseClicksEnabeled(activation);
+		this.setMouseMovesEnabeled(activation);
+		this.setMouseWheelEnabeled(activation);
 	}
 
 	@Override
 	public void setKeyboardEnabeled(boolean activation) {
-		this.addKeyListener(new KeyBoardHolder());
+		if (activation) {
+			this.addKeyListener(new KeyBoardHolder());
+		} else {
+			this.addKeyListener(null);
+		}
 	}
 
 	@Override
 	public void setMouseClicksEnabeled(boolean activation) {
-		this.addMouseListener(new MouseHolder());
+		if (activation) {
+			this.addMouseListener(new MouseHolder());
+		} else {
+			this.addMouseListener(null);
+		}
 	}
 
 	@Override
 	public void setMouseMovesEnabeled(boolean activation) {
-		this.addMouseMotionListener(new MouseHolder());
+		if (activation) {
+			this.addMouseMotionListener(new MouseHolder());
+		} else {
+			this.addMouseMotionListener(null);
+		}
 	}
 
 	@Override
 	public void setMouseWheelEnabeled(boolean activation) {
-		this.addMouseWheelListener(new MouseHolder());
+		if (activation) {
+			this.addMouseWheelListener(new MouseHolder());
+		} else {
+			this.addMouseWheelListener(null);
+		}
 	}
 
 	@Override
