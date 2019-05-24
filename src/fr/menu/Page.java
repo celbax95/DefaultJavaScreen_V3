@@ -1,4 +1,4 @@
-package menu;
+package fr.menu;
 
 /**
  * Page du menu

@@ -1,4 +1,4 @@
-package menu;
+package fr.menu;
 
 /**
  * Classe de gestion des pages du menu

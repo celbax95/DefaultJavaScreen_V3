@@ -1,4 +1,4 @@
-package menu.widgets;
+package fr.menu.widgets;
 
 public class WidgetFactory {
 

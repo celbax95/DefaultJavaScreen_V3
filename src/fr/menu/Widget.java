@@ -1,4 +1,4 @@
-package menu;
+package fr.menu;
 
 /**
  * Un widget est un element affiche par le menu

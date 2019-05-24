@@ -1,4 +1,4 @@
-package menu;
+package fr.menu;
 
 /**
  * Represente la page affichee par le menu

@@ -1,4 +1,4 @@
-package menu;
+package fr.menu;
 
 /**
  * Cette classe va chercher dans les fichiers de config le nom de toutes les

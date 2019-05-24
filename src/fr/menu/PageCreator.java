@@ -1,4 +1,4 @@
-package menu;
+package fr.menu;
 
 /**
  * Classe servant a la creation d'une page
