@@ -7,6 +7,7 @@ import java.awt.Graphics2D;
 import javax.swing.JPanel;
 
 import fr.keyboard.KeyBoardHolder;
+import fr.mouse.MouseHolder;
 
 /**
  * Panel principal pouvant changer d'etat
@@ -61,9 +62,9 @@ public class StatePanel extends JPanel implements Statable {
 
 		this.addKeyListener(new KeyBoardHolder());
 
-		// this.addMouseListener(new MouseHolder());
-		// this.addMouseMotionListener(new MouseHolder());
-		// this.addMouseWheelListener(new MouseHolder());
+		this.addMouseListener(new MouseHolder());
+		this.addMouseMotionListener(new MouseHolder());
+		this.addMouseWheelListener(new MouseHolder());
 
 		this.setSize(this.WIDTH, this.HEIGHT);
 	}
