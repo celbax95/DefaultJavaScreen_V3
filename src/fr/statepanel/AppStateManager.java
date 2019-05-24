@@ -165,6 +165,12 @@ public class AppStateManager {
 		this.states = states;
 	}
 
+	/**
+	 * Test l'etat d'initialisation de l'objet HardwareListner
+	 *
+	 * @return true si l'objet est initialise
+	 * @throws IllegalStateException : si l'objet n'est pas initialise
+	 */
 	private boolean isHardwareListnerSet() throws IllegalStateException {
 		if (this.hardwareListner == null)
 			throw new IllegalStateException(
