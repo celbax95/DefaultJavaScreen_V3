@@ -34,8 +34,8 @@ public class Point {
 	 * Calcule la valeur absolue du point
 	 */
 	public Point abs() {
-		Math.abs(this.x);
-		Math.abs(this.y);
+		this.x = Math.abs(this.x);
+		this.y = Math.abs(this.y);
 		return this;
 	}
 
