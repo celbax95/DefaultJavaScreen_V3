@@ -31,6 +31,15 @@ public class Point {
 	/* METHODS */
 
 	/**
+	 * Calcule la valeur absolue du point
+	 */
+	public Point abs() {
+		Math.abs(this.x);
+		Math.abs(this.y);
+		return this;
+	}
+
+	/**
 	 * Ajoute respectivement les coordonees de p au Point courant
 	 */
 	public Point add(Point p) {
