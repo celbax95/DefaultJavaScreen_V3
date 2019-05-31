@@ -30,6 +30,8 @@ public interface Widget {
 
 	boolean isUsingKeyboardReleasedSignal();
 
+	boolean isUsingMouseMovedSignal();
+
 	boolean isUsingMousePressedSignal();
 
 	boolean isUsingMouseReleasedSignal();
@@ -41,6 +43,8 @@ public interface Widget {
 	void setKeyboardPressedSignal(Object keyboardPressedSignal);
 
 	void setKeyboardReleasedSignal(Object keyboardReleasedSignal);
+
+	void setMouseMovedSignal(Object mouseMovedSignal);
 
 	void setMousePressedSignal(Object mousePressedSignal);
 
