@@ -2,6 +2,8 @@ package fr.menu;
 
 import java.awt.Graphics2D;
 
+import fr.util.point.Point;
+
 /**
  * Un widget est un element affiche par le menu
  *
@@ -24,19 +26,34 @@ public interface Widget {
 	 */
 	boolean isSelected();
 
+	boolean isUsingKeyboardPressedSignal();
+
+	boolean isUsingKeyboardReleasedSignal();
+
+	boolean isUsingMousePressedSignal();
+
+	boolean isUsingMouseReleasedSignal();
+
+	boolean isUsingMouseWheelSignal();
+
+	boolean isVisible();
+
+	void setKeyboardPressedSignal(Object keyboardPressedSignal);
+
+	void setKeyboardReleasedSignal(Object keyboardReleasedSignal);
+
+	void setMousePressedSignal(Object mousePressedSignal);
+
+	void setMouseReleasedSignal(Object mouseReleasedSignal);
+
+	void setMouseWheelSignal(Object mouseWheelSignal);
+
+	void setPos(Point pos);
+
 	/**
 	 * Selectionne le widget
 	 */
-	void select();
+	void setSelected(boolean selected);
 
-	/**
-	 *
-	 * Initialise les signaux
-	 *
-	 * @param clickSignal     : signal emi lors d'un clic souris
-	 * @param moveSignal      : signal emi lorsque la souris est bougee
-	 * @param mouseWeelSignal : signal emi lorsque la molette est actionnee
-	 * @param keyboardSignal  : signal emi lorsque le clavier est actionne
-	 */
-	void setSignals(Object clickSignal, Object moveSignal, Object mouseWeelSignal, Object keyboardSignal);
+	void setVisible(boolean visible);
 }
