@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
+import fr.sigmanager.SignalManager;
+
 /**
  * Singleton Clavier
  */
@@ -26,6 +28,8 @@ public class KeyboardManager implements Keyboard {
 	private Map<Integer, Object> priorityPressedKeys;
 
 	private Map<Integer, Object> priorityReleasedKeys;
+
+	private final String prioPressed = "keyboardmanager_prioPre_", prioReleased = "keyboardmanager_prioRel_";
 
 	private KeyboardManager() {
 		this.keys = new Vector<>();
@@ -69,8 +73,11 @@ public class KeyboardManager implements Keyboard {
 	public void addPriorityKey(int key) {
 		synchronized (this.priorityPressedKeys) {
 			if (!this.priorityPressedKeys.containsKey(key)) {
-				this.priorityPressedKeys.put(key, new Object());
-				this.priorityReleasedKeys.put(key, new Object());
+
+				SignalManager sm = SignalManager.getInstance();
+
+				this.priorityPressedKeys.put(key, sm.addSignal(this.prioPressed + String.valueOf(key)));
+				this.priorityReleasedKeys.put(key, sm.addSignal(this.prioReleased + String.valueOf(key)));
 			} else
 				throw new RuntimeException("La touche est deja priorisee");
 		}
@@ -161,13 +168,17 @@ public class KeyboardManager implements Keyboard {
 			this.priorityPressedKeys.remove(key);
 			this.priorityReleasedKeys.remove(key);
 		}
+		SignalManager sm = SignalManager.getInstance();
+		sm.remove(this.prioPressed + String.valueOf(key));
+		sm.remove(this.prioReleased + String.valueOf(key));
 	}
 
 	@Override
 	public void resetPriority() {
 		synchronized (this.priorityPressedKeys) {
-			this.priorityPressedKeys = new HashMap<>();
-			this.priorityReleasedKeys = new HashMap<>();
+			for (Integer key : this.priorityPressedKeys.keySet()) {
+				this.removePriorityKey(key);
+			}
 		}
 	}
 
