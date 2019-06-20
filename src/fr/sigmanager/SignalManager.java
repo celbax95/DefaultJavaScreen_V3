@@ -69,17 +69,20 @@ public class SignalManager {
 	 * @param sigName : nom du signal
 	 * @throws RuntimeException
 	 */
-	public void addSignal(String sigName) throws RuntimeException {
+	public Object addSignal(String sigName) throws RuntimeException {
 		synchronized (this.signals) {
 
 			if (!this.signals.containsKey(sigName)) {
 
-				this.signals.put(sigName, new Object());
+				Object signal = new Object();
+
+				this.signals.put(sigName, signal);
 
 				synchronized (this.linkedThreads) {
 					this.linkedThreads.put(sigName, new ArrayList<>());
 				}
 
+				return signal;
 			} else
 				throw new RuntimeException("Le signal existe deja");
 		}
