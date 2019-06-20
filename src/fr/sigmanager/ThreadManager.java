@@ -136,13 +136,32 @@ public class ThreadManager {
 	}
 
 	/**
-	 * Arrete et supprime un thread du gestionnaire (version synchronisee)
+	 * Arrete et supprime un thread du gestionnaire
 	 *
 	 * @param threadName : nom du thread
 	 */
 	public void remove(String threadName) {
 		synchronized (this.threads) {
-			this.removeUnsync(threadName);
+			if (this.threads.containsKey(threadName)) {
+				Thread toRemove = this.threads.get(threadName);
+
+				toRemove.interrupt();
+
+				this.threads.remove(threadName);
+
+				if (this.isLocked(threadName)) {
+					this.unlock(threadName);
+				}
+
+				synchronized (this.linkedSignals) {
+					if (this.linkedSignals.containsKey(threadName)) {
+						String linkedSignal = this.linkedSignals.get(threadName);
+						SignalManager.getInstance().removeLinkedThread(linkedSignal, threadName);
+					}
+				}
+
+			} else
+				throw new RuntimeException("Le thread " + threadName + " n'existe pas");
 		}
 	}
 
@@ -163,39 +182,15 @@ public class ThreadManager {
 	}
 
 	/**
-	 * Arrete et supprime un thread du gestionnaire (version non synchronisee)
-	 *
-	 * @param threadName : nom du thread
-	 */
-	private void removeUnsync(String threadName) {
-		if (this.threads.containsKey(threadName)) {
-			Thread toRemove = this.threads.get(threadName);
-
-			toRemove.interrupt();
-
-			this.threads.remove(threadName);
-
-			if (this.isLocked(threadName)) {
-				this.unlock(threadName);
-			}
-
-			if (this.linkedSignals.containsKey(threadName)) {
-				String linkedSignal = this.linkedSignals.get(threadName);
-				SignalManager.getInstance().removeLinkedThread(linkedSignal, threadName);
-			}
-
-		} else
-			throw new RuntimeException("Le thread " + threadName + " n'existe pas");
-	}
-
-	/**
 	 * Supprime tous les threads a moins qu'il soit verouille
 	 */
 	public void reset() {
 		synchronized (this.threads) {
-			for (String threadName : this.threads.keySet()) {
-				if (!this.lockedThreads.contains(threadName)) {
-					this.removeUnsync(threadName);
+			synchronized (this.lockedThreads) {
+				for (String threadName : this.threads.keySet()) {
+					if (!this.lockedThreads.contains(threadName)) {
+						this.remove(threadName);
+					}
 				}
 			}
 		}

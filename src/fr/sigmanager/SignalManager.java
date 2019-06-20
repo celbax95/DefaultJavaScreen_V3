@@ -96,12 +96,14 @@ public class SignalManager {
 	 * @throws RuntimeException
 	 */
 	public Object get(String sigName) throws RuntimeException {
-		if (this.signals.containsKey(sigName))
+		synchronized (this.signals) {
+			if (this.signals.containsKey(sigName))
 
-			return this.signals.get(sigName);
+				return this.signals.get(sigName);
 
-		else
-			throw new RuntimeException("Le signal n'existe pas");
+			else
+				throw new RuntimeException("Le signal n'existe pas");
+		}
 	}
 
 	/**
@@ -112,13 +114,17 @@ public class SignalManager {
 	 * @throws RuntimeException
 	 */
 	public List<String> getLinkedThreadsName(String sigName) throws RuntimeException {
-		if (this.signals.containsKey(sigName)) {
-			if (this.linkedThreads.containsKey(sigName))
-				return this.linkedThreads.get(sigName);
-			else
-				throw new RuntimeException("Le signal n'a aucun threads lie");
-		} else
-			throw new RuntimeException("Le signal n'existe pas");
+		synchronized (this.signals) {
+			if (this.signals.containsKey(sigName)) {
+				synchronized (this.linkedThreads) {
+					if (this.linkedThreads.containsKey(sigName))
+						return this.linkedThreads.get(sigName);
+					else
+						throw new RuntimeException("Le signal n'a aucun threads lie");
+				}
+			} else
+				throw new RuntimeException("Le signal n'existe pas");
+		}
 	}
 
 	/**
@@ -136,7 +142,9 @@ public class SignalManager {
 	 * @return true si le signal est verouille
 	 */
 	public boolean isLocked(String sigName) {
-		return this.lockedSignals.contains(sigName);
+		synchronized (this.lockedSignals) {
+			return this.lockedSignals.contains(sigName);
+		}
 	}
 
 	/**
@@ -161,14 +169,26 @@ public class SignalManager {
 	}
 
 	/**
-	 * Supprime le signal et les threads associes (version synchronisee)
+	 * Supprime le signal et les threads associes
 	 *
 	 * @param sigName : nom du signal
 	 * @throws RuntimeException : le signal n'existe pas
 	 */
 	public void remove(String sigName) throws RuntimeException {
 		synchronized (this.signals) {
-			this.removeUnsync(sigName);
+			if (this.signals.containsKey(sigName)) {
+
+				ThreadManager threadManager = ThreadManager.getInstance();
+
+				for (String threadName : this.linkedThreads.get(sigName)) {
+					this.removeLinkedThread(sigName, threadName);
+
+					threadManager.remove(threadName);
+				}
+
+				this.signals.remove(sigName);
+			} else
+				throw new RuntimeException("Le signal n'existe pas");
 		}
 	}
 
@@ -180,53 +200,19 @@ public class SignalManager {
 	 */
 	public void removeLinkedThread(String sigName, String threadName) {
 		synchronized (this.signals) {
-			synchronized (this.linkedThreads) {
-				this.removeLinkedThreadUnsync(sigName, threadName);
-			}
-		}
-	}
+			if (this.signals.containsKey(sigName)) {
+				synchronized (this.linkedThreads) {
+					if (this.linkedThreads.get(sigName).contains(threadName)) {
 
-	/**
-	 * Supprime le lien entre un signal et un thread
-	 *
-	 * @param sigName    : nom du signal
-	 * @param threadName : nom du thread lie
-	 */
-	private void removeLinkedThreadUnsync(String sigName, String threadName) {
-		if (this.signals.containsKey(sigName)) {
-			if (this.linkedThreads.get(sigName).contains(threadName)) {
+						this.linkedThreads.get(sigName).remove(threadName);
+						ThreadManager.getInstance().removeLinkedSignal(threadName);
 
-				this.linkedThreads.get(sigName).remove(threadName);
-				ThreadManager.getInstance().removeLinkedSignal(threadName);
-
-			} else
-				throw new RuntimeException("Le thread n'est pas associe au signal");
-		} else
-			throw new RuntimeException("Le signal n'existe pas");
-	}
-
-	/**
-	 * Supprime le signal et les threads associes (version non synchronisee)
-	 *
-	 * @param sigName : nom du signal
-	 * @throws RuntimeException : le signal n'existe pas
-	 */
-	private void removeUnsync(String sigName) throws RuntimeException {
-		if (this.signals.containsKey(sigName)) {
-
-			ThreadManager threadManager = ThreadManager.getInstance();
-
-			synchronized (threadManager) {
-				for (String threadName : this.linkedThreads.get(sigName)) {
-					this.removeLinkedThreadUnsync(sigName, threadName);
-
-					threadManager.remove(threadName);
+					} else
+						throw new RuntimeException("Le thread n'est pas associe au signal");
 				}
-			}
-
-			this.signals.remove(sigName);
-		} else
-			throw new RuntimeException("Le signal n'existe pas");
+			} else
+				throw new RuntimeException("Le signal n'existe pas");
+		}
 	}
 
 	/**
@@ -234,17 +220,19 @@ public class SignalManager {
 	 * verouille
 	 */
 	public void reset() throws RuntimeException {
-		synchronized (this) {
-			if (!this.isEmpty()) {
+		synchronized (this.signals) {
+			synchronized (this.lockedSignals) {
+				if (!this.isEmpty()) {
 
-				for (String sigName : this.signals.keySet()) {
-					if (!this.lockedSignals.contains(sigName)) {
-						this.removeUnsync(sigName);
+					for (String sigName : this.signals.keySet()) {
+						if (!this.lockedSignals.contains(sigName)) {
+							this.remove(sigName);
+						}
 					}
-				}
 
-			} else
-				throw new RuntimeException("Il n'y a aucun signal");
+				} else
+					throw new RuntimeException("Il n'y a aucun signal");
+			}
 		}
 	}
 
