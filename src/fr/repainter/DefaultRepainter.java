@@ -2,6 +2,8 @@ package fr.repainter;
 
 import javax.swing.JPanel;
 
+import fr.sigmanager.SignalManager;
+import fr.sigmanager.ThreadManager;
 import fr.statepanel.Repainter;
 
 /**
@@ -30,13 +32,21 @@ public class DefaultRepainter implements Repainter {
 	// Signal pour repaint sur demande
 	private final Object waiter;
 
+	private final String repainterThreadName = "repainter";
+
+	private final String repaintSignalName = "repaint";
+
 	public DefaultRepainter() {
 		super();
 		this.myThread = new Thread(this);
+		ThreadManager tm = ThreadManager.getInstance();
+		tm.add(this.repainterThreadName, this.myThread);
+		tm.lock(this.repainterThreadName);
+
 		this.rate = DEFAULT_RATE;
 		this.panel = null;
 		this.repaint = true;
-		this.waiter = new Object();
+		this.waiter = SignalManager.getInstance().addSignal(this.repaintSignalName);
 	}
 
 	public DefaultRepainter(JPanel requestor) {
@@ -52,7 +62,7 @@ public class DefaultRepainter implements Repainter {
 
 	@Override
 	public void interrupt() {
-		this.myThread.interrupt();
+		ThreadManager.getInstance().remove(this.repainterThreadName);
 	}
 
 	@Override
