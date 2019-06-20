@@ -1,6 +1,8 @@
 package fr.mouse;
 
 import fr.init.ConfInitializer;
+import fr.sigmanager.SignalManager;
+import fr.sigmanager.ThreadManager;
 import fr.util.point.Point;
 
 /**
@@ -29,13 +31,15 @@ public class MouseManager implements Mouse {
 	// Signal
 	private Object wheelSignal;
 
+	private final String pressedSignalName = "mousemanager_pressedSignal",
+			releasedSignalName = "mousemanager_releasedSignal", movedSignalName = "mousemanager_movedSignal",
+			wheelSignalName = "mousemanager_wheelSignal";
+
 	private Point pos;
 
 	private boolean inWindow;
 
 	private boolean[] buttons;
-
-	private Thread mT;
 
 	private boolean movingTesterRunning;
 
@@ -45,14 +49,18 @@ public class MouseManager implements Mouse {
 
 	private int wheelDown;
 
+	private final String movingTester = "mousemanager_movingtester";
+
 	/**
 	 * Private constructor for singleton.
 	 */
 	private MouseManager() {
-		this.pressedSignal = new Object();
-		this.releasedSignal = new Object();
-		this.movedSignal = new Object();
-		this.wheelSignal = new Object();
+		SignalManager sm = SignalManager.getInstance();
+
+		this.pressedSignal = sm.addSignal(this.pressedSignalName);
+		this.releasedSignal = sm.addSignal(this.releasedSignalName);
+		this.movedSignal = sm.addSignal(this.movedSignalName);
+		this.wheelSignal = sm.addSignal(this.wheelSignalName);
 
 		this.pos = new Point();
 
@@ -67,6 +75,21 @@ public class MouseManager implements Mouse {
 		}
 
 		this.startMovingTester();
+	}
+
+	/**
+	 * Gere les actions a effectuer quand la souris rentre dans la fenetre
+	 */
+	protected void enteredWindow() {
+		this.inWindow = true;
+		this.startMovingTester();
+	}
+
+	/**
+	 * Gere les actions a effectuer quand la souris sort dans la fenetre
+	 */
+	protected void exitedWindow() {
+		this.inWindow = false;
 	}
 
 	@Override
@@ -104,6 +127,13 @@ public class MouseManager implements Mouse {
 		return this.wheelUp;
 	}
 
+	/**
+	 * Arrete le Thread cree dans la methode isMovingTester
+	 */
+	private void interruptMovingTester() {
+		ThreadManager.getInstance().remove(this.movingTester);
+	}
+
 	@Override
 	public void interruptThreads() {
 		this.interruptMovingTester();
@@ -124,30 +154,6 @@ public class MouseManager implements Mouse {
 		return this.moving;
 	}
 
-	@Override
-	public boolean isPressed() {
-		for (Boolean b : this.buttons) {
-			if (b)
-				return true;
-		}
-		return false;
-	}
-
-	@Override
-	public boolean isRightClickPressed() {
-		return this.buttons[2];
-	}
-
-	/**
-	 * Arrete le Thread cree dans la methode isMovingTester
-	 */
-	private void interruptMovingTester() {
-		try {
-			this.mT.interrupt();
-		} catch (Exception e) {
-		}
-	}
-
 	/**
 	 * Test si la souris est en train de bouger
 	 *
@@ -158,7 +164,9 @@ public class MouseManager implements Mouse {
 			return;
 		this.movingTesterRunning = true;
 
-		(this.mT = new Thread(new Runnable() {
+		ThreadManager tm = ThreadManager.getInstance();
+
+		Thread mT = new Thread(new Runnable() {
 			@Override
 			public void run() {
 				Point pos = MouseManager.this.getPos();
@@ -183,30 +191,22 @@ public class MouseManager implements Mouse {
 					}
 				}
 			}
-		})).start();
+		});
+		tm.add("mousemanager_movingtester", mT);
 	}
 
-	/**
-	 * Lance le testeur servant a mettre a jour le statut 'en mouvement' de la
-	 * souris
-	 */
-	private void startMovingTester() {
-		this.isMovingTester();
+	@Override
+	public boolean isPressed() {
+		for (Boolean b : this.buttons) {
+			if (b)
+				return true;
+		}
+		return false;
 	}
 
-	/**
-	 * Gere les actions a effectuer quand la souris rentre dans la fenetre
-	 */
-	protected void enteredWindow() {
-		this.inWindow = true;
-		this.startMovingTester();
-	}
-
-	/**
-	 * Gere les actions a effectuer quand la souris sort dans la fenetre
-	 */
-	protected void exitedWindow() {
-		this.inWindow = false;
+	@Override
+	public boolean isRightClickPressed() {
+		return this.buttons[2];
 	}
 
 	/**
@@ -260,6 +260,14 @@ public class MouseManager implements Mouse {
 		synchronized (this.releasedSignal) {
 			this.releasedSignal.notifyAll();
 		}
+	}
+
+	/**
+	 * Lance le testeur servant a mettre a jour le statut 'en mouvement' de la
+	 * souris
+	 */
+	private void startMovingTester() {
+		this.isMovingTester();
 	}
 
 	/**
