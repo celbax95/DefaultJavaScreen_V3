@@ -26,31 +26,31 @@ public interface Widget {
 	 */
 	boolean isSelected();
 
-	boolean isUsingKeyboardPressedSignal();
+	boolean isUsingKeyboardPressed();
 
-	boolean isUsingKeyboardReleasedSignal();
+	boolean isUsingKeyboardReleased();
 
-	boolean isUsingMouseMovedSignal();
+	boolean isUsingMouseMoved();
 
-	boolean isUsingMousePressedSignal();
+	boolean isUsingMousePressed();
 
-	boolean isUsingMouseReleasedSignal();
+	boolean isUsingMouseReleased();
 
-	boolean isUsingMouseWheelSignal();
+	boolean isUsingMouseWheel();
 
 	boolean isVisible();
 
-	void setKeyboardPressedSignal(Object keyboardPressedSignal);
+	boolean setKeyboardPressedUsage(boolean active);
 
-	void setKeyboardReleasedSignal(Object keyboardReleasedSignal);
+	boolean setKeyboardReleasedUsage(boolean active);
 
-	void setMouseMovedSignal(Object mouseMovedSignal);
+	boolean setMouseMovedUsage(boolean active);
 
-	void setMousePressedSignal(Object mousePressedSignal);
+	boolean setMousePressedUsage(boolean active);
 
-	void setMouseReleasedSignal(Object mouseReleasedSignal);
+	boolean setMouseReleasedUsage(boolean active);
 
-	void setMouseWheelSignal(Object mouseWheelSignal);
+	boolean setMouseWheelUsage(boolean active);
 
 	void setPos(Point pos);
 
