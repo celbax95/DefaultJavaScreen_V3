@@ -3,15 +3,15 @@ package fr.keyboard;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-public class KeyBoardHolder implements KeyListener {
+public class KeyboardHolder implements KeyListener {
 
-	private static KeyBoardManager kb;
+	private static KeyboardManager kb;
 
 	static {
-		kb = KeyBoardManager.getInstance();
+		kb = KeyboardManager.getInstance();
 	}
 
-	public KeyBoardHolder() {
+	public KeyboardHolder() {
 	}
 
 	/**
