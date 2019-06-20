@@ -29,12 +29,19 @@ public class KeyboardManager implements Keyboard {
 
 	private Map<Integer, Object> priorityReleasedKeys;
 
-	private final String prioPressed = "keyboardmanager_prioPre_", prioReleased = "keyboardmanager_prioRel_";
+	private final String prioPressedSignalName = "keyboard_prioPressed_",
+			prioReleasedSignalName = "keyboard_prioReleased_";
+	private final String pressedSignalName = "keyboard_pressed_", releasedSignalName = "keyboard_released_";
 
 	private KeyboardManager() {
 		this.keys = new Vector<>();
-		this.pressedSignal = new Object();
-		this.releasedSignal = new Object();
+		SignalManager sm = SignalManager.getInstance();
+
+		this.pressedSignal = sm.addSignal(this.pressedSignalName);
+		sm.lock(this.pressedSignalName);
+		this.releasedSignal = sm.addSignal(this.releasedSignalName);
+		sm.lock(this.releasedSignalName);
+
 		this.priorityPressedKeys = new HashMap<>();
 		this.priorityReleasedKeys = new HashMap<>();
 	}
@@ -76,8 +83,10 @@ public class KeyboardManager implements Keyboard {
 
 				SignalManager sm = SignalManager.getInstance();
 
-				this.priorityPressedKeys.put(key, sm.addSignal(this.prioPressed + String.valueOf(key)));
-				this.priorityReleasedKeys.put(key, sm.addSignal(this.prioReleased + String.valueOf(key)));
+				this.priorityPressedKeys.put(key,
+						sm.addSignal(this.prioPressedSignalName + String.valueOf(key)));
+				this.priorityReleasedKeys.put(key,
+						sm.addSignal(this.prioReleasedSignalName + String.valueOf(key)));
 			} else
 				throw new RuntimeException("La touche est deja priorisee");
 		}
@@ -169,8 +178,8 @@ public class KeyboardManager implements Keyboard {
 			this.priorityReleasedKeys.remove(key);
 		}
 		SignalManager sm = SignalManager.getInstance();
-		sm.remove(this.prioPressed + String.valueOf(key));
-		sm.remove(this.prioReleased + String.valueOf(key));
+		sm.remove(this.prioPressedSignalName + String.valueOf(key));
+		sm.remove(this.prioReleasedSignalName + String.valueOf(key));
 	}
 
 	@Override
