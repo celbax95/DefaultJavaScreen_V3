@@ -6,7 +6,7 @@ import java.awt.Graphics2D;
 
 import javax.swing.JPanel;
 
-import fr.keyboard.KeyBoardHolder;
+import fr.keyboard.KeyboardHolder;
 import fr.mouse.MouseHolder;
 
 /**
@@ -102,7 +102,7 @@ public class StatePanel extends JPanel implements Statable, HardwareListner {
 	@Override
 	public void setKeyboardEnabeled(boolean activation) {
 		if (activation) {
-			this.addKeyListener(new KeyBoardHolder());
+			this.addKeyListener(new KeyboardHolder());
 		} else {
 			this.addKeyListener(null);
 		}
