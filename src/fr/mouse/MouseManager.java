@@ -31,9 +31,8 @@ public class MouseManager implements Mouse {
 	// Signal
 	private Object wheelSignal;
 
-	private final String pressedSignalName = "mousemanager_pressedSignal",
-			releasedSignalName = "mousemanager_releasedSignal", movedSignalName = "mousemanager_movedSignal",
-			wheelSignalName = "mousemanager_wheelSignal";
+	private final String pressedSignalName = "mouse_pressed", releasedSignalName = "mouse_released",
+			movedSignalName = "mouse_moved", wheelSignalName = "mouse_wheel";
 
 	private Point pos;
 
@@ -49,7 +48,7 @@ public class MouseManager implements Mouse {
 
 	private int wheelDown;
 
-	private final String movingTester = "mousemanager_movingtester";
+	private final String movingTester = "mouse_movingtester";
 
 	/**
 	 * Private constructor for singleton.
