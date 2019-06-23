@@ -10,13 +10,22 @@ import fr.util.point.Point;
  */
 public interface Mouse {
 	/**
-	 * Recupere l'etat des boutons de la souris
+	 * Recupere l'etat des boutons de la souris<br/>
 	 *
 	 * 0 : left / 1 : middle / 2 : right
 	 *
 	 * @return l'etat des boutons de la souris
 	 */
 	boolean[] getButtons();
+
+	/**
+	 * Recupere le dernier bouton presse ou relache <br/>
+	 *
+	 * 0 : left / 1 : middle / 2 : right
+	 *
+	 * @return le dernier bouton presse ou relache
+	 */
+	int getLastButton();
 
 	/**
 	 * Recupere le signal emit en cas de mouvement de la souris

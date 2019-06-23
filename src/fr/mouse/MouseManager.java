@@ -40,6 +40,8 @@ public class MouseManager implements Mouse {
 
 	private boolean[] buttons;
 
+	private Integer lastButton;
+
 	private boolean movingTesterRunning;
 
 	private boolean moving;
@@ -68,6 +70,8 @@ public class MouseManager implements Mouse {
 		this.wheelUp = 0;
 		this.wheelDown = 0;
 
+		this.lastButton = 0;
+
 		this.buttons = new boolean[3];
 		for (int i = 0; i < this.buttons.length; i++) {
 			this.buttons[i] = false;
@@ -94,6 +98,11 @@ public class MouseManager implements Mouse {
 	@Override
 	public boolean[] getButtons() {
 		return new boolean[] { this.buttons[0], this.buttons[1], this.buttons[2] };
+	}
+
+	@Override
+	public int getLastButton() {
+		return this.lastButton;
 	}
 
 	@Override
@@ -241,6 +250,10 @@ public class MouseManager implements Mouse {
 
 		this.buttons[button - 1] = true;
 
+		synchronized (this.lastButton) {
+			this.lastButton = button - 1;
+		}
+
 		synchronized (this.pressedSignal) {
 			this.pressedSignal.notifyAll();
 		}
@@ -260,6 +273,10 @@ public class MouseManager implements Mouse {
 			return;
 
 		this.buttons[button - 1] = false;
+
+		synchronized (this.lastButton) {
+			this.lastButton = button - 1;
+		}
 
 		synchronized (this.releasedSignal) {
 			this.releasedSignal.notifyAll();
