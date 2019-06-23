@@ -113,7 +113,7 @@ public class MouseManager implements Mouse {
 
 	@Override
 	public int getWheelDown() {
-		return this.wheelDown * -1;
+		return this.wheelDown;
 	}
 
 	@Override
@@ -123,7 +123,7 @@ public class MouseManager implements Mouse {
 
 	@Override
 	public int getWheelUp() {
-		return this.wheelUp;
+		return this.wheelUp * -1;
 	}
 
 	/**
@@ -399,10 +399,10 @@ public class MouseManager implements Mouse {
 					System.out.print("Wheel : {");
 
 					if (mm.getWheelUp() == 1) {
-						System.out.print(" Down ");
+						System.out.print(" Up ");
 					}
 					if (mm.getWheelDown() == 1) {
-						System.out.print(" Up ");
+						System.out.print(" Down ");
 					}
 
 					System.out.println("}");
