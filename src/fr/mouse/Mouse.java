@@ -19,13 +19,22 @@ public interface Mouse {
 	boolean[] getButtons();
 
 	/**
-	 * Recupere le dernier bouton presse ou relache <br/>
+	 * Recupere le dernier bouton presse <br/>
 	 *
 	 * 0 : left / 1 : middle / 2 : right
 	 *
 	 * @return le dernier bouton presse ou relache
 	 */
-	int getLastButton();
+	int getLastButtonPressed();
+
+	/**
+	 * Recupere le dernier boutonrelache <br/>
+	 *
+	 * 0 : left / 1 : middle / 2 : right
+	 *
+	 * @return le dernier bouton presse ou relache
+	 */
+	int getLastButtonReleased();
 
 	/**
 	 * Recupere le signal emit en cas de mouvement de la souris
