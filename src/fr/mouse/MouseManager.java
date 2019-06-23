@@ -279,11 +279,11 @@ public class MouseManager implements Mouse {
 			this.wheelUp = 0;
 			this.wheelDown = 0;
 		} else if (rotation >= 0) {
-			this.wheelDown = 0;
-			this.wheelUp = rotation;
-		} else {
 			this.wheelUp = 0;
 			this.wheelDown = rotation;
+		} else {
+			this.wheelDown = 0;
+			this.wheelUp = rotation;
 		}
 		synchronized (this.wheelSignal) {
 			this.wheelSignal.notifyAll();
