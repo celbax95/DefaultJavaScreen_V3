@@ -82,7 +82,7 @@ public class ThreadManager {
 	 * @return true si le gestionnaire contien le thread, false sinon
 	 */
 	public boolean contains(String threadName) {
-		return this.contains(threadName);
+		return this.threads.containsKey(threadName);
 	}
 
 	/**
