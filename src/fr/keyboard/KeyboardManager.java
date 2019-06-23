@@ -31,7 +31,7 @@ public class KeyboardManager implements Keyboard {
 
 	private final String prioPressedSignalName = "keyboard_prioPressed_",
 			prioReleasedSignalName = "keyboard_prioReleased_";
-	private final String pressedSignalName = "keyboard_pressed_", releasedSignalName = "keyboard_released_";
+	private final String pressedSignalName = "keyboard_pressed", releasedSignalName = "keyboard_released";
 
 	private KeyboardManager() {
 		this.keys = new Vector<>();
