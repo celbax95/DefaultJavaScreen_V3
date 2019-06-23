@@ -10,6 +10,15 @@ import fr.util.point.Point;
  */
 public interface Mouse {
 	/**
+	 * Recupere l'etat des boutons de la souris
+	 *
+	 * 0 : left / 1 : middle / 2 : right
+	 *
+	 * @return l'etat des boutons de la souris
+	 */
+	boolean[] getButtons();
+
+	/**
 	 * Recupere le signal emit en cas de mouvement de la souris
 	 *
 	 * @return : un Object sur lequel est appele notifyAll() quand la souris est
@@ -101,4 +110,8 @@ public interface Mouse {
 	 * @return l'etat de pression du clic doit de la souris
 	 */
 	boolean isRightClickPressed();
+
+	static Mouse getMouse() {
+		return MouseManager.getInstance();
+	}
 }

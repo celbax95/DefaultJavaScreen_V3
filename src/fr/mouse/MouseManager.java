@@ -92,6 +92,11 @@ public class MouseManager implements Mouse {
 	}
 
 	@Override
+	public boolean[] getButtons() {
+		return new boolean[] { this.buttons[0], this.buttons[1], this.buttons[2] };
+	}
+
+	@Override
 	public Object getMovedSignal() {
 		return this.movedSignal;
 	}
