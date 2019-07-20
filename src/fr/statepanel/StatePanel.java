@@ -6,9 +6,6 @@ import java.awt.Graphics2D;
 
 import javax.swing.JPanel;
 
-import fr.keyboard.KeyboardHolder;
-import fr.mouse.MouseHolder;
-
 /**
  * Panel principal pouvant changer d'etat
  *
@@ -16,7 +13,7 @@ import fr.mouse.MouseHolder;
  *
  */
 @SuppressWarnings("serial")
-public class StatePanel extends JPanel implements Statable, HardwareListner {
+public class StatePanel extends JPanel implements Statable {
 
 	// Instance unique de StatePanel
 	private static StatePanel instance;
@@ -61,8 +58,6 @@ public class StatePanel extends JPanel implements Statable, HardwareListner {
 		this.setFocusable(true);
 		this.requestFocusInWindow();
 
-		this.setAllListnersEnabeled(true);
-
 		this.setSize(this.WIDTH, this.HEIGHT);
 	}
 
@@ -83,55 +78,6 @@ public class StatePanel extends JPanel implements Statable, HardwareListner {
 			this.state.draw(g);
 		} catch (final StateRequest stateRequest) {
 			AppStateManager.getInstance().applyState(stateRequest.getState());
-		}
-	}
-
-	/**
-	 * Change l'etat da'ctivation de tous les listners
-	 *
-	 * @param activation : nouvel etat d'activation
-	 */
-	@Override
-	public void setAllListnersEnabeled(boolean activation) {
-		this.setKeyboardEnabeled(activation);
-		this.setMouseClicksEnabeled(activation);
-		this.setMouseMovesEnabeled(activation);
-		this.setMouseWheelEnabeled(activation);
-	}
-
-	@Override
-	public void setKeyboardEnabeled(boolean activation) {
-		if (activation) {
-			this.addKeyListener(new KeyboardHolder());
-		} else {
-			this.addKeyListener(null);
-		}
-	}
-
-	@Override
-	public void setMouseClicksEnabeled(boolean activation) {
-		if (activation) {
-			this.addMouseListener(new MouseHolder());
-		} else {
-			this.addMouseListener(null);
-		}
-	}
-
-	@Override
-	public void setMouseMovesEnabeled(boolean activation) {
-		if (activation) {
-			this.addMouseMotionListener(new MouseHolder());
-		} else {
-			this.addMouseMotionListener(null);
-		}
-	}
-
-	@Override
-	public void setMouseWheelEnabeled(boolean activation) {
-		if (activation) {
-			this.addMouseWheelListener(new MouseHolder());
-		} else {
-			this.addMouseWheelListener(null);
 		}
 	}
 
