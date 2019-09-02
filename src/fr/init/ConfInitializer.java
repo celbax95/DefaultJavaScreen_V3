@@ -2,8 +2,7 @@ package fr.init;
 
 import fr.datafilesmanager.DatafilesManager;
 import fr.datafilesmanager.XMLManager;
-import fr.panelstates.MenuState;
-import fr.repainter.DefaultRepainter;
+import fr.state.menu.MenuState;
 import fr.statepanel.AppStateManager;
 import fr.statepanel.StatePanel;
 import fr.window.Window;
@@ -11,31 +10,11 @@ import fr.xmlmanager.XMLManagerDOM;
 
 public class ConfInitializer {
 
-	/**
-	 * static Singleton instance.
-	 */
-	private static volatile ConfInitializer instance;
-
 	// Fichiers de configuration
 	private DatafilesManager dfm;
 
-	/**
-	 * Private constructor for singleton.
-	 */
-	private ConfInitializer() {
+	public ConfInitializer() {
 		this.dfm = DatafilesManager.getInstance();
-	}
-
-	/**
-	 * Creation des elements a partir de la conf
-	 */
-	public void start() {
-
-		this.initConfFiles();
-
-		this.windowInitializers(this.getWinConf());
-
-		this.windowStart(this.getWinConf());
 	}
 
 	/**
@@ -53,7 +32,19 @@ public class ConfInitializer {
 	 */
 	private void initConfFiles() {
 		this.dfm.init(new XMLManagerDOM());
-		this.dfm.addFile("winConf", "conf/winConf.xml");
+		this.dfm.addFile("winConf", Object.class.getResource("/conf/winConf.xml"));
+	}
+
+	/**
+	 * Creation des elements a partir de la conf
+	 */
+	public void start() {
+
+		this.initConfFiles();
+
+		StatePanel state = this.windowInitializers(this.getWinConf());
+
+		this.windowStart(this.getWinConf(), state);
 	}
 
 	/**
@@ -61,7 +52,7 @@ public class ConfInitializer {
 	 *
 	 * @param configRoot : racine du fichier de configuration
 	 */
-	private void windowInitializers(Object configRoot) {
+	private StatePanel windowInitializers(Object configRoot) {
 
 		XMLManager reader = this.dfm.getXmlReader();
 
@@ -69,15 +60,15 @@ public class ConfInitializer {
 
 		int height = (int) reader.getParam(configRoot, "height", 768);
 
-		final DefaultRepainter repainter = new DefaultRepainter();
+		final StatePanel mainPanel = new StatePanel();
+		mainPanel.init(width, height);
 
-		final StatePanel mainPanel = StatePanel.getInstance();
-		mainPanel.init(width, height, repainter);
-
-		final AppStateManager stator = AppStateManager.getInstance();
+		final AppStateManager stator = new AppStateManager();
 		stator.addState(new MenuState());
 		stator.setStatable(mainPanel);
 		stator.applyState("menu");
+
+		return mainPanel;
 	}
 
 	/**
@@ -85,7 +76,7 @@ public class ConfInitializer {
 	 *
 	 * @param configRoot : racine du fichier de configuration
 	 */
-	private void windowStart(Object configRoot) {
+	private void windowStart(Object configRoot, StatePanel state) {
 
 		XMLManager reader = this.dfm.getXmlReader();
 
@@ -93,25 +84,9 @@ public class ConfInitializer {
 		int marginRight = (int) reader.getParam(configRoot, "marginRight", 6);
 		int margin = (int) reader.getParam(configRoot, "margin", 2);
 
-		final Window screen = Window.getInstance();
-		screen.init(StatePanel.getInstance(), marginRight, marginBottom, margin);
+		final Window screen = new Window();
+		screen.init(state, marginRight, marginBottom, margin);
 
 		screen.start();
 	}
-
-	/**
-	 * Return a singleton instance of ConfInitializer.
-	 */
-	public static ConfInitializer getInstance() {
-		// Double lock for thread safety.
-		if (instance == null) {
-			synchronized (ConfInitializer.class) {
-				if (instance == null) {
-					instance = new ConfInitializer();
-				}
-			}
-		}
-		return instance;
-	}
-
 }

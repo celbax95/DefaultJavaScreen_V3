@@ -4,19 +4,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Singleton de gestion des etats
+ * Gestion des etats
  *
  * @author Loic.MACE
  *
  */
 public class AppStateManager {
-
-	// Instance singleton
-	private static AppStateManager instance;
-
-	static {
-		instance = new AppStateManager();
-	}
 
 	// Map associant un nom a un etat
 	private Map<String, IAppState> states;
@@ -24,12 +17,8 @@ public class AppStateManager {
 	// Objet sur lequel on applique les etats
 	private Statable statable;
 
-	// Objet permetant d'activer / desactiver les commandes clavier et souris
-	private HardwareListner hardwareListner;
-
-	private AppStateManager() {
+	public AppStateManager() {
 		this.statable = null;
-		this.hardwareListner = null;
 		this.states = new HashMap<>();
 	}
 
@@ -73,15 +62,6 @@ public class AppStateManager {
 	}
 
 	/**
-	 * Recupere l'objet hardwareListner
-	 *
-	 * @return : l'objet hardwareListner
-	 */
-	public HardwareListner getHardwareListner() {
-		return this.hardwareListner;
-	}
-
-	/**
 	 * Recupere l'objet statable
 	 *
 	 * @return : l'objet statable
@@ -115,9 +95,8 @@ public class AppStateManager {
 	 * @param statable        : l'objet statable
 	 * @param hardwareListner : l'objet hardwareListner
 	 */
-	public void init(Statable statable, HardwareListner hardwareListner) {
+	public void init(Statable statable) {
 		this.statable = statable;
-		this.hardwareListner = hardwareListner;
 	}
 
 	/**
@@ -139,59 +118,6 @@ public class AppStateManager {
 	}
 
 	/**
-	 * Initialise l'objet HardwareListner
-	 *
-	 * @param hardwareListner : l'objet HardwareListner
-	 */
-	public void setHardwareListner(HardwareListner hardwareListner) {
-		this.hardwareListner = hardwareListner;
-	}
-
-	/**
-	 * Gere l'etat d'activation du clavier
-	 *
-	 * @param activation : etat d'activation
-	 * @throws RuntimeException : l'objet hardwareListner n'est pas intialise
-	 */
-	public void setKeyboardEnabeled(boolean activation) throws RuntimeException {
-		this.isHardwareListnerSet();
-		this.hardwareListner.setKeyboardEnabeled(activation);
-	}
-
-	/**
-	 * Gere l'etat d'activation des clics souris
-	 *
-	 * @param activation : etat d'activation
-	 * @throws RuntimeException : l'objet hardwareListner n'est pas intialise
-	 */
-	public void setMouseClicksEnabeled(boolean activation) throws RuntimeException {
-		this.isHardwareListnerSet();
-		this.hardwareListner.setMouseClicksEnabeled(activation);
-	}
-
-	/**
-	 * Gere l'etat d'activation des mouvements de la souris
-	 *
-	 * @param activation : etat d'activation
-	 * @throws RuntimeException : l'objet hardwareListner n'est pas intialise
-	 */
-	public void setMouseMovesEnabeled(boolean activation) throws RuntimeException {
-		this.isHardwareListnerSet();
-		this.hardwareListner.setMouseMovesEnabeled(activation);
-	}
-
-	/**
-	 * Gere l'etat d'activation de la molette
-	 *
-	 * @param activation : etat d'activation
-	 * @throws RuntimeException : l'objet hardwareListner n'est pas intialise
-	 */
-	public void setMouseWheelEnabeled(boolean activation) throws RuntimeException {
-		this.isHardwareListnerSet();
-		this.hardwareListner.setMouseWheelEnabeled(activation);
-	}
-
-	/**
 	 * Initialise l'objet Statable
 	 *
 	 * @param statable : l'objet Statable
@@ -207,27 +133,5 @@ public class AppStateManager {
 	 */
 	public void setStates(HashMap<String, IAppState> states) {
 		this.states = states;
-	}
-
-	/**
-	 * Test l'etat d'initialisation de l'objet HardwareListner
-	 *
-	 * @return true si l'objet est initialise
-	 * @throws IllegalStateException : si l'objet n'est pas initialise
-	 */
-	private boolean isHardwareListnerSet() throws IllegalStateException {
-		if (this.hardwareListner == null)
-			throw new IllegalStateException(
-					"Utilisez la methode init ou setHardwareListner pour initialiser l'element hardwareListner");
-		return true;
-	}
-
-	/**
-	 * Accesseur du singleton
-	 *
-	 * @return : le singleton AppStateManager
-	 */
-	public static AppStateManager getInstance() {
-		return instance;
 	}
 }

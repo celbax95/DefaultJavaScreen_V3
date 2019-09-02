@@ -6,8 +6,8 @@ import java.awt.Graphics2D;
 
 import javax.swing.JPanel;
 
-import fr.keyboard.KeyboardHolder;
-import fr.mouse.MouseHolder;
+import fr.inputs.keyboard.Keyboard;
+import fr.inputs.mouse.Mouse;
 
 /**
  * Panel principal pouvant changer d'etat
@@ -16,14 +16,7 @@ import fr.mouse.MouseHolder;
  *
  */
 @SuppressWarnings("serial")
-public class StatePanel extends JPanel implements Statable, HardwareListner {
-
-	// Instance unique de StatePanel
-	private static StatePanel instance;
-
-	static {
-		instance = new StatePanel();
-	}
+public class StatePanel extends JPanel implements Statable {
 
 	// Taille de la fenetre
 	private int WIDTH, HEIGHT;
@@ -31,16 +24,33 @@ public class StatePanel extends JPanel implements Statable, HardwareListner {
 	// Etat
 	private IAppState state;
 
-	// Repainter servant a repaint
-	private Repainter repainter;
-
-	private StatePanel() {
+	public StatePanel() {
 		super();
 		this.WIDTH = 0;
 		this.HEIGHT = 0;
 
 		this.setSize(this.WIDTH, this.HEIGHT);
 		this.setBackground(Color.black);
+	}
+
+	public void addKeyboardListener(Keyboard listner) {
+		super.addKeyListener(listner);
+	}
+
+	public void addMouseListener(Mouse listner) {
+		super.addMouseListener(listner);
+		this.addMouseMotionListener(listner);
+		this.addMouseWheelListener(listner);
+	}
+
+	@Override
+	public int getHeight() {
+		return this.HEIGHT;
+	}
+
+	@Override
+	public int getWidth() {
+		return this.WIDTH;
 	}
 
 	/**
@@ -50,108 +60,42 @@ public class StatePanel extends JPanel implements Statable, HardwareListner {
 	 * @param height    : hauteur de la fenetre
 	 * @param repainter : repainter a utiliser
 	 */
-	public void init(int width, int height, Repainter repainter) {
+	public void init(int width, int height) {
 		this.WIDTH = width;
 		this.HEIGHT = height;
-
-		this.repainter = repainter;
-		this.repainter.setPanel(this);
 
 		// Pour les listners
 		this.setFocusable(true);
 		this.requestFocusInWindow();
 
-		this.setAllListnersEnabeled(true);
-
 		this.setSize(this.WIDTH, this.HEIGHT);
 	}
 
-	/**
-	 * Methode appellee par le repainter, pour actualiser l'affichage dans la
-	 * fenetre
-	 */
 	@Override
 	public void paintComponent(Graphics g2) {
 		final Graphics2D g = (Graphics2D) g2;
 		super.paintComponent(g);
 
-		g.setColor(this.state.getBackgroundColor());
-		g.fillRect(0, 0, this.WIDTH, this.HEIGHT);
-		g.setColor(Color.black);
-
-		try {
-			this.state.draw(g);
-		} catch (final StateRequest stateRequest) {
-			AppStateManager.getInstance().applyState(stateRequest.getState());
-		}
+		this.state.draw(g);
 	}
 
-	/**
-	 * Change l'etat da'ctivation de tous les listners
-	 *
-	 * @param activation : nouvel etat d'activation
-	 */
-	@Override
-	public void setAllListnersEnabeled(boolean activation) {
-		this.setKeyboardEnabeled(activation);
-		this.setMouseClicksEnabeled(activation);
-		this.setMouseMovesEnabeled(activation);
-		this.setMouseWheelEnabeled(activation);
+	public void removeKeyboardListener(Keyboard listner) {
+		super.removeKeyListener(listner);
 	}
 
-	@Override
-	public void setKeyboardEnabeled(boolean activation) {
-		if (activation) {
-			this.addKeyListener(new KeyboardHolder());
-		} else {
-			this.addKeyListener(null);
-		}
-	}
-
-	@Override
-	public void setMouseClicksEnabeled(boolean activation) {
-		if (activation) {
-			this.addMouseListener(new MouseHolder());
-		} else {
-			this.addMouseListener(null);
-		}
-	}
-
-	@Override
-	public void setMouseMovesEnabeled(boolean activation) {
-		if (activation) {
-			this.addMouseMotionListener(new MouseHolder());
-		} else {
-			this.addMouseMotionListener(null);
-		}
-	}
-
-	@Override
-	public void setMouseWheelEnabeled(boolean activation) {
-		if (activation) {
-			this.addMouseWheelListener(new MouseHolder());
-		} else {
-			this.addMouseWheelListener(null);
-		}
+	public void removeMouseListener(Mouse listner) {
+		super.removeMouseListener(listner);
+		this.removeMouseMotionListener(listner);
+		this.removeMouseWheelListener(listner);
 	}
 
 	@Override
 	public void setState(IAppState state) {
 		if (this.state != null) {
-			this.state.setActive(false);
+			this.state.stop();
 		}
 
 		this.state = state;
-		this.state.setRepainter(this.repainter);
-		this.state.setActive(true);
-	}
-
-	/**
-	 * Recupere l'instance unique de StatePanel
-	 *
-	 * @return l'instance unique de StatePanel
-	 */
-	public static StatePanel getInstance() {
-		return instance;
+		this.state.start(this);
 	}
 }

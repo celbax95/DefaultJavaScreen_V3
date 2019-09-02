@@ -4,8 +4,8 @@ public class Point {
 
 	/* VARIABLES */
 
-	private double x;
-	private double y;
+	public double x;
+	public double y;
 
 	/* CONSTRUCTORS */
 
@@ -48,6 +48,11 @@ public class Point {
 		return this;
 	}
 
+	@Override
+	public Point clone() {
+		return new Point(this);
+	}
+
 	/**
 	 * Calcul de la distance entre le point courant et le point p
 	 */
@@ -74,6 +79,13 @@ public class Point {
 		return this;
 	}
 
+	/**
+	 * Calcul du produit scalaire
+	 */
+	public double dot(Point p) {
+		return this.x * p.x + this.y * p.y;
+	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -89,6 +101,8 @@ public class Point {
 			return false;
 		return true;
 	}
+
+	/* METHODS */
 
 	/**
 	 * Calcule l'angle du vecteur forme par les coordonees du Point
@@ -109,8 +123,6 @@ public class Point {
 		return result;
 	}
 
-	/* METHODS */
-
 	/**
 	 * Getter pour x avec un cast vers int
 	 */
@@ -123,6 +135,17 @@ public class Point {
 	 */
 	public int iy() {
 		return (int) Math.round(this.y);
+	}
+
+	/**
+	 * Calcul la taille au carre du vecteur
+	 */
+	public double length() {
+		return Math.sqrt(this.lengthSquarred());
+	}
+
+	public double lengthSquarred() {
+		return Math.pow(this.x, 2) + Math.pow(this.y, 2);
 	}
 
 	/**
@@ -160,6 +183,14 @@ public class Point {
 	 */
 	public double scalar(Point p) {
 		return this.x * p.x + this.y * p.y;
+	}
+
+	/**
+	 * Calque les coordonnees de p sur le Point courant
+	 */
+	public void set(double x, double y) {
+		this.x = x;
+		this.y = y;
 	}
 
 	/**

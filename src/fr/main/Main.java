@@ -4,6 +4,6 @@ import fr.init.ConfInitializer;
 
 public class Main {
 	public static void main(String[] args) {
-		ConfInitializer.getInstance().start();
+		new ConfInitializer().start();
 	}
 }

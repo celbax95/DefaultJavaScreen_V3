@@ -18,20 +18,13 @@ public class Window extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 
-	// Instance unique de Window
-	private static Window instance;
-
-	static {
-		instance = new Window();
-	}
-
 	// Si Window est initialise
 	private boolean initialized;
 
 	// Panel principal de la fenetre
 	private JPanel mainPanel;
 
-	private Window() {
+	public Window() {
 		this.mainPanel = null;
 		this.initialized = false;
 	}
@@ -90,9 +83,5 @@ public class Window extends JFrame {
 			throw new IllegalStateException("Utilisez la methode init() pour initialiser l'instance Screen.");
 
 		this.setVisible(true);
-	}
-
-	public static Window getInstance() {
-		return instance;
 	}
 }
