@@ -32,7 +32,7 @@ public class ConfInitializer {
 	 */
 	private void initConfFiles() {
 		this.dfm.init(new XMLManagerDOM());
-		this.dfm.addFile("winConf", Object.class.getResource("/conf/winConf.xml"));
+		this.dfm.addFile("winConf", "/conf/winConf.xml");
 	}
 
 	/**

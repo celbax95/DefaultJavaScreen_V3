@@ -16,6 +16,21 @@ public class ImageManager {
 	 */
 	private static volatile ImageManager instance;
 
+	/**
+	 * Return a singleton instance of ImageManager.
+	 */
+	public static ImageManager getInstance() {
+		// Double lock for thread safety.
+		if (instance == null) {
+			synchronized (ImageManager.class) {
+				if (instance == null) {
+					instance = new ImageManager();
+				}
+			}
+		}
+		return instance;
+	}
+
 	private Map<String, Image> images;
 
 	/**
@@ -26,7 +41,7 @@ public class ImageManager {
 	}
 
 	public void add(String name, String path) {
-		URL url = Object.class.getResource(path);
+		URL url = this.getClass().getResource(path);
 
 		File file = null;
 		try {
@@ -58,20 +73,5 @@ public class ImageManager {
 		} else {
 			System.err.println("L'image \"" + name + "\" est inconnue.");
 		}
-	}
-
-	/**
-	 * Return a singleton instance of ImageManager.
-	 */
-	public static ImageManager getInstance() {
-		// Double lock for thread safety.
-		if (instance == null) {
-			synchronized (ImageManager.class) {
-				if (instance == null) {
-					instance = new ImageManager();
-				}
-			}
-		}
-		return instance;
 	}
 }

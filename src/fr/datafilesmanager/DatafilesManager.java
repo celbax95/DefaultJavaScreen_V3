@@ -24,6 +24,21 @@ public class DatafilesManager {
 	 */
 	private static volatile DatafilesManager instance;
 
+	/**
+	 * Return a singleton instance of XMLReader.
+	 */
+	public static DatafilesManager getInstance() {
+		// Double lock for thread safety.
+		if (instance == null) {
+			synchronized (XMLManagerDOM.class) {
+				if (instance == null) {
+					instance = new DatafilesManager();
+				}
+			}
+		}
+		return instance;
+	}
+
 	// Accesseur aux fichiers de configuration
 	private XMLManager xmlReader;
 
@@ -40,7 +55,9 @@ public class DatafilesManager {
 	 * @param name : nom du fichier
 	 * @param url  : chemin (path) du fichier
 	 */
-	public void addFile(String name, URL url) {
+	public void addFile(String name, String path) {
+
+		URL url = this.getClass().getResource(path);
 
 		File file = null;
 		try {
@@ -128,20 +145,5 @@ public class DatafilesManager {
 	public void init(XMLManager xmlReader) {
 		this.xmlReader = xmlReader;
 		initialized = true;
-	}
-
-	/**
-	 * Return a singleton instance of XMLReader.
-	 */
-	public static DatafilesManager getInstance() {
-		// Double lock for thread safety.
-		if (instance == null) {
-			synchronized (XMLManagerDOM.class) {
-				if (instance == null) {
-					instance = new DatafilesManager();
-				}
-			}
-		}
-		return instance;
 	}
 }

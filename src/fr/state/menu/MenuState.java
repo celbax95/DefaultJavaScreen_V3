@@ -4,8 +4,6 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 
 import fr.inputs.Input;
-import fr.inputs.keyboard.KeyboardEventList;
-import fr.inputs.mouse.MouseEventList;
 import fr.statepanel.IAppState;
 import fr.statepanel.StatePanel;
 
@@ -48,10 +46,6 @@ public class MenuState implements IAppState {
 		this.m.applyDefautPage();
 
 		this.sp.setBackground(this.BACKGROUND);
-
-		MouseEventList m = new MouseEventList();
-
-		KeyboardEventList k = new KeyboardEventList();
 
 		this.input = new Input();
 

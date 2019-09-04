@@ -9,6 +9,7 @@ import fr.inputs.Input;
 import fr.inputs.mouse.MouseEvent;
 import fr.state.menu.MenuPage;
 import fr.state.menu.Widget;
+import fr.util.Util;
 import fr.util.collider.AABB;
 import fr.util.collider.Collider;
 import fr.util.point.Point;
@@ -186,7 +187,7 @@ public abstract class WSlider implements Widget {
 
 	private void moveSlide(Point p) {
 
-		p.x = clamp(p.x, this.barPos.x, this.barPos.x + this.barSize.x) - this.barPos.x;
+		p.x = Util.clamp(p.x, this.barPos.x, this.barPos.x + this.barSize.x) - this.barPos.x;
 
 		int last = this.clic;
 
@@ -310,8 +311,4 @@ public abstract class WSlider implements Widget {
 	}
 
 	public abstract void valueChanged(int value);
-
-	public static double clamp(double val, double min, double max) {
-		return Math.max(min, Math.min(max, val));
-	}
 }
