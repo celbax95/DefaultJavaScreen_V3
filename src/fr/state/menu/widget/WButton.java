@@ -1,9 +1,6 @@
 package fr.state.menu.widget;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.Rectangle;
-import java.awt.geom.Area;
 
 import fr.inputs.Input;
 import fr.inputs.mouse.MouseEvent;
@@ -15,18 +12,14 @@ import fr.util.point.Point;
 
 public abstract class WButton implements Widget {
 	private Point pos;
+
 	private Point size;
-	private Point halfSize;
-
-	private TextData label;
-
-	private BorderData border;
-
-	private Color color;
-
-	private Color pressedColor;
 
 	private AABB hitbox;
+
+	private DrawElement drawElement;
+
+	private DrawElement pressedDrawElement;
 
 	private boolean pressed;
 
@@ -39,86 +32,35 @@ public abstract class WButton implements Widget {
 		this.pos = new Point();
 		this.size = new Point();
 
-		this.color = Color.BLACK;
-		this.pressedColor = Color.BLACK;
-
 		this.hitbox = new AABB(this.pos, this.pos, this.pos.clone().add(this.size));
 
-		this.label = null;
-
-		this.border = null;
-
 		this.canPressed = true;
+
+		this.drawElement = null;
+
+		this.pressedDrawElement = null;
 	}
 
 	public abstract void action();
 
 	@Override
 	public void draw(Graphics2D g) {
-
-		this.drawButton(g);
-
-		if (this.border != null) {
-			this.drawBorder(g);
-		}
-
-		if (this.label != null) {
-			this.drawLabel(g);
-		}
-	}
-
-	private void drawBorder(Graphics2D g) {
-		g.setColor(this.border.color);
-
-		Area a = new Area(new Rectangle(this.pos.ix(), this.pos.iy(), this.size.ix(), this.size.iy()));
-
-		Area b = new Area(new Rectangle(this.pos.ix() + this.border.size, this.pos.iy() + this.border.size,
-				this.size.ix() - this.border.size * 2, this.size.iy() - this.border.size * 2));
-
-		a.subtract(b);
-
-		g.fill(a);
-	}
-
-	private void drawButton(Graphics2D g) {
-		if (!this.pressed || this.pressedColor == null) {
-			g.setColor(this.color);
+		if (!this.pressed || this.pressedDrawElement == null) {
+			this.drawElement.draw(g);
 		} else {
-			g.setColor(this.pressedColor);
+			this.pressedDrawElement.draw(g);
 		}
-
-		g.fillRect(this.pos.ix(), this.pos.iy(), this.size.ix(), this.size.iy());
 	}
 
-	private void drawLabel(Graphics2D g) {
-		g.setFont(this.label.font);
-
-		if (!this.pressed || this.label.secondColor == null) {
-			g.setColor(this.label.color);
-		} else {
-			g.setColor(this.label.secondColor);
-		}
-
-		int width2 = g.getFontMetrics().stringWidth(this.label.text) / 2;
-
-		g.drawString(this.label.text, this.pos.ix() + this.halfSize.ix() - width2,
-				this.pos.iy() + this.halfSize.iy() + this.label.font.getSize() / 2);
-	}
-
-	public BorderData getBorder() {
-		return this.border;
-	}
-
-	public Color getColor() {
-		return this.color;
+	/**
+	 * @return the drawElement
+	 */
+	public DrawElement getDrawElement() {
+		return this.drawElement;
 	}
 
 	public AABB getHitbox() {
 		return this.hitbox;
-	}
-
-	public TextData getLabel() {
-		return this.label;
 	}
 
 	public MenuPage getPage() {
@@ -129,8 +71,11 @@ public abstract class WButton implements Widget {
 		return this.pos;
 	}
 
-	public Color getPressedColor() {
-		return this.pressedColor;
+	/**
+	 * @return the pressedDrawElement
+	 */
+	public DrawElement getPressedDrawElement() {
+		return this.pressedDrawElement;
 	}
 
 	public Point getSize() {
@@ -145,24 +90,19 @@ public abstract class WButton implements Widget {
 		return this.pressed;
 	}
 
-	public void setBorder(BorderData border) {
-		this.border = border;
-	}
-
 	public void setCanPressed(boolean canPressed) {
 		this.canPressed = canPressed;
 	}
 
-	public void setColor(Color color) {
-		this.color = color;
+	/**
+	 * @param drawElement the drawElement to set
+	 */
+	public void setDrawElement(DrawElement drawElement) {
+		this.drawElement = drawElement;
 	}
 
 	public void setHitbox(AABB hitbox) {
 		this.hitbox = hitbox;
-	}
-
-	public void setLabel(TextData label) {
-		this.label = label;
 	}
 
 	public void setPage(MenuPage page) {
@@ -179,13 +119,15 @@ public abstract class WButton implements Widget {
 		this.pressed = pressed;
 	}
 
-	public void setPressedColor(Color pressedColor) {
-		this.pressedColor = pressedColor;
+	/**
+	 * @param pressedDrawElement the pressedDrawElement to set
+	 */
+	public void setPressedDrawElement(DrawElement pressedDrawElement) {
+		this.pressedDrawElement = pressedDrawElement;
 	}
 
 	public void setSize(Point size) {
 		this.size.set(size);
-		this.halfSize = size.clone().div(2);
 		this.hitbox.min(this.pos);
 		this.hitbox.max(this.pos.clone().add(size));
 	}

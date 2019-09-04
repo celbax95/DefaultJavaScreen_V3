@@ -15,7 +15,7 @@ import fr.state.menu.Widget;
 import fr.state.menu.widget.BorderData;
 import fr.state.menu.widget.TextData;
 import fr.state.menu.widget.WButton;
-import fr.state.menu.widget.WImage;
+import fr.state.menu.widget.WElement;
 import fr.state.menu.widget.WLabel;
 import fr.state.menu.widget.WSlider;
 import fr.util.point.Point;
@@ -57,7 +57,7 @@ public class MenuMain implements MenuPage {
 	}
 
 	private void wBackground() {
-		WImage i = new WImage(this);
+		WElement i = new WElement(this);
 
 		i.setPos(new Point(416, 0));
 		i.setImage(ImageManager.getInstance().get("menuMain/background"));
