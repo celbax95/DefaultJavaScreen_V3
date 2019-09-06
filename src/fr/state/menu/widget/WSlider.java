@@ -16,8 +16,6 @@ public abstract class WSlider implements Widget {
 	private Point pos;
 	private Point size;
 
-	private Point barHitboxSize;
-
 	private AABB hitbox;
 
 	// La position de la barre est calculee par cette classe
@@ -116,12 +114,54 @@ public abstract class WSlider implements Widget {
 		return this.bar;
 	}
 
+	/**
+	 * @return the hitbox
+	 */
+	public AABB getHitbox() {
+		return this.hitbox;
+	}
+
+	/**
+	 * @return the inputXClamped
+	 */
+	public int getInputXClamped() {
+		return this.inputXClamped;
+	}
+
+	/**
+	 * @return the page
+	 */
+	public MenuPage getPage() {
+		return this.page;
+	}
+
 	public Point getPos() {
 		return this.pos;
 	}
 
+	/**
+	 * @return the scope
+	 */
+	public int getScope() {
+		return this.scope;
+	}
+
 	public DrawElement getSlider() {
 		return this.slider;
+	}
+
+	/**
+	 * @return the value
+	 */
+	public int getValue() {
+		return this.value;
+	}
+
+	/**
+	 * @return the pressed
+	 */
+	public boolean isPressed() {
+		return this.pressed;
 	}
 
 	/**
@@ -142,6 +182,20 @@ public abstract class WSlider implements Widget {
 		this.bar = bar;
 	}
 
+	/**
+	 * @param inputXClamped the inputXClamped to set
+	 */
+	public void setInputXClamped(int inputXClamped) {
+		this.inputXClamped = inputXClamped;
+	}
+
+	/**
+	 * @param page the page to set
+	 */
+	public void setPage(MenuPage page) {
+		this.page = page;
+	}
+
 	public void setPos(Point pos) {
 		this.pos = pos;
 
@@ -154,10 +208,38 @@ public abstract class WSlider implements Widget {
 		}
 	}
 
+	/**
+	 * @param pressed the pressed to set
+	 */
+	public void setPressed(boolean pressed) {
+		this.pressed = pressed;
+	}
+
+	/**
+	 * @param scope the scope to set
+	 */
+	public void setScope(int scope) {
+		this.scope = scope;
+	}
+
+	/**
+	 * @param size the size to set
+	 */
+	public void setSize(Point size) {
+		this.size = size;
+	}
+
 	public void setSlider(DrawElement slider) {
 		slider.setPos(this.calcSliderPos());
 
 		this.slider = slider;
+	}
+
+	/**
+	 * @param value the value to set
+	 */
+	public void setValue(int value) {
+		this.value = value;
 	}
 
 	@Override

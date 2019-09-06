@@ -8,9 +8,6 @@ import fr.state.menu.Widget;
 import fr.util.point.Point;
 
 public class WElement implements Widget {
-	private Point pos;
-	private Point size;
-
 	private DrawElement drawElement;
 
 	private MenuPage page;

@@ -99,6 +99,7 @@ public abstract class WButton implements Widget {
 	 */
 	public void setDrawElement(DrawElement drawElement) {
 		this.drawElement = drawElement;
+		this.setSize(drawElement.getSize());
 	}
 
 	public void setHitbox(AABB hitbox) {
@@ -139,24 +140,12 @@ public abstract class WButton implements Widget {
 			// on button
 			if (Collider.AABBvsPoint(this.hitbox, e.pos)) {
 				switch (e.id) {
-				case MouseEvent.LEFT_PRESSED:
-					if (this.canPressed) {
-						this.pressed = true;
-					}
-					break;
 				case MouseEvent.LEFT_RELEASED:
 					if (this.pressed) {
 						this.action();
 					}
 					break;
 				}
-			}
-
-			// out of button
-			switch (e.id) {
-			case MouseEvent.LEFT_RELEASED:
-				this.pressed = false;
-				break;
 			}
 		}
 
