@@ -10,8 +10,6 @@ public class DELabel implements DrawElement {
 
 	private Point pos;
 
-	private Point size;
-
 	private TextData label;
 
 	/**
@@ -22,7 +20,6 @@ public class DELabel implements DrawElement {
 	public DELabel() {
 		super();
 		this.pos = new Point();
-		this.size = new Point();
 		this.label = null;
 	}
 
@@ -34,17 +31,17 @@ public class DELabel implements DrawElement {
 	public DELabel(Point pos, Point size, TextData label) {
 		this();
 		this.pos = pos;
-		this.size = size;
 		this.label = label;
 	}
 
 	@Override
-	public void draw(Graphics2D g) {
+	public void draw(Graphics2D g, Point ref) {
 		g.setColor(this.label.getColor());
 		g.setFont(this.label.getFont());
 
-		g.drawString(this.label.getText(), this.pos.ix() + this.label.getPos().ix(),
-				this.pos.iy() + this.label.getPos().iy());
+		Point absTextPos = ref.clone().add(this.pos).add(this.label.getPos());
+
+		g.drawString(this.label.getText(), absTextPos.ix(), absTextPos.iy());
 	}
 
 	/**
@@ -57,6 +54,7 @@ public class DELabel implements DrawElement {
 	/**
 	 * @return the pos
 	 */
+	@Override
 	public Point getPos() {
 		return this.pos;
 	}
@@ -64,6 +62,7 @@ public class DELabel implements DrawElement {
 	/**
 	 * @return the size
 	 */
+	@Override
 	public Point getSize() {
 		return this.label.getSize();
 	}
@@ -78,6 +77,7 @@ public class DELabel implements DrawElement {
 	/**
 	 * @param pos the pos to set
 	 */
+	@Override
 	public void setPos(Point pos) {
 		this.pos = pos;
 	}
