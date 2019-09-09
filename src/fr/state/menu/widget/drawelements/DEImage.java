@@ -82,7 +82,7 @@ public class DEImage implements DrawElement {
 		this.setLabel(label);
 	}
 
-	private void changeBorderDrawer() {
+	private void changeBorderDrawer(Point absp) {
 		if (this.borderDrawer.prevBorderState != this.border.getState())
 			return;
 
@@ -92,14 +92,13 @@ public class DEImage implements DrawElement {
 			this.borderDrawer = new BorderDrawer() {
 				@Override
 				public void draw(Graphics2D g) {
-					Area a = new Area(new Rectangle(DEImage.this.pos.ix(), DEImage.this.pos.iy(),
-							DEImage.this.size.ix(), DEImage.this.size.iy()));
+					Area a = new Area(new Rectangle(absp.ix(), absp.iy(), DEImage.this.size.ix(),
+							DEImage.this.size.iy()));
 
-					Area b = new Area(
-							new Rectangle(DEImage.this.pos.ix() + DEImage.this.border.getThickness(),
-									DEImage.this.pos.iy() + DEImage.this.border.getThickness(),
-									DEImage.this.size.ix() - DEImage.this.border.getThickness() * 2,
-									DEImage.this.size.iy() - DEImage.this.border.getThickness() * 2));
+					Area b = new Area(new Rectangle(absp.ix() + DEImage.this.border.getThickness(),
+							absp.iy() + DEImage.this.border.getThickness(),
+							DEImage.this.size.ix() - DEImage.this.border.getThickness() * 2,
+							DEImage.this.size.iy() - DEImage.this.border.getThickness() * 2));
 
 					a.subtract(b);
 
@@ -112,14 +111,13 @@ public class DEImage implements DrawElement {
 			this.borderDrawer = new BorderDrawer() {
 				@Override
 				public void draw(Graphics2D g) {
-					Area a = new Area(
-							new Rectangle(DEImage.this.pos.ix() - DEImage.this.border.getThickness(),
-									DEImage.this.pos.iy() - DEImage.this.border.getThickness(),
-									DEImage.this.size.ix() + DEImage.this.border.getThickness() * 2,
-									DEImage.this.size.iy() + DEImage.this.border.getThickness() * 2));
+					Area a = new Area(new Rectangle(absp.ix() - DEImage.this.border.getThickness(),
+							absp.iy() - DEImage.this.border.getThickness(),
+							DEImage.this.size.ix() + DEImage.this.border.getThickness() * 2,
+							DEImage.this.size.iy() + DEImage.this.border.getThickness() * 2));
 
-					Area b = new Area(new Rectangle(DEImage.this.pos.ix(), DEImage.this.pos.iy(),
-							DEImage.this.size.ix(), DEImage.this.size.iy()));
+					Area b = new Area(new Rectangle(absp.ix(), absp.iy(), DEImage.this.size.ix(),
+							DEImage.this.size.iy()));
 
 					a.subtract(b);
 
@@ -130,29 +128,19 @@ public class DEImage implements DrawElement {
 		}
 	}
 
-	private void changeLabelDrawer() {
+	private void changeLabelDrawer(Point absp) {
 		if (this.labelDrawer.prevLabelState == this.label.getState())
 			return;
 
+		Point absTextPos = absp.clone().add(this.label.getPos());
+
 		switch (this.label.getState()) {
 		case 0:
-			// Absolute
-			this.labelDrawer = new LabelDrawer() {
-				@Override
-				public void draw(Graphics2D g) {
-					g.drawString(DEImage.this.label.getText(), DEImage.this.label.getPos().ix(),
-							DEImage.this.label.getPos().iy());
-				}
-			};
-			break;
-		case 1:
 			// Relative
 			this.labelDrawer = new LabelDrawer() {
 				@Override
 				public void draw(Graphics2D g) {
-					g.drawString(DEImage.this.label.getText(),
-							DEImage.this.pos.ix() + DEImage.this.label.getPos().ix(),
-							DEImage.this.pos.iy() + DEImage.this.label.getPos().iy());
+					g.drawString(DEImage.this.label.getText(), absTextPos.ix(), absTextPos.iy());
 				}
 			};
 			break;
@@ -160,30 +148,34 @@ public class DEImage implements DrawElement {
 	}
 
 	@Override
-	public void draw(Graphics2D g) {
-		this.drawBorder(g);
+	public void draw(Graphics2D g, Point ref) {
+		// Absolute Point
+		Point absp = ref.clone().add(this.pos);
+
+		this.drawBorder(g, absp);
 
 		if (this.image != null) {
-			g.drawImage(this.image, this.pos.ix(), this.pos.iy(), null);
+			g.drawImage(this.image, absp.ix(), absp.iy(), null);
 		}
+
+		this.drawLabel(g, absp);
 	}
 
-	private void drawBorder(Graphics2D g) {
+	private void drawBorder(Graphics2D g, Point absp) {
 		if (this.border == null)
 			return;
 
-		this.changeBorderDrawer();
-
+		this.changeBorderDrawer(absp);
 		g.setColor(this.border.getColor());
 
 		this.borderDrawer.draw(g);
 	}
 
-	private void drawLabel(Graphics2D g) {
+	private void drawLabel(Graphics2D g, Point absp) {
 		if (this.label == null)
 			return;
 
-		this.changeLabelDrawer();
+		this.changeLabelDrawer(absp);
 
 		g.setColor(this.label.getColor());
 		g.setFont(this.label.getFont());
@@ -215,6 +207,7 @@ public class DEImage implements DrawElement {
 	/**
 	 * @return the pos
 	 */
+	@Override
 	public Point getPos() {
 		return this.pos;
 	}
@@ -222,6 +215,7 @@ public class DEImage implements DrawElement {
 	/**
 	 * @return the size
 	 */
+	@Override
 	public Point getSize() {
 		return this.size;
 	}
@@ -252,6 +246,7 @@ public class DEImage implements DrawElement {
 	/**
 	 * @param pos the pos to set
 	 */
+	@Override
 	public void setPos(Point pos) {
 		this.pos = pos;
 	}
