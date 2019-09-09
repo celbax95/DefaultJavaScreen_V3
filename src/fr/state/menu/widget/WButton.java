@@ -13,13 +13,13 @@ import fr.util.point.Point;
 public abstract class WButton implements Widget {
 	private Point pos;
 
-	private Point size;
-
 	private AABB hitbox;
 
-	private DrawElement drawElement;
+	private DrawElement stdDrawElement;
 
 	private DrawElement pressedDrawElement;
+
+	private DrawElement currentDE;
 
 	private boolean pressed;
 
@@ -30,33 +30,25 @@ public abstract class WButton implements Widget {
 	public WButton(MenuPage p) {
 		this.page = p;
 		this.pos = new Point();
-		this.size = new Point();
 
-		this.hitbox = new AABB(this.pos, this.pos, this.pos.clone().add(this.size));
+		this.hitbox = new AABB(this.pos, new Point(), new Point());
 
 		this.canPressed = true;
 
-		this.drawElement = null;
+		this.stdDrawElement = null;
 
 		this.pressedDrawElement = null;
+
+		this.currentDE = null;
 	}
 
 	public abstract void action();
 
 	@Override
 	public void draw(Graphics2D g) {
-		if (!this.pressed || this.pressedDrawElement == null) {
-			this.drawElement.draw(g);
-		} else {
-			this.pressedDrawElement.draw(g);
+		if (this.currentDE != null) {
+			this.currentDE.draw(g, this.pos);
 		}
-	}
-
-	/**
-	 * @return the drawElement
-	 */
-	public DrawElement getDrawElement() {
-		return this.drawElement;
 	}
 
 	public AABB getHitbox() {
@@ -79,7 +71,14 @@ public abstract class WButton implements Widget {
 	}
 
 	public Point getSize() {
-		return this.size;
+		return this.currentDE != null ? this.currentDE.getSize() : new Point();
+	}
+
+	/**
+	 * @return the drawElement
+	 */
+	public DrawElement getStdDrawElement() {
+		return this.stdDrawElement;
 	}
 
 	public boolean isCanPressed() {
@@ -94,16 +93,14 @@ public abstract class WButton implements Widget {
 		this.canPressed = canPressed;
 	}
 
-	/**
-	 * @param drawElement the drawElement to set
-	 */
-	public void setDrawElement(DrawElement drawElement) {
-		this.drawElement = drawElement;
-		this.setSize(drawElement.getSize());
-	}
-
 	public void setHitbox(AABB hitbox) {
 		this.hitbox = hitbox;
+	}
+
+	public void setHitboxFromDrawElement() {
+		this.hitbox.min(this.pos.clone().add(this.stdDrawElement.getPos()));
+		this.hitbox
+				.max(this.pos.clone().add(this.stdDrawElement.getPos()).add(this.stdDrawElement.getSize()));
 	}
 
 	public void setPage(MenuPage page) {
@@ -112,12 +109,14 @@ public abstract class WButton implements Widget {
 
 	public void setPos(Point pos) {
 		this.pos.set(pos);
-		this.hitbox.min(pos);
-		this.hitbox.max(pos.clone().add(this.size));
 	}
 
 	public void setPressed(boolean pressed) {
 		this.pressed = pressed;
+
+		// Changement du drawElement courant
+		this.currentDE = pressed && this.pressedDrawElement != null ? this.pressedDrawElement
+				: this.stdDrawElement;
 	}
 
 	/**
@@ -127,10 +126,11 @@ public abstract class WButton implements Widget {
 		this.pressedDrawElement = pressedDrawElement;
 	}
 
-	public void setSize(Point size) {
-		this.size.set(size);
-		this.hitbox.min(this.pos);
-		this.hitbox.max(this.pos.clone().add(size));
+	/**
+	 * @param drawElement the drawElement to set
+	 */
+	public void setStdDrawElement(DrawElement drawElement) {
+		this.stdDrawElement = drawElement;
 	}
 
 	@Override
@@ -149,7 +149,7 @@ public abstract class WButton implements Widget {
 			}
 		}
 
-		this.pressed = input.mouseButtons.get(Input.MOUSE_LEFT)
-				&& Collider.AABBvsPoint(this.hitbox, input.mousePos);
+		this.setPressed(input.mouseButtons.get(Input.MOUSE_LEFT)
+				&& Collider.AABBvsPoint(this.hitbox, input.mousePos));
 	}
 }
