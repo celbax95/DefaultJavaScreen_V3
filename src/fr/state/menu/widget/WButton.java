@@ -98,9 +98,11 @@ public abstract class WButton implements Widget {
 	}
 
 	public void setHitboxFromDrawElement() {
-		this.hitbox.min(this.pos.clone().add(this.stdDrawElement.getPos()));
-		this.hitbox
-				.max(this.pos.clone().add(this.stdDrawElement.getPos()).add(this.stdDrawElement.getSize()));
+		if (this.currentDE == null)
+			return;
+
+		this.hitbox.min(this.pos.clone().add(this.currentDE.getPos()));
+		this.hitbox.max(this.pos.clone().add(this.currentDE.getPos()).add(this.currentDE.getSize()));
 	}
 
 	public void setPage(MenuPage page) {
@@ -131,6 +133,9 @@ public abstract class WButton implements Widget {
 	 */
 	public void setStdDrawElement(DrawElement drawElement) {
 		this.stdDrawElement = drawElement;
+		if (this.currentDE == null) {
+			this.currentDE = this.stdDrawElement;
+		}
 	}
 
 	@Override

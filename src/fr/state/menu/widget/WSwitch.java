@@ -12,10 +12,11 @@ import fr.util.point.Point;
 
 public abstract class WSwitch implements Widget {
 	private Point pos;
-	private Point size;
 
 	private DrawElement on, pressedOn;
 	private DrawElement off, pressedOff;
+
+	private DrawElement currentDE;
 
 	private AABB hitbox;
 
@@ -28,7 +29,6 @@ public abstract class WSwitch implements Widget {
 	public WSwitch(MenuPage p) {
 		this.page = p;
 		this.pos = new Point();
-		this.size = new Point();
 
 		this.on = null;
 		this.pressedOn = null;
@@ -36,9 +36,19 @@ public abstract class WSwitch implements Widget {
 		this.off = null;
 		this.pressedOff = null;
 
-		this.hitbox = new AABB(this.pos, this.pos, this.pos.clone().add(this.size));
+		this.hitbox = new AABB(this.pos, new Point(), new Point());
 
 		this.active = false;
+
+		this.on = null;
+
+		this.pressedOn = null;
+
+		this.off = null;
+
+		this.pressedOff = null;
+
+		this.currentDE = null;
 	}
 
 	public abstract void actionOff();
@@ -47,30 +57,168 @@ public abstract class WSwitch implements Widget {
 
 	@Override
 	public void draw(Graphics2D g) {
-		if (!this.active) {
-			if (!this.pressed || this.pressedOn == null) {
-				if (this.on != null) {
-					this.on.draw(g);
-				}
-			} else {
-				this.pressedOn.draw(g);
-			}
-		} else {
-			if (!this.pressed || this.pressedOff == null) {
-				if (this.off != null) {
-					this.off.draw(g);
-				}
-			} else {
-				this.pressedOff.draw(g);
-			}
+		if (this.currentDE != null) {
+			this.currentDE.draw(g, this.pos);
 		}
+	}
+
+	/**
+	 * @return the hitbox
+	 */
+	public AABB getHitbox() {
+		return this.hitbox;
+	}
+
+	/**
+	 * @return the off
+	 */
+	public DrawElement getOffDrawElement() {
+		return this.off;
+	}
+
+	/**
+	 * @return the on
+	 */
+	public DrawElement getOnDrawElement() {
+		return this.on;
+	}
+
+	/**
+	 * @return the page
+	 */
+	public MenuPage getPage() {
+		return this.page;
+	}
+
+	/**
+	 * @return the pos
+	 */
+	public Point getPos() {
+		return this.pos;
+	}
+
+	/**
+	 * @return the pressedOff
+	 */
+	public DrawElement getPressedOffDrawElement() {
+		return this.pressedOff;
+	}
+
+	/**
+	 * @return the pressedOn
+	 */
+	public DrawElement getPressedOnDrawElement() {
+		return this.pressedOn;
+	}
+
+	/**
+	 * @return the size
+	 */
+	public Point getSize() {
+		return this.currentDE == null ? new Point() : this.currentDE.getSize();
+	}
+
+	/**
+	 * @return the active
+	 */
+	public boolean isActive() {
+		return this.active;
+	}
+
+	/**
+	 * @return the pressed
+	 */
+	public boolean isPressed() {
+		return this.pressed;
+	}
+
+	/**
+	 * @param active the active to set
+	 */
+	public void setActive(boolean active) {
+		if (active != this.active) {
+			this.active = active;
+			this.updateCurrentDE();
+		}
+	}
+
+	/**
+	 * @param hitbox the hitbox to set
+	 */
+	public void setHitbox(AABB hitbox) {
+		this.hitbox = hitbox;
+	}
+
+	public void setHitboxFromDrawElement() {
+		if (this.currentDE == null)
+			return;
+
+		this.hitbox.min(this.pos.clone().add(this.currentDE.getPos()));
+		this.hitbox.max(this.pos.clone().add(this.currentDE.getPos()).add(this.currentDE.getSize()));
+	}
+
+	/**
+	 * @param off the off to set
+	 */
+	public void setOffDrawElement(DrawElement off) {
+		this.off = off;
+
+		if (!this.active) {
+			this.currentDE = off;
+		}
+	}
+
+	/**
+	 * @param on the on to set
+	 */
+	public void setOnDrawElement(DrawElement on) {
+		this.on = on;
+
+		if (this.active) {
+			this.currentDE = on;
+		}
+	}
+
+	/**
+	 * @param page the page to set
+	 */
+	public void setPage(MenuPage page) {
+		this.page = page;
+	}
+
+	/**
+	 * @param pos the pos to set
+	 */
+	public void setPos(Point pos) {
+		this.pos = pos;
+	}
+
+	/**
+	 * @param pressed the pressed to set
+	 */
+	public void setPressed(boolean pressed) {
+		if (pressed != this.pressed) {
+			this.pressed = pressed;
+			this.updateCurrentDE();
+		}
+	}
+
+	/**
+	 * @param pressedOff the pressedOff to set
+	 */
+	public void setPressedOffDrawElement(DrawElement pressedOff) {
+		this.pressedOff = pressedOff;
+	}
+
+	/**
+	 * @param pressedOn the pressedOn to set
+	 */
+	public void setPressedOnDrawElement(DrawElement pressedOn) {
+		this.pressedOn = pressedOn;
 	}
 
 	@Override
 	public void update(Input input) {
-
-		boolean needHitboxCalc = false;
-
 		for (MouseEvent e : input.mouseEvents) {
 			// on button
 			if (Collider.AABBvsPoint(this.hitbox, e.pos)) {
@@ -81,41 +229,28 @@ public abstract class WSwitch implements Widget {
 					} else {
 						this.actionOn();
 					}
-					this.active = !this.active;
-					needHitboxCalc = true;
+					this.setActive(!this.active);
 					break;
 				}
 			}
 		}
 
-		boolean pressed = input.mouseButtons.get(Input.MOUSE_LEFT)
-				&& Collider.AABBvsPoint(this.hitbox, input.mousePos);
-
-		if (this.pressed != pressed || needHitboxCalc) {
-			this.updateHitbox();
-		}
+		this.setPressed(input.mouseButtons.get(Input.MOUSE_LEFT)
+				&& Collider.AABBvsPoint(this.hitbox, input.mousePos));
 	}
 
-	private void updateHitbox() {
-		if (!this.active) {
+	private void updateCurrentDE() {
+		if (this.active) {
 			if (!this.pressed || this.pressedOn == null) {
-				if (this.on != null) {
-					this.hitbox.min(this.on.getPos());
-					this.hitbox.max(this.on.getSize());
-				}
+				this.currentDE = this.on;
 			} else {
-				this.hitbox.min(this.pressedOn.getPos());
-				this.hitbox.max(this.pressedOn.getSize());
+				this.currentDE = this.pressedOn;
 			}
 		} else {
 			if (!this.pressed || this.pressedOff == null) {
-				if (this.off != null) {
-					this.hitbox.min(this.off.getPos());
-					this.hitbox.max(this.off.getSize());
-				}
+				this.currentDE = this.off;
 			} else {
-				this.hitbox.min(this.pressedOff.getPos());
-				this.hitbox.max(this.pressedOff.getSize());
+				this.currentDE = this.pressedOff;
 			}
 		}
 	}
