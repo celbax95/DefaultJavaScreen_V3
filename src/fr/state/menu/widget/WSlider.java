@@ -4,6 +4,7 @@ import java.awt.Graphics2D;
 
 import fr.inputs.Input;
 import fr.inputs.mouse.MouseEvent;
+import fr.logger.Logger;
 import fr.state.menu.MenuPage;
 import fr.state.menu.Widget;
 import fr.util.Util;
@@ -166,6 +167,10 @@ public abstract class WSlider implements Widget {
 	 * @param bar the bar to set
 	 */
 	public void setBar(DrawElement bar) {
+		if (!bar.isLocked()) {
+			Logger.warn("L'element bar devrait etre verouille via la methode lock().");
+		}
+
 		this.bar = bar;
 
 		if (this.slider != null) {
@@ -234,6 +239,10 @@ public abstract class WSlider implements Widget {
 	}
 
 	public void setSlider(DrawElement slider) {
+		if (!slider.isLocked()) {
+			Logger.warn("L'element slider devrait etre verouille via la methode lock().");
+		}
+
 		this.slider = slider;
 
 		if (this.bar != null) {
