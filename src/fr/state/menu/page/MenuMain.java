@@ -17,7 +17,6 @@ import fr.state.menu.widget.WButton;
 import fr.state.menu.widget.WElement;
 import fr.state.menu.widget.WSlider;
 import fr.state.menu.widget.drawelements.DEImage;
-import fr.state.menu.widget.drawelements.DELabel;
 import fr.state.menu.widget.drawelements.DERectangle;
 import fr.util.point.Point;
 
@@ -140,14 +139,13 @@ public class MenuMain implements MenuPage {
 				Color.WHITE, 0);
 		td.lock();
 
-		DELabel l = new DELabel();
+		DEImage i = new DEImage();
 
-		l.setLabel(td);
-		l.lock();
+		i.setImage(ImageManager.getInstance().get("menuMain/title"));
+		i.lock();
 
-		title.setDrawElement(l);
-		int width = this.m.getMenuState().getStatePanel().getWidth();
-		title.setPos(new Point(width / 2 - td.getSize().ix() / 2, 80));
+		title.setDrawElement(i);
+		title.setPos(new Point(392, 54));
 
 		this.widgets.add(title);
 	}

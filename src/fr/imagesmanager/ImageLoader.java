@@ -9,7 +9,7 @@ public class ImageLoader {
 	public void loadAll() {
 		ImageManager im = ImageManager.getInstance();
 
-		im.add("menuMain/random", "/resources/menu/menuMain/random.jpg");
 		im.add("menuMain/background", "/resources/menu/menuMain/background.png");
+		im.add("menuMain/title", "/resources/menu/menuMain/title.png");
 	}
 }
