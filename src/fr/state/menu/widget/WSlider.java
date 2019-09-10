@@ -65,16 +65,19 @@ public abstract class WSlider implements Widget {
 		double fillup = (inputXClamped - this.minX) / xposScope;
 
 		// Valeur entiere uncluse dans [0 ; scope]
-		this.value = (int) Math.round(fillup * this.scope);
+		int tmpValue = (int) Math.round(fillup * this.scope);
 
 		// Changement de la position du slider
 		if (this.freeMove) {
 			this.sliderPos.x = inputXClamped;
-		} else {
-			this.sliderPos.x = this.minX + Math.round(this.value * xposScope / (double) this.scope);
+		} else if (tmpValue != this.value) {
+			this.sliderPos.x = this.minX + Math.round(tmpValue * xposScope / (double) this.scope);
 		}
 
-		this.valueChanged(this.value);
+		if (tmpValue != this.value) {
+			this.value = tmpValue;
+			this.valueChanged(this.value);
+		}
 	}
 
 	@Override
