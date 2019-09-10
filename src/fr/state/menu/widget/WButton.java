@@ -42,6 +42,22 @@ public abstract class WButton implements Widget {
 		this.currentDE = null;
 	}
 
+	public WButton(WButton other) {
+		this(other.page);
+		this.setPos(other.pos);
+		AABB hb = new AABB(this.pos, new Point(), new Point());
+		hb.min(new Point(other.hitbox.min()));
+		hb.max(new Point(other.hitbox.max()));
+
+		this.setHitbox(hb);
+
+		this.setStdDrawElement(other.stdDrawElement.clone());
+		this.setPressedDrawElement(other.pressedDrawElement.clone());
+		this.setPressed(false);
+		this.setCanPressed(other.canPressed);
+		this.setPage(other.page);
+	}
+
 	public abstract void action();
 
 	@Override

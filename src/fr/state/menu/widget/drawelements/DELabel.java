@@ -25,6 +25,13 @@ public class DELabel implements DrawElement {
 		this.label = null;
 	}
 
+	public DELabel(DELabel other) {
+		this();
+		this.setPos(new Point(other.pos));
+		this.setLabel(new TextData(other.label));
+		this.lock = false;
+	}
+
 	/**
 	 * @param pos
 	 * @param size
@@ -34,6 +41,11 @@ public class DELabel implements DrawElement {
 		this();
 		this.pos = pos;
 		this.label = label;
+	}
+
+	@Override
+	public DrawElement clone() {
+		return new DELabel(this);
 	}
 
 	@Override

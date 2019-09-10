@@ -52,6 +52,28 @@ public abstract class WSlider implements Widget {
 		this.page = page;
 	}
 
+	public WSlider(WSlider other) {
+		this(other.page);
+		this.setPos(new Point(other.pos));
+
+		AABB hb = new AABB(this.pos, new Point(), new Point());
+		hb.min(new Point(other.hitbox.min()));
+		hb.max(new Point(other.hitbox.max()));
+
+		this.setHitbox(hb);
+
+		this.setBar(other.bar.clone());
+		this.setSlider(other.slider.clone());
+		this.setScope(this.scope);
+		this.setValue(0);
+		this.setMinX(other.minX);
+		this.setMaxX(other.maxX);
+		this.setSliderPos(new Point(this.minX, other.sliderPos.y));
+		this.setPressed(false);
+		this.setFreeMove(other.freeMove);
+		this.setPage(other.page);
+	}
+
 	private void changeValue(int inputX) {
 
 		// Pour que la souris soit au centre du widget
@@ -211,6 +233,14 @@ public abstract class WSlider implements Widget {
 		this.hitbox.max(max);
 	}
 
+	private void setMaxX(int maxX) {
+		this.maxX = maxX;
+	}
+
+	private void setMinX(int minX) {
+		this.minX = minX;
+	}
+
 	/**
 	 * @param page the page to set
 	 */
@@ -248,6 +278,10 @@ public abstract class WSlider implements Widget {
 		if (this.bar != null) {
 			this.initDrawElements();
 		}
+	}
+
+	private void setSliderPos(Point sliderPos) {
+		this.sliderPos = sliderPos;
 	}
 
 	/**

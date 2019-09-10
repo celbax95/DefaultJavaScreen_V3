@@ -29,8 +29,8 @@ public class DEImage implements DrawElement {
 	private LabelDrawer labelDrawer;
 
 	private BorderDrawer borderDrawer;
-	private Point pos;
 
+	private Point pos;
 	private Point size;
 
 	private BorderData border;
@@ -66,6 +66,16 @@ public class DEImage implements DrawElement {
 			}
 		};
 		this.borderDrawer.prevBorderState = -1;
+	}
+
+	public DEImage(DEImage other) {
+		this();
+		this.lock = false;
+		this.setPos(new Point(other.pos));
+		this.setSize(new Point(other.size));
+		this.border = new BorderData(other.border);
+		this.label = new TextData(other.label);
+		this.setImage(this.image);
 	}
 
 	/**
@@ -145,6 +155,11 @@ public class DEImage implements DrawElement {
 			};
 			break;
 		}
+	}
+
+	@Override
+	public DrawElement clone() {
+		return new DEImage(this);
 	}
 
 	@Override
@@ -267,5 +282,9 @@ public class DEImage implements DrawElement {
 		if (this.lock)
 			return;
 		this.pos = pos;
+	}
+
+	private void setSize(Point size) {
+		this.size = size;
 	}
 }

@@ -20,6 +20,13 @@ public class WElement implements Widget {
 		this.drawElement = null;
 	}
 
+	public WElement(WElement other) {
+		this(other.page);
+		this.setDrawElement(other.drawElement.clone());
+		this.setPos(other.pos);
+		this.setPage(other.page);
+	}
+
 	@Override
 	public void draw(Graphics2D g) {
 		this.drawElement.draw(g, this.pos);

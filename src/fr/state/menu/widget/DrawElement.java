@@ -5,6 +5,8 @@ import java.awt.Graphics2D;
 import fr.util.point.Point;
 
 public interface DrawElement {
+	DrawElement clone();
+
 	void draw(Graphics2D g, Point ref);
 
 	Point getPos();

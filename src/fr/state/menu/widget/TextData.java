@@ -59,6 +59,18 @@ public class TextData {
 		this.setState(state);
 	}
 
+	public TextData(TextData other) {
+		this();
+		this.setPos(new Point(other.pos));
+		this.setSize(new Point(other.size));
+		this.font = new Font(this.font.getFamily(), this.font.getStyle(), this.font.getSize());
+		this.setText(new String(other.text));
+		this.setColor(new Color(other.color.getRed(), other.color.getGreen(), other.color.getBlue(),
+				other.color.getAlpha()));
+		this.state = other.state;
+		this.lock = false;
+	}
+
 	/**
 	 * @return the color
 	 */
@@ -146,6 +158,9 @@ public class TextData {
 
 		this.size.set(new Point(this.font.getStringBounds(this.text, frc).getWidth(),
 				this.font.getStringBounds(this.text, frc).getHeight()));
+	}
+
+	private void setSize(Point point) {
 	}
 
 	/**

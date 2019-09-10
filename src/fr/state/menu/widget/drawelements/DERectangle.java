@@ -29,8 +29,8 @@ public class DERectangle implements DrawElement {
 	private Point pos;
 
 	private Point halfSize;
-	private Point size;
 
+	private Point size;
 	private Color color;
 
 	private BorderData border;
@@ -63,6 +63,18 @@ public class DERectangle implements DrawElement {
 			}
 		};
 		this.borderDrawer.prevBorderState = -1;
+	}
+
+	public DERectangle(DERectangle other) {
+		this();
+		this.setPos(new Point(other.pos));
+		this.setHalfSize(new Point(other.halfSize));
+		this.setSize(new Point(other.size));
+		this.setColor(new Color(other.color.getRed(), other.color.getGreen(), other.color.getBlue(),
+				other.color.getAlpha()));
+		this.border = new BorderData(other.border);
+		this.label = new TextData(other.label);
+		this.lock = false;
 	}
 
 	/**
@@ -183,6 +195,11 @@ public class DERectangle implements DrawElement {
 	}
 
 	@Override
+	public DrawElement clone() {
+		return new DERectangle(this);
+	}
+
+	@Override
 	public void draw(Graphics2D g, Point ref) {
 
 		Point absp = ref.clone().add(this.pos);
@@ -284,6 +301,10 @@ public class DERectangle implements DrawElement {
 		if (this.lock)
 			return;
 		this.color = color;
+	}
+
+	private void setHalfSize(Point halfSize) {
+		this.halfSize = halfSize;
 	}
 
 	/**

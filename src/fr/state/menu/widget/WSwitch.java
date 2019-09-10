@@ -51,6 +51,24 @@ public abstract class WSwitch implements Widget {
 		this.currentDE = null;
 	}
 
+	public WSwitch(WSwitch other) {
+		this(other.page);
+
+		this.setPos(new Point(other.pos));
+		this.setOnDrawElement(other.on.clone());
+		this.setPressedOnDrawElement(other.pressedOn.clone());
+		this.setOffDrawElement(other.off.clone());
+		this.setPressedOffDrawElement(other.pressedOff.clone());
+
+		AABB hb = new AABB(this.pos, new Point(), new Point());
+		hb.min(new Point(other.hitbox.min()));
+		hb.max(new Point(other.hitbox.max()));
+
+		this.setActive(other.active);
+		this.setPressed(false);
+		this.setPage(other.page);
+	}
+
 	public abstract void actionOff();
 
 	public abstract void actionOn();
@@ -147,6 +165,10 @@ public abstract class WSwitch implements Widget {
 				this.actionOff();
 			}
 		}
+	}
+
+	private void setCurrentDE(DrawElement currentDE) {
+		this.currentDE = currentDE;
 	}
 
 	/**
