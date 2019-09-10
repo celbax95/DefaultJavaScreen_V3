@@ -139,6 +139,11 @@ public abstract class WSwitch implements Widget {
 		if (active != this.active) {
 			this.active = active;
 			this.updateCurrentDE();
+			if (this.active) {
+				this.actionOff();
+			} else {
+				this.actionOn();
+			}
 		}
 	}
 
@@ -220,23 +225,20 @@ public abstract class WSwitch implements Widget {
 	@Override
 	public void update(Input input) {
 		for (MouseEvent e : input.mouseEvents) {
-			// on button
-			if (Collider.AABBvsPoint(this.hitbox, e.pos)) {
-				switch (e.id) {
-				case MouseEvent.LEFT_RELEASED:
-					if (this.active) {
-						this.actionOff();
-					} else {
-						this.actionOn();
-					}
-					this.setActive(!this.active);
-					break;
+			switch (e.id) {
+			case MouseEvent.LEFT_PRESSED:
+				if (Collider.AABBvsPoint(this.hitbox, e.pos)) {
+					this.setPressed(true);
 				}
+				continue;
+			case MouseEvent.LEFT_RELEASED:
+				this.setPressed(false);
+				if (Collider.AABBvsPoint(this.hitbox, e.pos) && this.pressed) {
+					this.setActive(!this.active);
+				}
+				continue;
 			}
 		}
-
-		this.setPressed(input.mouseButtons.get(Input.MOUSE_LEFT)
-				&& Collider.AABBvsPoint(this.hitbox, input.mousePos));
 	}
 
 	private void updateCurrentDE() {

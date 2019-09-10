@@ -140,21 +140,22 @@ public abstract class WButton implements Widget {
 
 	@Override
 	public void update(Input input) {
-
 		for (MouseEvent e : input.mouseEvents) {
-			// on button
-			if (Collider.AABBvsPoint(this.hitbox, e.pos)) {
-				switch (e.id) {
-				case MouseEvent.LEFT_RELEASED:
+			switch (e.id) {
+			case MouseEvent.LEFT_PRESSED:
+				if (Collider.AABBvsPoint(this.hitbox, e.pos)) {
+					this.setPressed(true);
+				}
+				continue;
+			case MouseEvent.LEFT_RELEASED:
+				this.setPressed(false);
+				if (Collider.AABBvsPoint(this.hitbox, e.pos)) {
 					if (this.pressed) {
 						this.action();
 					}
-					break;
 				}
+				continue;
 			}
 		}
-
-		this.setPressed(input.mouseButtons.get(Input.MOUSE_LEFT)
-				&& Collider.AABBvsPoint(this.hitbox, input.mousePos));
 	}
 }

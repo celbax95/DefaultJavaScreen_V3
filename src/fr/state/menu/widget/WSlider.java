@@ -6,6 +6,7 @@ import fr.inputs.Input;
 import fr.inputs.mouse.MouseEvent;
 import fr.state.menu.MenuPage;
 import fr.state.menu.Widget;
+import fr.util.Util;
 import fr.util.collider.AABB;
 import fr.util.collider.Collider;
 import fr.util.point.Point;
@@ -16,10 +17,6 @@ public abstract class WSlider implements Widget {
 
 	private AABB hitbox;
 
-	private Point barPos, sliderPos;
-
-	private int minX, maxX;
-
 	private DrawElement bar;
 
 	private DrawElement slider;
@@ -27,9 +24,14 @@ public abstract class WSlider implements Widget {
 	private int scope;
 	private int value; // [0 ; scope]
 
-	private int inputXClamped;
+	private int minX, maxX;
+
+	// Position du slider
+	private Point sliderPos;
 
 	private boolean pressed;
+
+	private boolean freeMove;
 
 	private MenuPage page;
 
@@ -40,41 +42,60 @@ public abstract class WSlider implements Widget {
 
 		this.pressed = false;
 
-		this.inputXClamped = 0;
+		this.sliderPos = new Point();
 
-		// Positions par defaut
-		this.barPos = null;
-
-		this.sliderPos = null;
+		this.freeMove = false;
 
 		this.page = null;
 	}
 
-	private Point calcBarPos() {
+	private void changeValue(int inputX) {
 
-	}
+		int xposScope = this.maxX - this.minX;
 
-	private Point calcSliderPos() {
+		// Clamp the value between [minX ; maxX]
+		double inputXClamped = Util.clamp(inputX, this.minX, this.maxX);
 
-	}
+		// Pourcentage de remplissage
+		double fillup = (inputXClamped - this.minX) / xposScope;
 
-	private void changeValue(int inputXClamped) {
+		// Valeur entiere uncluse dans [0 ; scope]
+		this.value = (int) Math.round(fillup * this.scope);
 
-	}
+		// Changement de la position du slider
+		if (this.freeMove) {
+			this.sliderPos.x = inputXClamped;
+		} else {
+			this.sliderPos.x = this.minX + Math.round(fillup * xposScope);
+		}
 
-	private int clampX(int x) {
-
+		this.valueChanged(this.value);
 	}
 
 	@Override
 	public void draw(Graphics2D g) {
+		this.bar.draw(g, this.pos);
+
+		this.slider.draw(g, this.pos.clone().add(this.sliderPos));
+	}
+
+	private void initDrawElements() {
 		if (this.bar == null || this.slider == null)
 			return;
 
-		this.bar.draw(g);
+		this.minX = this.pos.ix() + this.bar.getPos().ix();
+		this.maxX = this.pos.ix() + this.bar.getPos().ix() + this.bar.getSize().ix()
+				- this.slider.getSize().ix();
 
-		this.slider.setPos(this.calcSliderPos());
-		this.slider.draw(g);
+		this.sliderPos = new Point(this.minX, this.pos.iy() + this.bar.getPos().iy()
+				- (this.slider.getSize().iy() - this.bar.getSize().iy()) / 2);
+	}
+
+	/**
+	 * @return the pressed
+	 */
+	public boolean isPressed() {
+		return this.pressed;
 	}
 
 	/**
@@ -83,86 +104,70 @@ public abstract class WSlider implements Widget {
 	public void setBar(DrawElement bar) {
 		this.bar = bar;
 
-		if (this.slider == null) {
-			this.barPos = new Point();
-
-			this.minX = this.pos.ix() + bar.getPos().ix();
-			this.maxX = this.pos.ix() + bar.getPos().ix() + bar.getSize().ix();
-		} else {
-			int dy = (this.slider.getSize().iy() - bar.getSize().iy()) / 2;
-
-			this.barPos = this.pos.clone();
-
-			this.pos.y -= dy;
-			this.barPos.y += dy;
-
-			this.minX = this.pos.ix() + bar.getPos().ix();
-			this.maxX = this.pos.ix() + bar.getPos().ix() + bar.getSize().ix() - this.slider.getSize().ix();
+		if (this.slider != null) {
+			this.initDrawElements();
 		}
 	}
 
+	public void setHitboxFromDrawElement() {
+		int minBY = 0, minSY = 0, maxBY = 0, maxSY = 0;
+
+		Point min = null, max = null;
+
+		minBY = this.pos.iy() + this.bar.getPos().iy();
+		minSY = this.pos.iy() + this.sliderPos.iy() + this.slider.getPos().iy();
+
+		min = new Point(this.minX, minBY <= minSY ? minBY : minSY);
+
+		maxBY = minBY + this.bar.getSize().iy();
+		maxSY = minSY + this.slider.getSize().iy();
+
+		max = new Point(this.maxX, maxBY >= maxSY ? maxBY : maxSY);
+
+		this.hitbox.min(min);
+		this.hitbox.max(max);
+	}
+
 	public void setPos(Point pos) {
-		this.pos = pos;
+		this.pos.set(pos);
+	}
 
-		if (this.bar != null) {
-			this.bar.setPos(this.calcBarPos());
-		}
-
-		if (this.slider != null) {
-			this.slider.setPos(this.calcSliderPos());
-		}
+	/**
+	 * @param pressed the pressed to set
+	 */
+	public void setPressed(boolean pressed) {
+		this.pressed = pressed;
 	}
 
 	public void setSlider(DrawElement slider) {
 		this.slider = slider;
 
-		if (this.bar == null) {
-			this.sliderPos = new Point();
-		} else {
-			this.setBar(this.bar);
-
-			this.sliderPos = this.barPos.clone();
-
-
-
-			this.sliderPos.y -=
+		if (this.bar != null) {
+			this.initDrawElements();
 		}
 	}
 
 	@Override
 	public void update(Input input) {
-		Integer inputX = null;
-
 		for (MouseEvent e : input.mouseEvents) {
-
-			// out of
 			switch (e.id) {
 			case MouseEvent.LEFT_RELEASED:
-				this.pressed = false;
-				break;
+				this.setPressed(false);
+				continue;
 			case MouseEvent.MOVE:
 				if (this.pressed) {
+					this.changeValue(e.pos.ix());
 				}
-				break;
+				continue;
+			case MouseEvent.LEFT_PRESSED:
+				if (Collider.AABBvsPoint(this.hitbox, e.pos)) {
+					this.setPressed(true);
+					this.changeValue(e.pos.ix());
+				}
+				continue;
 			default:
 				break;
 			}
-
-			// on
-			if (Collider.AABBvsPoint(this.hitbox, e.pos)) {
-				switch (e.id) {
-				case MouseEvent.LEFT_PRESSED:
-					this.pressed = true;
-					inputX = e.pos.ix();
-					break;
-				default:
-					break;
-				}
-			}
-		}
-		if (inputX != null) {
-			this.inputXClamped = this.clampX(inputX);
-			this.changeValue(this.inputXClamped);
 		}
 	}
 
