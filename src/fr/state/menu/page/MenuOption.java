@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Vector;
 
 import fr.inputs.Input;
+import fr.logger.Logger;
 import fr.state.menu.Menu;
 import fr.state.menu.MenuPage;
 import fr.state.menu.Widget;
@@ -89,12 +90,12 @@ public class MenuOption implements MenuPage {
 		WSwitch s = new WSwitch(this) {
 			@Override
 			public void actionOff() {
-				System.out.println("inactive...");
+				Logger.obs("SwitchButton : non active");
 			}
 
 			@Override
 			public void actionOn() {
-				System.out.println("active !");
+				Logger.obs("SwitchButton : active");
 			}
 		};
 		TextData label1 = new TextData(new Point(), new Font("Arial", Font.PLAIN, 20), "Active moiiiii",

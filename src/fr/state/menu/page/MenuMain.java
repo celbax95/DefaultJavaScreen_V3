@@ -9,6 +9,7 @@ import java.util.Vector;
 import fr.imagesmanager.ImageLoader;
 import fr.imagesmanager.ImageManager;
 import fr.inputs.Input;
+import fr.logger.Logger;
 import fr.state.menu.Menu;
 import fr.state.menu.MenuPage;
 import fr.state.menu.Widget;
@@ -107,7 +108,7 @@ public class MenuMain implements MenuPage {
 		WSlider s = new WSlider(this) {
 			@Override
 			public void valueChanged(int value) {
-				System.out.println(value);
+				Logger.obs("Valeur du slider : " + value);
 			}
 		};
 
