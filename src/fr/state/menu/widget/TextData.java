@@ -21,6 +21,8 @@ public class TextData {
 
 	private int state;
 
+	private boolean lock;
+
 	/**
 	 * @param pos
 	 * @param size
@@ -37,6 +39,7 @@ public class TextData {
 		this.text = "";
 		this.color = Color.black;
 		this.state = 0;
+		this.lock = false;
 	}
 
 	/**
@@ -48,7 +51,7 @@ public class TextData {
 	 * @param state
 	 */
 	public TextData(Point pos, Font font, String text, Color color, int state) {
-		super();
+		this();
 		this.setPos(pos);
 		this.setFont(font);
 		this.setText(text);
@@ -57,6 +60,8 @@ public class TextData {
 	}
 
 	private Point calcSize() {
+		assert this.font != null && this.text != null;
+
 		AffineTransform affinetransform = new AffineTransform();
 		FontRenderContext frc = new FontRenderContext(affinetransform, true, true);
 
@@ -106,10 +111,20 @@ public class TextData {
 		return this.text;
 	}
 
+	public boolean isLocked() {
+		return this.lock;
+	}
+
+	public void lock() {
+		this.lock = true;
+	}
+
 	/**
 	 * @param color the color to set
 	 */
 	public void setColor(Color color) {
+		if (this.lock)
+			return;
 		assert color != null;
 		this.color = color;
 	}
@@ -118,6 +133,8 @@ public class TextData {
 	 * @param font the font to set
 	 */
 	public void setFont(Font font) {
+		if (this.lock)
+			return;
 		assert font != null;
 		this.font = font;
 		this.calcSize();
@@ -127,6 +144,8 @@ public class TextData {
 	 * @param pos the pos to set
 	 */
 	public void setPos(Point pos) {
+		if (this.lock)
+			return;
 		assert pos != null;
 		this.pos = pos;
 	}
@@ -135,6 +154,8 @@ public class TextData {
 	 * @param state the state to set
 	 */
 	public void setState(int state) {
+		if (this.lock)
+			return;
 		assert state >= 0;
 		this.state = state;
 	}
@@ -143,6 +164,8 @@ public class TextData {
 	 * @param text the text to set
 	 */
 	public void setText(String text) {
+		if (this.lock)
+			return;
 		assert text != null;
 		this.text = text;
 		this.calcSize();

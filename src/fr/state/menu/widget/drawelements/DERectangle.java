@@ -24,10 +24,11 @@ public class DERectangle implements DrawElement {
 		public abstract void draw(Graphics2D g, Point absp);
 	}
 
+	private boolean lock;
+
 	private Point pos;
 
 	private Point halfSize;
-
 	private Point size;
 
 	private Color color;
@@ -257,10 +258,22 @@ public class DERectangle implements DrawElement {
 		return this.size;
 	}
 
+	@Override
+	public boolean isLocked() {
+		return this.lock;
+	}
+
+	@Override
+	public void lock() {
+		this.lock = true;
+	}
+
 	/**
 	 * @param border the border to set
 	 */
 	public void setBorder(BorderData border) {
+		if (this.lock)
+			return;
 		this.border = border;
 	}
 
@@ -268,6 +281,8 @@ public class DERectangle implements DrawElement {
 	 * @param color the color to set
 	 */
 	public void setColor(Color color) {
+		if (this.lock)
+			return;
 		this.color = color;
 	}
 
@@ -275,6 +290,8 @@ public class DERectangle implements DrawElement {
 	 * @param label the label to set
 	 */
 	public void setLabel(TextData label) {
+		if (this.lock)
+			return;
 		this.label = label;
 	}
 
@@ -283,6 +300,8 @@ public class DERectangle implements DrawElement {
 	 */
 	@Override
 	public void setPos(Point pos) {
+		if (this.lock)
+			return;
 		this.pos = pos;
 	}
 
@@ -290,6 +309,8 @@ public class DERectangle implements DrawElement {
 	 * @param size the size to set
 	 */
 	public void setSize(Point size) {
+		if (this.lock)
+			return;
 		this.size = size;
 		this.halfSize = size.clone().div(2);
 	}

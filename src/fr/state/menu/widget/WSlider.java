@@ -35,18 +35,20 @@ public abstract class WSlider implements Widget {
 
 	private MenuPage page;
 
-	public WSlider(MenuPage p) {
+	public WSlider(MenuPage page) {
+		super();
 		this.pos = new Point();
-
+		this.hitbox = new AABB(this.pos, this.pos, this.pos);
+		this.bar = null;
+		this.slider = null;
 		this.scope = 0;
-
-		this.pressed = false;
-
+		this.value = 0;
+		this.minX = 0;
+		this.maxX = 0;
 		this.sliderPos = new Point();
-
+		this.pressed = false;
 		this.freeMove = false;
-
-		this.page = null;
+		this.page = page;
 	}
 
 	private void changeValue(int inputX) {
@@ -79,6 +81,55 @@ public abstract class WSlider implements Widget {
 		this.slider.draw(g, this.pos.clone().add(this.sliderPos));
 	}
 
+	/**
+	 * @return the bar
+	 */
+	public DrawElement getBar() {
+		return this.bar;
+	}
+
+	/**
+	 * @return the hitbox
+	 */
+	public AABB getHitbox() {
+		return this.hitbox;
+	}
+
+	/**
+	 * @return the page
+	 */
+	public MenuPage getPage() {
+		return this.page;
+	}
+
+	/**
+	 * @return the pos
+	 */
+	public Point getPos() {
+		return this.pos;
+	}
+
+	/**
+	 * @return the scope
+	 */
+	public int getScope() {
+		return this.scope;
+	}
+
+	/**
+	 * @return the slider
+	 */
+	public DrawElement getSlider() {
+		return this.slider;
+	}
+
+	/**
+	 * @return the value
+	 */
+	public int getValue() {
+		return this.value;
+	}
+
 	private void initDrawElements() {
 		if (this.bar == null || this.slider == null)
 			return;
@@ -89,6 +140,13 @@ public abstract class WSlider implements Widget {
 
 		this.sliderPos = new Point(this.minX, this.pos.iy() + this.bar.getPos().iy()
 				- (this.slider.getSize().iy() - this.bar.getSize().iy()) / 2);
+	}
+
+	/**
+	 * @return the freeMove
+	 */
+	public boolean isFreeMove() {
+		return this.freeMove;
 	}
 
 	/**
@@ -107,6 +165,20 @@ public abstract class WSlider implements Widget {
 		if (this.slider != null) {
 			this.initDrawElements();
 		}
+	}
+
+	/**
+	 * @param freeMove the freeMove to set
+	 */
+	public void setFreeMove(boolean freeMove) {
+		this.freeMove = freeMove;
+	}
+
+	/**
+	 * @param hitbox the hitbox to set
+	 */
+	public void setHitbox(AABB hitbox) {
+		this.hitbox = hitbox;
 	}
 
 	public void setHitboxFromDrawElement() {
@@ -128,8 +200,17 @@ public abstract class WSlider implements Widget {
 		this.hitbox.max(max);
 	}
 
+	/**
+	 * @param page the page to set
+	 */
+	public void setPage(MenuPage page) {
+		this.page = page;
+	}
+
 	public void setPos(Point pos) {
 		this.pos.set(pos);
+
+		this.initDrawElements();
 	}
 
 	/**
@@ -139,12 +220,26 @@ public abstract class WSlider implements Widget {
 		this.pressed = pressed;
 	}
 
+	/**
+	 * @param scope the scope to set
+	 */
+	public void setScope(int scope) {
+		this.scope = scope;
+	}
+
 	public void setSlider(DrawElement slider) {
 		this.slider = slider;
 
 		if (this.bar != null) {
 			this.initDrawElements();
 		}
+	}
+
+	/**
+	 * @param value the value to set
+	 */
+	public void setValue(int value) {
+		this.value = value;
 	}
 
 	@Override

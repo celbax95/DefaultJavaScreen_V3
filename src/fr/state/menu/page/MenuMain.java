@@ -12,12 +12,12 @@ import fr.inputs.Input;
 import fr.state.menu.Menu;
 import fr.state.menu.MenuPage;
 import fr.state.menu.Widget;
-import fr.state.menu.widget.BorderData;
 import fr.state.menu.widget.TextData;
 import fr.state.menu.widget.WButton;
 import fr.state.menu.widget.WElement;
-import fr.state.menu.widget.WLabel;
 import fr.state.menu.widget.WSlider;
+import fr.state.menu.widget.drawelements.DEImage;
+import fr.state.menu.widget.drawelements.DERectangle;
 import fr.util.point.Point;
 
 public class MenuMain implements MenuPage {
@@ -37,9 +37,9 @@ public class MenuMain implements MenuPage {
 		im.loadAll();
 
 		this.wBackground();
-		this.wButtonToOption();
-		this.wTitle();
-		this.wSlide();
+//		this.wButtonToOption();
+//		this.wTitle();
+//		this.wSlide();
 	}
 
 	@Override
@@ -59,8 +59,12 @@ public class MenuMain implements MenuPage {
 	private void wBackground() {
 		WElement i = new WElement(this);
 
+		DEImage image = new DEImage();
+
+		image.setImage(ImageManager.getInstance().get("menuMain/background"));
+
 		i.setPos(new Point(416, 0));
-		i.setImage(ImageManager.getInstance().get("menuMain/background"));
+		i.setDrawElement(image);
 
 		this.widgets.add(i);
 	}
@@ -73,11 +77,28 @@ public class MenuMain implements MenuPage {
 			}
 		};
 
-		b.setLabel(new TextData(new Font("Arial", Font.BOLD, 22), "OPTIONS", Color.RED, Color.RED));
-		b.setColor(Color.BLUE);
-		b.setPressedColor(Color.CYAN);
+		DERectangle rect1 = new DERectangle();
+
+		TextData label = new TextData(new Point(), new Font("Arial", Font.BOLD, 22), "OPTIONS", Color.RED, 2);
+
+		label.lock();
+
+		rect1.setLabel(label);
+		rect1.setColor(Color.BLUE);
+		rect1.setSize(new Point(200, 200));
+		rect1.lock();
+
+		DERectangle rect2 = new DERectangle();
+
+		rect2.setLabel(label);
+		rect2.setColor(Color.CYAN);
+		rect2.setSize(new Point(200, 200));
+		rect2.lock();
+
 		b.setPos(new Point(200, 200));
-		b.setSize(new Point(200, 200));
+		b.setStdDrawElement(rect1);
+		b.setPressedDrawElement(rect2);
+		b.setHitboxFromDrawElement();
 
 		this.widgets.add(b);
 
@@ -92,25 +113,36 @@ public class MenuMain implements MenuPage {
 			}
 		};
 
+		DERectangle bar = new DERectangle();
+
+		bar.setColor(Color.WHITE);
+		bar.setSize(new Point(300, 20));
+		bar.lock();
+
+		DERectangle slider = new DERectangle();
+
+		slider.setColor(Color.WHITE);
+		slider.setSize(new Point(20, 40));
+		slider.lock();
+
 		s.setPos(new Point(300, 500));
-		s.setSize(new Point(300, 40));
-		s.setSlideWidth(14);
-		s.setBarHeightScale(0.2);
-		s.setClicNumber(1);
-		s.setBarColor(Color.white);
-		s.setSlideColor(Color.red);
-		s.setBorder(new BorderData(2, Color.BLACK, Color.BLACK));
+		s.setBar(bar);
+		s.setSlider(slider);
+		s.setScope(1);
+		s.setHitboxFromDrawElement();
 
 		this.widgets.add(s);
 	}
 
 	private void wTitle() {
-		WLabel title = new WLabel(this);
-		title.setTextData(new TextData(new Font("Copperplate Gothic Bold", Font.PLAIN, 45), "MENU",
-				Color.WHITE, Color.WHITE));
+		WElement title = new WElement(this);
+
+		TextData td = new TextData(new Point(), new Font("Copperplate Gothic Bold", Font.PLAIN, 45), "MENU",
+				Color.WHITE, 0);
+		td.lock();
 
 		int width = this.m.getMenuState().getStatePanel().getWidth();
-		title.setPos(new Point(width / 2 - title.getTextData().getSize().ix() / 2, 80));
+		title.setPos(new Point(width / 2 - td.getSize().ix() / 2, 80));
 
 		this.widgets.add(title);
 	}

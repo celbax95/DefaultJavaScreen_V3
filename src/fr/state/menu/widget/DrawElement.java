@@ -11,5 +11,9 @@ public interface DrawElement {
 
 	Point getSize();
 
+	boolean isLocked();
+
+	void lock();
+
 	void setPos(Point pos);
 }

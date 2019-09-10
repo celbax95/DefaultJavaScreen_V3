@@ -10,14 +10,17 @@ public class BorderData {
 
 	private int state;
 
+	private boolean lock;
+
 	public BorderData() {
+		super();
 		this.thickness = 0;
 		this.color = Color.BLACK;
 		this.state = 0;
 	}
 
 	public BorderData(int thickness, Color color, int state) {
-		super();
+		this();
 		this.setThickness(thickness);
 		this.setColor(color);
 		this.setState(state);
@@ -44,10 +47,20 @@ public class BorderData {
 		return this.thickness;
 	}
 
+	public boolean isLocked() {
+		return this.lock;
+	}
+
+	public void lock() {
+		this.lock = true;
+	}
+
 	/**
 	 * @param color the color to set
 	 */
 	public void setColor(Color color) {
+		if (this.lock)
+			return;
 		assert color != null;
 		this.color = color;
 	}
@@ -56,6 +69,8 @@ public class BorderData {
 	 * @param state the state to set
 	 */
 	public void setState(int state) {
+		if (this.lock)
+			return;
 		assert state >= 0;
 		this.state = state;
 	}
@@ -64,6 +79,8 @@ public class BorderData {
 	 * @param size the size to set
 	 */
 	public void setThickness(int size) {
+		if (this.lock)
+			return;
 		assert size >= 0;
 		this.thickness = size;
 	}

@@ -10,6 +10,8 @@ public class DELabel implements DrawElement {
 
 	private Point pos;
 
+	private boolean lock;
+
 	private TextData label;
 
 	/**
@@ -67,10 +69,22 @@ public class DELabel implements DrawElement {
 		return this.label.getSize();
 	}
 
+	@Override
+	public boolean isLocked() {
+		return this.lock;
+	}
+
+	@Override
+	public void lock() {
+		this.lock = true;
+	}
+
 	/**
 	 * @param label the label to set
 	 */
 	public void setLabel(TextData label) {
+		if (this.lock)
+			return;
 		this.label = label;
 	}
 
@@ -79,6 +93,8 @@ public class DELabel implements DrawElement {
 	 */
 	@Override
 	public void setPos(Point pos) {
+		if (this.lock)
+			return;
 		this.pos = pos;
 	}
 }

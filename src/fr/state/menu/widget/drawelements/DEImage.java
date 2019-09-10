@@ -24,10 +24,11 @@ public class DEImage implements DrawElement {
 		public abstract void draw(Graphics2D g, Point absp);
 	}
 
+	private boolean lock;
+
 	private LabelDrawer labelDrawer;
 
 	private BorderDrawer borderDrawer;
-
 	private Point pos;
 
 	private Point size;
@@ -219,10 +220,22 @@ public class DEImage implements DrawElement {
 		return this.size;
 	}
 
+	@Override
+	public boolean isLocked() {
+		return this.lock;
+	}
+
+	@Override
+	public void lock() {
+		this.lock = true;
+	}
+
 	/**
 	 * @param border the border to set
 	 */
 	public void setBorder(BorderData border) {
+		if (this.lock)
+			return;
 		this.border = border;
 	}
 
@@ -230,6 +243,8 @@ public class DEImage implements DrawElement {
 	 * @param image the image to set
 	 */
 	public void setImage(Image image) {
+		if (this.lock)
+			return;
 		assert image != null;
 		this.image = image;
 		this.size.set(image.getWidth(null), image.getHeight(null));
@@ -239,6 +254,8 @@ public class DEImage implements DrawElement {
 	 * @param label the label to set
 	 */
 	public void setLabel(TextData label) {
+		if (this.lock)
+			return;
 		this.label = label;
 	}
 
@@ -247,6 +264,8 @@ public class DEImage implements DrawElement {
 	 */
 	@Override
 	public void setPos(Point pos) {
+		if (this.lock)
+			return;
 		this.pos = pos;
 	}
 }

@@ -10,10 +10,13 @@ import fr.util.point.Point;
 public class WElement implements Widget {
 	private DrawElement drawElement;
 
+	private Point pos;
+
 	private MenuPage page;
 
 	public WElement(MenuPage p) {
 		this.page = p;
+		this.pos = new Point();
 		this.drawElement = null;
 	}
 
@@ -34,7 +37,7 @@ public class WElement implements Widget {
 	}
 
 	public Point getPos() {
-		return this.drawElement.getPos();
+		return this.pos;
 	}
 
 	public Point getSize() {
@@ -53,7 +56,7 @@ public class WElement implements Widget {
 	}
 
 	public void setPos(Point pos) {
-		this.drawElement.setPos(pos);
+		this.pos.set(pos);
 	}
 
 	@Override
