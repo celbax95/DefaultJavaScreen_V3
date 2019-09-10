@@ -30,9 +30,9 @@ public class MenuOption implements MenuPage {
 
 		this.widgets = new Vector<>();
 
-		this.wButtonToMenu();
-		this.wTitle();
-		this.wSwitch();
+//		this.wButtonToMenu();
+//		this.wTitle();
+//		this.wSwitch();
 	}
 
 	@Override

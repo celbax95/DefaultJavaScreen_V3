@@ -22,7 +22,7 @@ public class WElement implements Widget {
 
 	@Override
 	public void draw(Graphics2D g) {
-		this.drawElement.draw(g, new Point());
+		this.drawElement.draw(g, this.pos);
 	}
 
 	/**
