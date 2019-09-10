@@ -138,11 +138,13 @@ public abstract class WSwitch implements Widget {
 	public void setActive(boolean active) {
 		if (active != this.active) {
 			this.active = active;
+
 			this.updateCurrentDE();
+
 			if (this.active) {
-				this.actionOff();
-			} else {
 				this.actionOn();
+			} else {
+				this.actionOff();
 			}
 		}
 	}
@@ -232,10 +234,10 @@ public abstract class WSwitch implements Widget {
 				}
 				continue;
 			case MouseEvent.LEFT_RELEASED:
-				this.setPressed(false);
 				if (Collider.AABBvsPoint(this.hitbox, e.pos) && this.pressed) {
 					this.setActive(!this.active);
 				}
+				this.setPressed(false);
 				continue;
 			}
 		}

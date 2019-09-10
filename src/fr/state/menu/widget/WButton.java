@@ -148,12 +148,12 @@ public abstract class WButton implements Widget {
 				}
 				continue;
 			case MouseEvent.LEFT_RELEASED:
-				this.setPressed(false);
 				if (Collider.AABBvsPoint(this.hitbox, e.pos)) {
 					if (this.pressed) {
 						this.action();
 					}
 				}
+				this.setPressed(false);
 				continue;
 			}
 		}

@@ -53,6 +53,9 @@ public abstract class WSlider implements Widget {
 
 	private void changeValue(int inputX) {
 
+		// Pour que la souris soit au centre du widget
+		inputX -= this.slider.getSize().ix() / 2;
+
 		int xposScope = this.maxX - this.minX;
 
 		// Clamp the value between [minX ; maxX]
@@ -68,7 +71,7 @@ public abstract class WSlider implements Widget {
 		if (this.freeMove) {
 			this.sliderPos.x = inputXClamped;
 		} else {
-			this.sliderPos.x = this.minX + Math.round(fillup * xposScope);
+			this.sliderPos.x = this.minX + Math.round(this.value * xposScope / (double) this.scope);
 		}
 
 		this.valueChanged(this.value);
@@ -78,7 +81,7 @@ public abstract class WSlider implements Widget {
 	public void draw(Graphics2D g) {
 		this.bar.draw(g, this.pos);
 
-		this.slider.draw(g, this.pos.clone().add(this.sliderPos));
+		this.slider.draw(g, this.sliderPos);
 	}
 
 	/**
@@ -194,7 +197,7 @@ public abstract class WSlider implements Widget {
 		maxBY = minBY + this.bar.getSize().iy();
 		maxSY = minSY + this.slider.getSize().iy();
 
-		max = new Point(this.maxX, maxBY >= maxSY ? maxBY : maxSY);
+		max = new Point(this.maxX + this.slider.getSize().ix(), maxBY >= maxSY ? maxBY : maxSY);
 
 		this.hitbox.min(min);
 		this.hitbox.max(max);

@@ -30,7 +30,7 @@ public class DELabel implements DrawElement {
 	 * @param size
 	 * @param label
 	 */
-	public DELabel(Point pos, Point size, TextData label) {
+	public DELabel(Point pos, TextData label) {
 		this();
 		this.pos = pos;
 		this.label = label;

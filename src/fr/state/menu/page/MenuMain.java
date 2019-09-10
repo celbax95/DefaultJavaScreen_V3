@@ -39,7 +39,7 @@ public class MenuMain implements MenuPage {
 		this.wBackground();
 		this.wButtonToOption();
 		this.wTitle();
-//		this.wSlide();
+		this.wSlide();
 	}
 
 	@Override
@@ -119,14 +119,14 @@ public class MenuMain implements MenuPage {
 
 		DERectangle slider = new DERectangle();
 
-		slider.setColor(Color.WHITE);
-		slider.setSize(new Point(20, 40));
+		slider.setColor(Color.RED);
+		slider.setSize(new Point(120, 30));
 		slider.lock();
 
 		s.setPos(new Point(300, 500));
 		s.setBar(bar);
 		s.setSlider(slider);
-		s.setScope(1);
+		s.setScope(10);
 		s.setHitboxFromDrawElement();
 
 		this.widgets.add(s);
