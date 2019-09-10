@@ -59,16 +59,6 @@ public class TextData {
 		this.setState(state);
 	}
 
-	private Point calcSize() {
-		assert this.font != null && this.text != null;
-
-		AffineTransform affinetransform = new AffineTransform();
-		FontRenderContext frc = new FontRenderContext(affinetransform, true, true);
-
-		return new Point(this.font.getStringBounds(this.text, frc).getWidth(),
-				this.font.getStringBounds(this.text, frc).getHeight());
-	}
-
 	/**
 	 * @return the color
 	 */
@@ -137,7 +127,7 @@ public class TextData {
 			return;
 		assert font != null;
 		this.font = font;
-		this.calcSize();
+		this.setSize();
 	}
 
 	/**
@@ -148,6 +138,14 @@ public class TextData {
 			return;
 		assert pos != null;
 		this.pos = pos;
+	}
+
+	private void setSize() {
+		AffineTransform affinetransform = new AffineTransform();
+		FontRenderContext frc = new FontRenderContext(affinetransform, true, true);
+
+		this.size.set(new Point(this.font.getStringBounds(this.text, frc).getWidth(),
+				this.font.getStringBounds(this.text, frc).getHeight()));
 	}
 
 	/**
@@ -168,6 +166,6 @@ public class TextData {
 			return;
 		assert text != null;
 		this.text = text;
-		this.calcSize();
+		this.setSize();
 	}
 }

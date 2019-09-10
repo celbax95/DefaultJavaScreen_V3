@@ -162,7 +162,7 @@ public class DERectangle implements DrawElement {
 					Point absoluteTextPos = absp.clone().add(DERectangle.this.label.getPos());
 
 					g.drawString(DERectangle.this.label.getText(), absoluteTextPos.ix(), absp.iy()
-							+ DERectangle.this.halfSize.iy() - DERectangle.this.label.getSize().iy() / 2);
+							+ DERectangle.this.halfSize.iy() + DERectangle.this.label.getSize().iy() / 4);
 				}
 			};
 			break;
@@ -175,7 +175,7 @@ public class DERectangle implements DrawElement {
 							absp.ix() + DERectangle.this.halfSize.ix()
 									- DERectangle.this.label.getSize().ix() / 2,
 							absp.iy() + DERectangle.this.halfSize.iy()
-									- DERectangle.this.label.getSize().iy() / 2);
+									+ DERectangle.this.label.getSize().iy() / 4);
 				}
 			};
 			break;

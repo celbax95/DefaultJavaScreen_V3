@@ -37,7 +37,7 @@ public class MenuMain implements MenuPage {
 		im.loadAll();
 
 		this.wBackground();
-//		this.wButtonToOption();
+		this.wButtonToOption();
 //		this.wTitle();
 //		this.wSlide();
 	}
@@ -79,7 +79,7 @@ public class MenuMain implements MenuPage {
 
 		DERectangle rect1 = new DERectangle();
 
-		TextData label = new TextData(new Point(), new Font("Arial", Font.BOLD, 22), "OPTIONS", Color.RED, 2);
+		TextData label = new TextData(new Point(), new Font("Arial", Font.BOLD, 22), "OPTIONS", Color.RED, 3);
 
 		label.lock();
 
@@ -101,8 +101,6 @@ public class MenuMain implements MenuPage {
 		b.setHitboxFromDrawElement();
 
 		this.widgets.add(b);
-
-		this.wTitle();
 	}
 
 	private void wSlide() {
