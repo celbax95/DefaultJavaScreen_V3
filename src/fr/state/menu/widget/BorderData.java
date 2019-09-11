@@ -20,7 +20,9 @@ public class BorderData {
 	}
 
 	public BorderData(BorderData other) {
-		super();
+		this();
+		if (other == null)
+			return;
 		this.setThickness(other.thickness);
 		this.setColor(new Color(other.color.getRed(), other.color.getGreen(), other.color.getBlue(),
 				other.color.getAlpha()));

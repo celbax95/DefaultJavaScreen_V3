@@ -70,6 +70,8 @@ public class DEImage implements DrawElement {
 
 	public DEImage(DEImage other) {
 		this();
+		if (other == null)
+			return;
 		this.lock = false;
 		this.setPos(new Point(other.pos));
 		this.setSize(new Point(other.size));
@@ -243,6 +245,12 @@ public class DEImage implements DrawElement {
 	@Override
 	public void lock() {
 		this.lock = true;
+		if (this.border != null) {
+			this.border.lock();
+		}
+		if (this.label != null) {
+			this.label.lock();
+		}
 	}
 
 	/**

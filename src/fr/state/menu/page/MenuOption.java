@@ -59,28 +59,25 @@ public class MenuOption implements MenuPage {
 			}
 		};
 
-		DERectangle rect1 = new DERectangle();
+		DERectangle rect = new DERectangle();
 
 		TextData label = new TextData(new Point(), new Font("Arial", Font.BOLD, 22), "OPTIONS", Color.BLUE,
 				3);
-
 		label.lock();
 
-		rect1.setLabel(label);
-		rect1.setColor(Color.RED);
-		rect1.setSize(new Point(200, 200));
-		rect1.lock();
+		rect.setLabel(label);
+		rect.setColor(Color.RED);
+		rect.setSize(new Point(200, 200));
+		rect.lock();
+		b.setStdDrawElement(rect);
 
-		DERectangle rect2 = new DERectangle();
+		rect = (DERectangle) rect.clone();
 
-		rect2.setLabel(label);
-		rect2.setColor(Color.PINK);
-		rect2.setSize(new Point(200, 200));
-		rect2.lock();
+		rect.setColor(Color.PINK);
+		rect.lock();
+		b.setPressedDrawElement(rect);
 
 		b.setPos(new Point(200, 200));
-		b.setStdDrawElement(rect1);
-		b.setPressedDrawElement(rect2);
 		b.setHitboxFromDrawElement();
 
 		this.widgets.add(b);
@@ -98,57 +95,46 @@ public class MenuOption implements MenuPage {
 				Logger.obs("SwitchButton : active");
 			}
 		};
-		TextData label1 = new TextData(new Point(), new Font("Arial", Font.PLAIN, 20), "Active moiiiii",
+		TextData label = new TextData(new Point(), new Font("Arial", Font.PLAIN, 20), "Active moiiiii",
 				Color.WHITE, 3);
-		label1.lock();
-		TextData label2 = new TextData(new Point(), new Font("Arial", Font.PLAIN, 20), "Active moiiiii",
-				Color.BLACK, 3);
-		label2.lock();
-		TextData label3 = new TextData(new Point(), new Font("Arial", Font.PLAIN, 20), "Je suis activé :)",
-				Color.BLACK, 3);
-		label3.lock();
+		label.lock();
 
 		BorderData border = new BorderData(3, Color.white, 1);
 		border.lock();
 
-		DERectangle rect1 = new DERectangle();
+		DERectangle rect = new DERectangle();
 
-		rect1.setLabel(label1);
-		rect1.setColor(Color.RED);
-		rect1.setSize(new Point(200, 100));
-		rect1.setBorder(border);
-		rect1.lock();
+		rect.setPos(new Point(800, 400));
+		rect.setLabel(label);
+		rect.setColor(Color.RED);
+		rect.setSize(new Point(200, 100));
+		rect.setBorder(border);
+		rect.lock();
+		s.setOffDrawElement(rect);
 
-		DERectangle rect2 = new DERectangle();
+		rect = (DERectangle) rect.clone();
+		label = new TextData(label);
+		label.setColor(Color.BLACK);
+		label.lock();
+		rect.setLabel(label);
+		rect.setColor(new Color(255, 30, 30));
+		rect.lock();
+		s.setPressedOffDrawElement(rect);
 
-		rect2.setLabel(label2);
-		rect2.setColor(new Color(255, 30, 30));
-		rect2.setSize(new Point(200, 100));
-		rect2.setBorder(border);
-		rect2.lock();
+		rect = (DERectangle) rect.clone();
+		label = new TextData(label);
+		label.setColor(Color.BLACK);
+		label.setText("Je suis activé :)");
+		label.lock();
+		rect.setLabel(label);
+		rect.setColor(Color.GREEN);
+		rect.lock();
+		s.setOnDrawElement(rect);
 
-		DERectangle rect3 = new DERectangle();
-
-		rect3.setLabel(label3);
-		rect3.setColor(Color.GREEN);
-		rect3.setSize(new Point(200, 100));
-		rect3.setBorder(border);
-		rect3.lock();
-
-		DERectangle rect4 = new DERectangle();
-
-		rect4.setLabel(label3);
-		rect4.setColor(new Color(30, 255, 30));
-		rect4.setSize(new Point(200, 100));
-		rect4.setBorder(border);
-		rect4.lock();
-
-		s.setPos(new Point(800, 400));
-
-		s.setOffDrawElement(rect1);
-		s.setPressedOffDrawElement(rect2);
-		s.setOnDrawElement(rect3);
-		s.setPressedOnDrawElement(rect4);
+		rect = (DERectangle) rect.clone();
+		rect.setColor(new Color(30, 255, 30));
+		rect.lock();
+		s.setPressedOnDrawElement(rect);
 
 		s.setHitboxFromDrawElement();
 

@@ -4,6 +4,7 @@ import java.awt.Graphics2D;
 
 import fr.inputs.Input;
 import fr.inputs.mouse.MouseEvent;
+import fr.logger.Logger;
 import fr.state.menu.MenuPage;
 import fr.state.menu.Widget;
 import fr.util.collider.AABB;
@@ -43,7 +44,9 @@ public abstract class WButton implements Widget {
 	}
 
 	public WButton(WButton other) {
-		this(other.page);
+		this(other == null ? null : other.page);
+		if (other == null)
+			return;
 		this.setPos(other.pos);
 		AABB hb = new AABB(this.pos, new Point(), new Point());
 		hb.min(new Point(other.hitbox.min()));
@@ -64,6 +67,8 @@ public abstract class WButton implements Widget {
 	public void draw(Graphics2D g) {
 		if (this.currentDE != null) {
 			this.currentDE.draw(g, this.pos);
+		} else {
+			Logger.err("Un " + this.getClass().getSimpleName() + " n'a pas de drawElement");
 		}
 	}
 
@@ -141,6 +146,9 @@ public abstract class WButton implements Widget {
 	 * @param pressedDrawElement the pressedDrawElement to set
 	 */
 	public void setPressedDrawElement(DrawElement pressedDrawElement) {
+		if (pressedDrawElement != null) {
+			pressedDrawElement.lock();
+		}
 		this.pressedDrawElement = pressedDrawElement;
 	}
 
@@ -148,6 +156,10 @@ public abstract class WButton implements Widget {
 	 * @param drawElement the drawElement to set
 	 */
 	public void setStdDrawElement(DrawElement drawElement) {
+		if (drawElement != null) {
+			drawElement.lock();
+		}
+
 		this.stdDrawElement = drawElement;
 		if (this.currentDE == null) {
 			this.currentDE = this.stdDrawElement;

@@ -4,6 +4,7 @@ import java.awt.Graphics2D;
 
 import fr.inputs.Input;
 import fr.inputs.mouse.MouseEvent;
+import fr.logger.Logger;
 import fr.state.menu.MenuPage;
 import fr.state.menu.Widget;
 import fr.util.collider.AABB;
@@ -52,7 +53,9 @@ public abstract class WSwitch implements Widget {
 	}
 
 	public WSwitch(WSwitch other) {
-		this(other.page);
+		this(other == null ? null : other.page);
+		if (other == null)
+			return;
 
 		this.setPos(new Point(other.pos));
 		this.setOnDrawElement(other.on.clone());
@@ -77,6 +80,9 @@ public abstract class WSwitch implements Widget {
 	public void draw(Graphics2D g) {
 		if (this.currentDE != null) {
 			this.currentDE.draw(g, this.pos);
+		} else {
+			Logger.err("Un " + this.getClass().getSimpleName() + " utilise n'a pas de de drawElement");
+			return;
 		}
 	}
 
@@ -190,6 +196,10 @@ public abstract class WSwitch implements Widget {
 	 * @param off the off to set
 	 */
 	public void setOffDrawElement(DrawElement off) {
+		if (off != null) {
+			off.lock();
+		}
+
 		this.off = off;
 
 		if (!this.active) {
@@ -201,6 +211,10 @@ public abstract class WSwitch implements Widget {
 	 * @param on the on to set
 	 */
 	public void setOnDrawElement(DrawElement on) {
+		if (on != null) {
+			on.lock();
+		}
+
 		this.on = on;
 
 		if (this.active) {
@@ -236,6 +250,9 @@ public abstract class WSwitch implements Widget {
 	 * @param pressedOff the pressedOff to set
 	 */
 	public void setPressedOffDrawElement(DrawElement pressedOff) {
+		if (pressedOff != null) {
+			pressedOff.lock();
+		}
 		this.pressedOff = pressedOff;
 	}
 
@@ -243,6 +260,9 @@ public abstract class WSwitch implements Widget {
 	 * @param pressedOn the pressedOn to set
 	 */
 	public void setPressedOnDrawElement(DrawElement pressedOn) {
+		if (pressedOn != null) {
+			pressedOn.lock();
+		}
 		this.pressedOn = pressedOn;
 	}
 

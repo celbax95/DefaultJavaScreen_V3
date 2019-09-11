@@ -78,27 +78,20 @@ public class MenuMain implements MenuPage {
 			}
 		};
 
-		DERectangle rect1 = new DERectangle();
+		DERectangle rect = new DERectangle();
 
 		TextData label = new TextData(new Point(), new Font("Arial", Font.BOLD, 22), "OPTIONS", Color.RED, 3);
 
-		label.lock();
+		rect.setLabel(label);
+		rect.setColor(Color.BLUE);
+		rect.setSize(new Point(200, 200));
+		b.setStdDrawElement(rect);
 
-		rect1.setLabel(label);
-		rect1.setColor(Color.BLUE);
-		rect1.setSize(new Point(200, 200));
-		rect1.lock();
-
-		DERectangle rect2 = new DERectangle();
-
-		rect2.setLabel(label);
-		rect2.setColor(Color.CYAN);
-		rect2.setSize(new Point(200, 200));
-		rect2.lock();
+		rect = (DERectangle) rect.clone();
+		rect.setColor(Color.CYAN);
+		b.setPressedDrawElement(rect);
 
 		b.setPos(new Point(200, 200));
-		b.setStdDrawElement(rect1);
-		b.setPressedDrawElement(rect2);
 		b.setHitboxFromDrawElement();
 
 		this.widgets.add(b);
@@ -116,17 +109,15 @@ public class MenuMain implements MenuPage {
 
 		bar.setColor(Color.WHITE);
 		bar.setSize(new Point(300, 20));
-		bar.lock();
+		s.setBar(bar);
 
 		DERectangle slider = new DERectangle();
 
 		slider.setColor(Color.RED);
 		slider.setSize(new Point(120, 30));
-		slider.lock();
+		s.setSlider(slider);
 
 		s.setPos(new Point(300, 500));
-		s.setBar(bar);
-		s.setSlider(slider);
 		s.setScope(10);
 		s.setHitboxFromDrawElement();
 
@@ -136,14 +127,9 @@ public class MenuMain implements MenuPage {
 	private void wTitle() {
 		WElement title = new WElement(this);
 
-		TextData td = new TextData(new Point(), new Font("Copperplate Gothic Bold", Font.PLAIN, 45), "MENU",
-				Color.WHITE, 0);
-		td.lock();
-
 		DEImage i = new DEImage();
 
 		i.setImage(ImageManager.getInstance().get("menuMain/title"));
-		i.lock();
 
 		title.setDrawElement(i);
 		title.setPos(new Point(392, 54));

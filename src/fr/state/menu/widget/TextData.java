@@ -61,9 +61,12 @@ public class TextData {
 
 	public TextData(TextData other) {
 		this();
+		if (other == null)
+			return;
 		this.setPos(new Point(other.pos));
 		this.setSize(new Point(other.size));
-		this.font = new Font(this.font.getFamily(), this.font.getStyle(), this.font.getSize());
+
+		this.font = new Font(other.font.getFamily(), other.font.getStyle(), other.font.getSize());
 		this.setText(new String(other.text));
 		this.setColor(new Color(other.color.getRed(), other.color.getGreen(), other.color.getBlue(),
 				other.color.getAlpha()));

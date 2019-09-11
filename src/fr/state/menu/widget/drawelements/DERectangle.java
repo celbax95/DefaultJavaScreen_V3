@@ -67,6 +67,8 @@ public class DERectangle implements DrawElement {
 
 	public DERectangle(DERectangle other) {
 		this();
+		if (other == null)
+			return;
 		this.setPos(new Point(other.pos));
 		this.setHalfSize(new Point(other.halfSize));
 		this.setSize(new Point(other.size));
@@ -283,6 +285,12 @@ public class DERectangle implements DrawElement {
 	@Override
 	public void lock() {
 		this.lock = true;
+		if (this.border != null) {
+			this.border.lock();
+		}
+		if (this.label != null) {
+			this.label.lock();
+		}
 	}
 
 	/**

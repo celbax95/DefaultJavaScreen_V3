@@ -3,6 +3,7 @@ package fr.state.menu.widget;
 import java.awt.Graphics2D;
 
 import fr.inputs.Input;
+import fr.logger.Logger;
 import fr.state.menu.MenuPage;
 import fr.state.menu.Widget;
 import fr.util.point.Point;
@@ -21,7 +22,9 @@ public class WElement implements Widget {
 	}
 
 	public WElement(WElement other) {
-		this(other.page);
+		this(other == null ? null : other.page);
+		if (other == null)
+			return;
 		this.setDrawElement(other.drawElement.clone());
 		this.setPos(other.pos);
 		this.setPage(other.page);
@@ -29,6 +32,10 @@ public class WElement implements Widget {
 
 	@Override
 	public void draw(Graphics2D g) {
+		if (this.drawElement == null) {
+			Logger.err("Un " + this.getClass().getSimpleName() + " utilise n'a pas de de drawElement");
+			return;
+		}
 		this.drawElement.draw(g, this.pos);
 	}
 
@@ -55,6 +62,9 @@ public class WElement implements Widget {
 	 * @param drawElement the drawElement to set
 	 */
 	public void setDrawElement(DrawElement drawElement) {
+		if (drawElement != null) {
+			drawElement.lock();
+		}
 		this.drawElement = drawElement;
 	}
 

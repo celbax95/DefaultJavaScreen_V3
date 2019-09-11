@@ -53,7 +53,9 @@ public abstract class WSlider implements Widget {
 	}
 
 	public WSlider(WSlider other) {
-		this(other.page);
+		this(other == null ? null : other.page);
+		if (other == null)
+			return;
 		this.setPos(new Point(other.pos));
 
 		AABB hb = new AABB(this.pos, new Point(), new Point());
@@ -105,9 +107,19 @@ public abstract class WSlider implements Widget {
 
 	@Override
 	public void draw(Graphics2D g) {
-		this.bar.draw(g, this.pos);
+		if (this.bar == null) {
+			Logger.err(
+					"Un " + this.getClass().getSimpleName() + " utilise n'a pas de de drawElement \"bar\"");
+		} else {
+			this.bar.draw(g, this.pos);
+		}
 
-		this.slider.draw(g, this.sliderPos);
+		if (this.slider == null) {
+			Logger.err("Un " + this.getClass().getSimpleName()
+					+ " utilise n'a pas de de drawElement \"slider\"");
+		} else {
+			this.slider.draw(g, this.sliderPos);
+		}
 	}
 
 	/**
@@ -189,13 +201,12 @@ public abstract class WSlider implements Widget {
 	 * @param bar the bar to set
 	 */
 	public void setBar(DrawElement bar) {
-		if (!bar.isLocked()) {
-			Logger.warn("L'element bar devrait etre verouille via la methode lock().");
+		if (bar != null) {
+			bar.lock();
 		}
-
 		this.bar = bar;
 
-		if (this.slider != null) {
+		if (this.bar != null && this.slider != null) {
 			this.initDrawElements();
 		}
 	}
@@ -269,13 +280,13 @@ public abstract class WSlider implements Widget {
 	}
 
 	public void setSlider(DrawElement slider) {
-		if (!slider.isLocked()) {
-			Logger.warn("L'element slider devrait etre verouille via la methode lock().");
+		if (slider != null) {
+			slider.lock();
 		}
 
 		this.slider = slider;
 
-		if (this.bar != null) {
+		if (this.bar != null && slider != null) {
 			this.initDrawElements();
 		}
 	}

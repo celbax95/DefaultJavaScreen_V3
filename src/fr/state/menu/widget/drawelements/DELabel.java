@@ -27,6 +27,8 @@ public class DELabel implements DrawElement {
 
 	public DELabel(DELabel other) {
 		this();
+		if (other == null)
+			return;
 		this.setPos(new Point(other.pos));
 		this.setLabel(new TextData(other.label));
 		this.lock = false;
@@ -89,6 +91,7 @@ public class DELabel implements DrawElement {
 	@Override
 	public void lock() {
 		this.lock = true;
+		this.label.lock();
 	}
 
 	/**
