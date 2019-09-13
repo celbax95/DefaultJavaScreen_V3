@@ -15,6 +15,7 @@ import fr.state.menu.widget.BorderData;
 import fr.state.menu.widget.TextData;
 import fr.state.menu.widget.WButton;
 import fr.state.menu.widget.WElement;
+import fr.state.menu.widget.WSlider;
 import fr.state.menu.widget.WSwitch;
 import fr.state.menu.widget.drawelements.DELabel;
 import fr.state.menu.widget.drawelements.DERectangle;
@@ -35,6 +36,7 @@ public class MenuOption implements MenuPage {
 		this.wButtonToMenu();
 		this.wTitle();
 		this.wSwitch();
+		this.wSlide();
 	}
 
 	@Override
@@ -81,6 +83,33 @@ public class MenuOption implements MenuPage {
 		b.setHitboxFromDrawElement();
 
 		this.widgets.add(b);
+	}
+
+	private void wSlide() {
+		WSlider s = new WSlider(this) {
+			@Override
+			public void valueChanged(int value) {
+				Logger.obs("Valeur du slider : " + value);
+			}
+		};
+
+		DERectangle bar = new DERectangle();
+
+		bar.setColor(Color.WHITE);
+		bar.setSize(new Point(300, 20));
+		s.setBar(bar);
+
+		DERectangle slider = new DERectangle();
+
+		slider.setColor(Color.RED);
+		slider.setSize(new Point(120, 30));
+		s.setSlider(slider);
+
+		s.setPos(new Point(300, 500));
+		s.setScope(10);
+		s.setHitboxFromDrawElement();
+
+		this.widgets.add(s);
 	}
 
 	private void wSwitch() {

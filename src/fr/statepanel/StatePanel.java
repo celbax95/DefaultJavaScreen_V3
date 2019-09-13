@@ -8,6 +8,7 @@ import javax.swing.JPanel;
 
 import fr.inputs.keyboard.Keyboard;
 import fr.inputs.mouse.Mouse;
+import fr.window.Window;
 
 /**
  * Panel principal pouvant changer d'etat
@@ -18,14 +19,18 @@ import fr.inputs.mouse.Mouse;
 @SuppressWarnings("serial")
 public class StatePanel extends JPanel implements Statable {
 
+	private Window window;
+
 	// Taille de la fenetre
 	private int WIDTH, HEIGHT;
 
 	// Etat
 	private IAppState state;
 
-	public StatePanel() {
+	public StatePanel(Window w) {
 		super();
+		assert w != null;
+		this.window = w;
 		this.WIDTH = 0;
 		this.HEIGHT = 0;
 
@@ -51,6 +56,13 @@ public class StatePanel extends JPanel implements Statable {
 	@Override
 	public int getWidth() {
 		return this.WIDTH;
+	}
+
+	/**
+	 * @return the window
+	 */
+	public Window getWindow() {
+		return this.window;
 	}
 
 	/**

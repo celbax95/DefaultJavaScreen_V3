@@ -77,7 +77,7 @@ public class DEImage implements DrawElement {
 		this.setSize(new Point(other.size));
 		this.border = new BorderData(other.border);
 		this.label = new TextData(other.label);
-		this.setImage(this.image);
+		this.setImage(other.image);
 	}
 
 	/**

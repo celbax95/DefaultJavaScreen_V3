@@ -60,17 +60,15 @@ public class MenuState implements IAppState {
 
 	@Override
 	public void stop() {
-		this.m = null;
-		this.m.applyDefautPage();
-		this.sp = null;
-		this.input = null;
-		this.loop.stop();
-		this.loop = null;
 		this.sp.removeKeyboardListener(this.input.getKeyboardEventListener());
 		this.sp.removeKeyboardListener(this.input.getKeyboardMirrorListener());
 		this.sp.removeMouseListener(this.input.getMouseEventListener());
 		this.sp.removeMouseListener(this.input.getMouseMirrorListener());
-
+		this.m = null;
+		this.sp = null;
+		this.input = null;
+		this.loop.stop();
+		this.loop = null;
 	}
 
 	public void update() {

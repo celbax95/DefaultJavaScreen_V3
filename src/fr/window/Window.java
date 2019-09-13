@@ -8,6 +8,8 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.WindowConstants;
 
+import fr.logger.Logger;
+
 /**
  * Classe representant une fenetre
  *
@@ -29,6 +31,12 @@ public class Window extends JFrame {
 		this.initialized = false;
 	}
 
+	@Override
+	public void dispose() {
+		Logger.inf("Fermeture de l'application.");
+		super.dispose();
+	}
+
 	/**
 	 * Initialisation de la fenetre
 	 *
@@ -43,6 +51,8 @@ public class Window extends JFrame {
 		if (mainJpanel == null)
 			throw new IllegalArgumentException("L'argument 1 : mainJpanel ne doit pas etre null");
 
+		this.dispose();
+
 		(this.mainPanel = mainJpanel).setLocation(marginTotal, marginTotal);
 
 		// Quand on ferme la fenetre
@@ -50,6 +60,7 @@ public class Window extends JFrame {
 		this.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {
+				Window.this.dispose();
 				System.exit(0);
 			}
 		});
@@ -81,6 +92,8 @@ public class Window extends JFrame {
 
 		if (!this.initialized)
 			throw new IllegalStateException("Utilisez la methode init() pour initialiser l'instance Screen.");
+
+		Logger.inf("Lancement de l'application.");
 
 		this.setVisible(true);
 	}

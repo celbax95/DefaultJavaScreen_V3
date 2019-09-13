@@ -42,9 +42,9 @@ public class ConfInitializer {
 
 		this.initConfFiles();
 
-		StatePanel state = this.windowInitializers(this.getWinConf());
+		Window screen = this.windowInitializers(this.getWinConf());
 
-		this.windowStart(this.getWinConf(), state);
+		this.windowStart(screen);
 	}
 
 	/**
@@ -52,7 +52,7 @@ public class ConfInitializer {
 	 *
 	 * @param configRoot : racine du fichier de configuration
 	 */
-	private StatePanel windowInitializers(Object configRoot) {
+	private Window windowInitializers(Object configRoot) {
 
 		XMLManager reader = this.dfm.getXmlReader();
 
@@ -60,7 +60,9 @@ public class ConfInitializer {
 
 		int height = (int) reader.getParam(configRoot, "height", 768);
 
-		final StatePanel mainPanel = new StatePanel();
+		final Window screen = new Window();
+		final StatePanel mainPanel = new StatePanel(screen);
+
 		mainPanel.init(width, height);
 
 		final AppStateManager stator = new AppStateManager();
@@ -68,7 +70,13 @@ public class ConfInitializer {
 		stator.setStatable(mainPanel);
 		stator.applyState("menu");
 
-		return mainPanel;
+		int marginBottom = (int) reader.getParam(configRoot, "marginBottom", 35);
+		int marginRight = (int) reader.getParam(configRoot, "marginRight", 6);
+		int margin = (int) reader.getParam(configRoot, "margin", 2);
+
+		screen.init(mainPanel, marginRight, marginBottom, margin);
+
+		return screen;
 	}
 
 	/**
@@ -76,17 +84,7 @@ public class ConfInitializer {
 	 *
 	 * @param configRoot : racine du fichier de configuration
 	 */
-	private void windowStart(Object configRoot, StatePanel state) {
-
-		XMLManager reader = this.dfm.getXmlReader();
-
-		int marginBottom = (int) reader.getParam(configRoot, "marginBottom", 35);
-		int marginRight = (int) reader.getParam(configRoot, "marginRight", 6);
-		int margin = (int) reader.getParam(configRoot, "margin", 2);
-
-		final Window screen = new Window();
-		screen.init(state, marginRight, marginBottom, margin);
-
+	private void windowStart(Window screen) {
 		screen.start();
 	}
 }

@@ -13,17 +13,20 @@ public class MenuLoop implements Runnable {
 
 	@Override
 	public void run() {
-		while (Thread.currentThread().isAlive()) {
-			try {
-				Thread.sleep(32);
-			} catch (InterruptedException e) {
+		while (!this.loop.isInterrupted()) {
+			synchronized (this) {
+				try {
+					this.state.getInput();
+
+					this.state.update();
+
+					this.state.getStatePanel().repaint();
+
+					Thread.sleep(32);
+				} catch (InterruptedException | NullPointerException e) {
+					Thread.currentThread().interrupt();
+				}
 			}
-
-			this.state.getInput();
-
-			this.state.update();
-
-			this.state.getStatePanel().repaint();
 		}
 	}
 
@@ -32,6 +35,8 @@ public class MenuLoop implements Runnable {
 	}
 
 	public void stop() {
-		this.loop.interrupt();
+		synchronized (this) {
+			this.loop.interrupt();
+		}
 	}
 }

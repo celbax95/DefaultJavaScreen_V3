@@ -1,7 +1,5 @@
 package fr.state.menu.page;
 
-import java.awt.Color;
-import java.awt.Font;
 import java.awt.Graphics2D;
 import java.util.List;
 import java.util.Vector;
@@ -9,16 +7,12 @@ import java.util.Vector;
 import fr.imagesmanager.ImageLoader;
 import fr.imagesmanager.ImageManager;
 import fr.inputs.Input;
-import fr.logger.Logger;
 import fr.state.menu.Menu;
 import fr.state.menu.MenuPage;
 import fr.state.menu.Widget;
-import fr.state.menu.widget.TextData;
 import fr.state.menu.widget.WButton;
 import fr.state.menu.widget.WElement;
-import fr.state.menu.widget.WSlider;
 import fr.state.menu.widget.drawelements.DEImage;
-import fr.state.menu.widget.drawelements.DERectangle;
 import fr.util.point.Point;
 
 public class MenuMain implements MenuPage {
@@ -38,9 +32,11 @@ public class MenuMain implements MenuPage {
 		im.loadAll();
 
 		this.wBackground();
-		this.wButtonToOption();
 		this.wTitle();
-		this.wSlide();
+		this.wJoinButton();
+		this.wHostButton();
+		this.wExitButton();
+		this.wOptionButton();
 	}
 
 	@Override
@@ -70,7 +66,83 @@ public class MenuMain implements MenuPage {
 		this.widgets.add(i);
 	}
 
-	private void wButtonToOption() {
+	private void wExitButton() {
+		WButton b = new WButton(this) {
+			@Override
+			public void action() {
+				MenuMain.this.m.getMenuState().getStatePanel().setVisible(false);
+				MenuMain.this.m.getMenuState().getStatePanel().getWindow().dispose();
+			}
+		};
+
+		DEImage i = new DEImage();
+
+		ImageManager im = ImageManager.getInstance();
+
+		i.setImage(im.get("menuMain/exitStd"));
+		b.setStdDrawElement(i);
+
+		i = (DEImage) i.clone();
+		i.setImage(im.get("menuMain/exitPressed"));
+		b.setPressedDrawElement(i);
+
+		b.setPos(new Point(631, 631));
+		b.setHitboxFromDrawElement();
+
+		this.widgets.add(b);
+	}
+
+	private void wHostButton() {
+		WButton b = new WButton(this) {
+			@Override
+			public void action() {
+				// MenuMain.this.m.applyPage(new MenuOption(MenuMain.this.m));
+			}
+		};
+
+		DEImage i = new DEImage();
+
+		ImageManager im = ImageManager.getInstance();
+
+		i.setImage(im.get("menuMain/hostStd"));
+		b.setStdDrawElement(i);
+
+		i = (DEImage) i.clone();
+		i.setImage(im.get("menuMain/hostPressed"));
+		b.setPressedDrawElement(i);
+
+		b.setPos(new Point(568, 464));
+		b.setHitboxFromDrawElement();
+
+		this.widgets.add(b);
+	}
+
+	private void wJoinButton() {
+		WButton b = new WButton(this) {
+			@Override
+			public void action() {
+				// MenuMain.this.m.applyPage(new MenuOption(MenuMain.this.m));
+			}
+		};
+
+		DEImage i = new DEImage();
+
+		ImageManager im = ImageManager.getInstance();
+
+		i.setImage(im.get("menuMain/joinStd"));
+		b.setStdDrawElement(i);
+
+		i = (DEImage) i.clone();
+		i.setImage(im.get("menuMain/joinPressed"));
+		b.setPressedDrawElement(i);
+
+		b.setPos(new Point(538, 298));
+		b.setHitboxFromDrawElement();
+
+		this.widgets.add(b);
+	}
+
+	private void wOptionButton() {
 		WButton b = new WButton(this) {
 			@Override
 			public void action() {
@@ -78,50 +150,21 @@ public class MenuMain implements MenuPage {
 			}
 		};
 
-		DERectangle rect = new DERectangle();
+		DEImage i = new DEImage();
 
-		TextData label = new TextData(new Point(), new Font("Arial", Font.BOLD, 22), "OPTIONS", Color.RED, 3);
+		ImageManager im = ImageManager.getInstance();
 
-		rect.setLabel(label);
-		rect.setColor(Color.BLUE);
-		rect.setSize(new Point(200, 200));
-		b.setStdDrawElement(rect);
+		i.setImage(im.get("menuMain/settingsStd"));
+		b.setStdDrawElement(i);
 
-		rect = (DERectangle) rect.clone();
-		rect.setColor(Color.CYAN);
-		b.setPressedDrawElement(rect);
+		i = (DEImage) i.clone();
+		i.setImage(im.get("menuMain/settingsPressed"));
+		b.setPressedDrawElement(i);
 
-		b.setPos(new Point(200, 200));
+		b.setPos(new Point(49, 648));
 		b.setHitboxFromDrawElement();
 
 		this.widgets.add(b);
-	}
-
-	private void wSlide() {
-		WSlider s = new WSlider(this) {
-			@Override
-			public void valueChanged(int value) {
-				Logger.obs("Valeur du slider : " + value);
-			}
-		};
-
-		DERectangle bar = new DERectangle();
-
-		bar.setColor(Color.WHITE);
-		bar.setSize(new Point(300, 20));
-		s.setBar(bar);
-
-		DERectangle slider = new DERectangle();
-
-		slider.setColor(Color.RED);
-		slider.setSize(new Point(120, 30));
-		s.setSlider(slider);
-
-		s.setPos(new Point(300, 500));
-		s.setScope(10);
-		s.setHitboxFromDrawElement();
-
-		this.widgets.add(s);
 	}
 
 	private void wTitle() {

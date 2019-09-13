@@ -3,6 +3,8 @@ package fr.statepanel;
 import java.util.HashMap;
 import java.util.Map;
 
+import fr.logger.Logger;
+
 /**
  * Gestion des etats
  *
@@ -52,6 +54,8 @@ public class AppStateManager {
 			throw new IllegalArgumentException("Le state \"" + name + "\" est inconnu");
 
 		this.statable.setState(this.states.get(name));
+
+		Logger.inf("Application du state \"" + name + "\"");
 	}
 
 	/**

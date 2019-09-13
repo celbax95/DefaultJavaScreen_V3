@@ -1,6 +1,6 @@
 background	416	;	0
 title		392	;	54
 join		538	;	298
-host		568	;	264
+host		568	;	464
 exit		631	;	631
 settings	49	;	648
