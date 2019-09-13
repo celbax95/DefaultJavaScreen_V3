@@ -31,10 +31,11 @@ public class Window extends JFrame {
 		this.initialized = false;
 	}
 
-	@Override
-	public void dispose() {
+	public void close() {
 		Logger.inf("Fermeture de l'application.");
+		this.setVisible(false);
 		super.dispose();
+		System.exit(0);
 	}
 
 	/**

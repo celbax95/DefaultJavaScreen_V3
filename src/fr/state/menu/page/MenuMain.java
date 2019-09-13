@@ -70,8 +70,7 @@ public class MenuMain implements MenuPage {
 		WButton b = new WButton(this) {
 			@Override
 			public void action() {
-				MenuMain.this.m.getMenuState().getStatePanel().setVisible(false);
-				MenuMain.this.m.getMenuState().getStatePanel().getWindow().dispose();
+				MenuMain.this.m.getMenuState().getStatePanel().getWindow().close();
 			}
 		};
 
