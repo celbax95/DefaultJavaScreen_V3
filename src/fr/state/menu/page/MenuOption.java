@@ -146,7 +146,7 @@ public class MenuOption implements MenuPage {
 		label.setColor(Color.BLACK);
 		label.lock();
 		rect.setLabel(label);
-		rect.setColor(new Color(255, 30, 30));
+		rect.setColor(new Color(200, 30, 30));
 		rect.lock();
 		s.setPressedOffDrawElement(rect);
 
@@ -161,7 +161,7 @@ public class MenuOption implements MenuPage {
 		s.setOnDrawElement(rect);
 
 		rect = (DERectangle) rect.clone();
-		rect.setColor(new Color(30, 255, 30));
+		rect.setColor(new Color(30, 200, 30));
 		rect.lock();
 		s.setPressedOnDrawElement(rect);
 

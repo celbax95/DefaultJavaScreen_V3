@@ -25,6 +25,8 @@ public abstract class WSwitch implements Widget {
 
 	private boolean pressed;
 
+	private boolean mouseOn;
+
 	private MenuPage page;
 
 	public WSwitch(MenuPage p) {
@@ -41,13 +43,9 @@ public abstract class WSwitch implements Widget {
 
 		this.active = false;
 
-		this.on = null;
+		this.pressed = false;
 
-		this.pressedOn = null;
-
-		this.off = null;
-
-		this.pressedOff = null;
+		this.mouseOn = false;
 
 		this.currentDE = null;
 	}
@@ -150,6 +148,13 @@ public abstract class WSwitch implements Widget {
 	}
 
 	/**
+	 * @return the mouseOn
+	 */
+	public boolean isMouseOn() {
+		return this.mouseOn;
+	}
+
+	/**
 	 * @return the pressed
 	 */
 	public boolean isPressed() {
@@ -163,12 +168,28 @@ public abstract class WSwitch implements Widget {
 		if (active != this.active) {
 			this.active = active;
 
-			this.updateCurrentDE();
+			this.setCurrentDE();
 
 			if (this.active) {
 				this.actionOn();
 			} else {
 				this.actionOff();
+			}
+		}
+	}
+
+	private void setCurrentDE() {
+		if (this.active) {
+			if (this.pressed && this.mouseOn && this.pressedOn != null) {
+				this.currentDE = this.pressedOn;
+			} else {
+				this.currentDE = this.on;
+			}
+		} else {
+			if (this.pressed && this.mouseOn && this.pressedOff != null) {
+				this.currentDE = this.pressedOff;
+			} else {
+				this.currentDE = this.off;
 			}
 		}
 	}
@@ -190,6 +211,16 @@ public abstract class WSwitch implements Widget {
 
 		this.hitbox.min(this.pos.clone().add(this.currentDE.getPos()));
 		this.hitbox.max(this.pos.clone().add(this.currentDE.getPos()).add(this.currentDE.getSize()));
+	}
+
+	/**
+	 * @param mouseOn the mouseOn to set
+	 */
+	public void setMouseOn(boolean mouseOn) {
+		if (mouseOn != this.mouseOn) {
+			this.mouseOn = mouseOn;
+			this.setCurrentDE();
+		}
 	}
 
 	/**
@@ -242,7 +273,7 @@ public abstract class WSwitch implements Widget {
 	public void setPressed(boolean pressed) {
 		if (pressed != this.pressed) {
 			this.pressed = pressed;
-			this.updateCurrentDE();
+			this.setCurrentDE();
 		}
 	}
 
@@ -283,21 +314,6 @@ public abstract class WSwitch implements Widget {
 				continue;
 			}
 		}
-	}
-
-	private void updateCurrentDE() {
-		if (this.active) {
-			if (!this.pressed || this.pressedOn == null) {
-				this.currentDE = this.on;
-			} else {
-				this.currentDE = this.pressedOn;
-			}
-		} else {
-			if (!this.pressed || this.pressedOff == null) {
-				this.currentDE = this.off;
-			} else {
-				this.currentDE = this.pressedOff;
-			}
-		}
+		this.setMouseOn(Collider.AABBvsPoint(this.hitbox, input.mousePos));
 	}
 }

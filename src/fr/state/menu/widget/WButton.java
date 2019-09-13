@@ -24,6 +24,8 @@ public abstract class WButton implements Widget {
 
 	private boolean pressed;
 
+	private boolean mouseOn;
+
 	private boolean canPressed;
 
 	private MenuPage page;
@@ -39,6 +41,10 @@ public abstract class WButton implements Widget {
 		this.stdDrawElement = null;
 
 		this.pressedDrawElement = null;
+
+		this.pressed = false;
+
+		this.mouseOn = false;
 
 		this.currentDE = null;
 	}
@@ -56,7 +62,6 @@ public abstract class WButton implements Widget {
 
 		this.setStdDrawElement(other.stdDrawElement.clone());
 		this.setPressedDrawElement(other.pressedDrawElement.clone());
-		this.setPressed(false);
 		this.setCanPressed(other.canPressed);
 		this.setPage(other.page);
 	}
@@ -106,12 +111,28 @@ public abstract class WButton implements Widget {
 		return this.canPressed;
 	}
 
+	/**
+	 * @return the mouseOn
+	 */
+	public boolean isMouseOn() {
+		return this.mouseOn;
+	}
+
 	public boolean isPressed() {
 		return this.pressed;
 	}
 
 	public void setCanPressed(boolean canPressed) {
 		this.canPressed = canPressed;
+	}
+
+	private void setCurrentDE() {
+		// Changement du drawElement courant
+
+		if (this.pressedDrawElement == null)
+			return;
+
+		this.currentDE = this.pressed && this.mouseOn ? this.pressedDrawElement : this.stdDrawElement;
 	}
 
 	public void setHitbox(AABB hitbox) {
@@ -126,6 +147,16 @@ public abstract class WButton implements Widget {
 		this.hitbox.max(this.pos.clone().add(this.currentDE.getPos()).add(this.currentDE.getSize()));
 	}
 
+	/**
+	 * @param mouseOn the mouseOn to set
+	 */
+	public void setMouseOn(boolean mouseOn) {
+		if (mouseOn != this.mouseOn) {
+			this.mouseOn = mouseOn;
+			this.setCurrentDE();
+		}
+	}
+
 	public void setPage(MenuPage page) {
 		this.page = page;
 	}
@@ -135,11 +166,10 @@ public abstract class WButton implements Widget {
 	}
 
 	public void setPressed(boolean pressed) {
-		this.pressed = pressed;
-
-		// Changement du drawElement courant
-		this.currentDE = pressed && this.pressedDrawElement != null ? this.pressedDrawElement
-				: this.stdDrawElement;
+		if (pressed != this.pressed) {
+			this.pressed = pressed;
+			this.setCurrentDE();
+		}
 	}
 
 	/**
@@ -185,5 +215,6 @@ public abstract class WButton implements Widget {
 				continue;
 			}
 		}
+		this.setMouseOn(Collider.AABBvsPoint(this.hitbox, input.mousePos));
 	}
 }
