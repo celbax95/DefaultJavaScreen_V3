@@ -1,0 +1,6 @@
+title		:	392	:	54
+back		:	30	:	30
+Graphics	:	70	:	321
+Controls	:	394	:	321
+Profile		:	718	:	321
+Game Options:	1042:	321
