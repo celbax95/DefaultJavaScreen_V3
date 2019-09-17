@@ -8,6 +8,7 @@ import javax.swing.JPanel;
 
 import fr.inputs.keyboard.Keyboard;
 import fr.inputs.mouse.Mouse;
+import fr.window.WinData;
 import fr.window.Window;
 
 /**
@@ -21,8 +22,7 @@ public class StatePanel extends JPanel implements Statable {
 
 	private Window window;
 
-	// Taille de la fenetre
-	private int WIDTH, HEIGHT;
+	private WinData winData;
 
 	// Etat
 	private IAppState state;
@@ -31,10 +31,9 @@ public class StatePanel extends JPanel implements Statable {
 		super();
 		assert w != null;
 		this.window = w;
-		this.WIDTH = 0;
-		this.HEIGHT = 0;
+		this.winData = w.getWinData();
 
-		this.setSize(this.WIDTH, this.HEIGHT);
+		this.setSize(this.winData.getScreenSize().ix(), this.winData.getScreenSize().iy());
 		this.setBackground(Color.black);
 	}
 
@@ -48,14 +47,11 @@ public class StatePanel extends JPanel implements Statable {
 		this.addMouseWheelListener(listner);
 	}
 
-	@Override
-	public int getHeight() {
-		return this.HEIGHT;
-	}
-
-	@Override
-	public int getWidth() {
-		return this.WIDTH;
+	/**
+	 * @return the winData
+	 */
+	public WinData getWinData() {
+		return this.winData;
 	}
 
 	/**
@@ -68,24 +64,21 @@ public class StatePanel extends JPanel implements Statable {
 	/**
 	 * Initialisation du StatePanel
 	 *
-	 * @param width     : largeur de la fenetre
-	 * @param height    : hauteur de la fenetre
-	 * @param repainter : repainter a utiliser
 	 */
-	public void init(int width, int height) {
-		this.WIDTH = width;
-		this.HEIGHT = height;
+	public void init(WinData winData) {
+		this.winData = winData;
 
 		// Pour les listners
 		this.setFocusable(true);
 		this.requestFocusInWindow();
 
-		this.setSize(this.WIDTH, this.HEIGHT);
+		this.setSize(this.winData.getScreenSize().ix(), this.winData.getScreenSize().iy());
 	}
 
 	@Override
 	public void paintComponent(Graphics g2) {
 		final Graphics2D g = (Graphics2D) g2;
+
 		super.paintComponent(g);
 
 		this.state.draw(g);

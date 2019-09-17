@@ -1,6 +1,7 @@
 package fr.window;
 
 import java.awt.Color;
+import java.awt.Toolkit;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -26,9 +27,12 @@ public class Window extends JFrame {
 	// Panel principal de la fenetre
 	private JPanel mainPanel;
 
+	private WinData winData;
+
 	public Window() {
 		this.mainPanel = null;
 		this.initialized = false;
+		this.winData = new WinData();
 	}
 
 	public void close() {
@@ -36,6 +40,13 @@ public class Window extends JFrame {
 		this.setVisible(false);
 		super.dispose();
 		System.exit(0);
+	}
+
+	/**
+	 * @return the winData
+	 */
+	public WinData getWinData() {
+		return this.winData;
 	}
 
 	/**
@@ -47,14 +58,19 @@ public class Window extends JFrame {
 	 * @param marginTotal  : marge sur les bord de la fenetre (en plus des marge en
 	 *                     bas et a droite)
 	 */
-	public void init(JPanel mainJpanel, int marginRight, int marginBottom, int marginTotal) {
+	public void init(JPanel mainJpanel, WinData winData) {
 
 		if (mainJpanel == null)
 			throw new IllegalArgumentException("L'argument 1 : mainJpanel ne doit pas etre null");
 
+		if (this.winData != null) {
+			this.winData = winData;
+		}
+
 		this.dispose();
 
-		(this.mainPanel = mainJpanel).setLocation(marginTotal, marginTotal);
+		(this.mainPanel = mainJpanel).setLocation(this.winData.getMargin() + this.winData.getMarginLeft(),
+				this.winData.getMargin() + this.winData.getMarginTop());
 
 		// Quand on ferme la fenetre
 		this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
@@ -68,8 +84,19 @@ public class Window extends JFrame {
 
 		// Proprietes de la fenetres
 		this.setResizable(false);
-		this.setSize(marginRight + mainJpanel.getWidth() + marginTotal * 2,
-				marginBottom + mainJpanel.getHeight() + marginTotal * 2);
+
+		if (this.winData.isFullScreen()) {
+			this.setSize(Toolkit.getDefaultToolkit().getScreenSize());
+			this.setUndecorated(true);
+		} else {
+			this.setSize(
+					this.winData.getMarginLeft() + this.winData.getMarginRight() + mainJpanel.getWidth()
+							+ this.winData.getMargin() * 2,
+					this.winData.getMarginTop() + this.winData.getMarginBottom() + mainJpanel.getHeight()
+							+ this.winData.getMargin() * 2);
+			this.setUndecorated(this.winData.isBorderless());
+		}
+
 		this.setLocationRelativeTo(null);
 
 		// Interieur de la fenetre
