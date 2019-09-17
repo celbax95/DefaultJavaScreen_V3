@@ -21,13 +21,13 @@ import fr.state.menu.widget.drawelements.DELabel;
 import fr.state.menu.widget.drawelements.DERectangle;
 import fr.util.point.Point;
 
-public class MenuOption implements MenuPage {
+public class MenuTemoin implements MenuPage {
 
 	private List<Widget> widgets;
 
 	private Menu m;
 
-	public MenuOption(Menu m) {
+	public MenuTemoin(Menu m) {
 
 		this.m = m;
 
@@ -57,7 +57,7 @@ public class MenuOption implements MenuPage {
 		WButton b = new WButton(this) {
 			@Override
 			public void action() {
-				MenuOption.this.m.applyPage(new MenuMain(MenuOption.this.m));
+				MenuTemoin.this.m.applyPage(new MenuMain(MenuTemoin.this.m));
 			}
 		};
 

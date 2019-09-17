@@ -17,19 +17,37 @@ import fr.util.point.Point;
 
 public class MenuMain implements MenuPage {
 
+	private static final String[] RES_NAMES = { "background", "title", "exitStd", "exitPressed", "hostStd",
+			"hostPressed", "joinStd", "joinPressed", "settingsStd", "settingsPressed" };
+
+	private static final String[] RES_PATHS = { "background", "title", "exitStd", "exitPressed", "hostStd",
+			"hostPressed", "joinStd", "joinPressed", "settingsStd", "settingsPressed" };
+
+	private static final String RES_FOLDER = "/resources/menu/menuMain/";
+	private static final String RES_EXTENSION = ".png";
+
+	private static final String PAGE_NAME = "menuMain";
+
+	static {
+		for (int i = 0; i < RES_NAMES.length; i++) {
+			RES_NAMES[i] = PAGE_NAME + "/" + RES_NAMES[i];
+		}
+
+		for (int i = 0; i < RES_PATHS.length; i++) {
+			RES_PATHS[i] = RES_FOLDER + RES_PATHS[i] + RES_EXTENSION;
+		}
+	}
+
 	private List<Widget> widgets;
 
 	private Menu m;
 
 	public MenuMain(Menu m) {
-
 		this.m = m;
 
 		this.widgets = new Vector<>();
 
-		ImageLoader im = new ImageLoader();
-
-		im.loadAll();
+		this.loadResources();
 
 		this.wBackground();
 		this.wTitle();
@@ -44,6 +62,12 @@ public class MenuMain implements MenuPage {
 		for (Widget w : this.widgets) {
 			w.draw(g);
 		}
+	}
+
+	private void loadResources() {
+		ImageLoader il = new ImageLoader();
+
+		il.load(RES_NAMES, RES_PATHS);
 	}
 
 	@Override
@@ -145,7 +169,7 @@ public class MenuMain implements MenuPage {
 		WButton b = new WButton(this) {
 			@Override
 			public void action() {
-				MenuMain.this.m.applyPage(new MenuOption(MenuMain.this.m));
+				MenuMain.this.m.applyPage(new MenuSettings(MenuMain.this.m));
 			}
 		};
 

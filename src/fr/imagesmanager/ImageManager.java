@@ -10,6 +10,8 @@ import java.util.Map;
 
 import javax.swing.ImageIcon;
 
+import fr.logger.Logger;
+
 public class ImageManager {
 	/**
 	 * static Singleton instance.
@@ -58,6 +60,10 @@ public class ImageManager {
 		}
 	}
 
+	public boolean contains(String name) {
+		return this.images.containsKey(name);
+	}
+
 	public Image get(String name) {
 		if (this.images.containsKey(name))
 			return this.images.get(name);
@@ -73,5 +79,10 @@ public class ImageManager {
 		} else {
 			System.err.println("L'image \"" + name + "\" est inconnue.");
 		}
+	}
+
+	public void removeAll() {
+		Logger.inf("Toutes les images ont été déchargées.");
+		this.images.clear();
 	}
 }

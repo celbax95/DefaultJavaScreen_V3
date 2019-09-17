@@ -3,6 +3,7 @@ package fr.state.menu;
 import java.awt.Color;
 import java.awt.Graphics2D;
 
+import fr.imagesmanager.ImageManager;
 import fr.inputs.Input;
 import fr.statepanel.IAppState;
 import fr.statepanel.StatePanel;
@@ -42,6 +43,9 @@ public class MenuState implements IAppState {
 	@Override
 	public void start(StatePanel panel) {
 		this.sp = panel;
+
+		ImageManager.getInstance().removeAll();
+
 		this.m = new Menu(this);
 		this.m.applyDefautPage();
 
