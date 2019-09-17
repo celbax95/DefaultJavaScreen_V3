@@ -12,7 +12,7 @@ public class WinData {
 	}
 
 	enum Rendering {
-		FAST, QUALITY, DEFAULT,
+		DEFAULT, FAST, QUALITY,
 	}
 
 	private static final Aliasing[] aliasingValues;

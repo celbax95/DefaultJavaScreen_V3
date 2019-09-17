@@ -2,7 +2,13 @@
 	<!-- Window parameters -->
 	<param name="width" type="integer" value="1366"/>
 	<param name="height" type="integer" value="768"/>
+	<param name="marginTop" type="integer" value="0"/>
 	<param name="marginBottom" type="integer" value="35"/>
+	<param name="marginLeft" type="integer" value="0"/>
 	<param name="marginRight" type="integer" value="6"/>
 	<param name="margin" type="integer" value="2"/>
+
+	<param name="fullscreen" type="boolean" value="false"/>
+	<param name="borderless" type="boolean" value="false"/>
+	<param name="antialiasing" type="integer" value="0"/>
 </conf>
