@@ -15,9 +15,9 @@ public class WinData {
 		FAST, QUALITY, DEFAULT,
 	}
 
-	private static Aliasing[] aliasingValues;
+	private static final Aliasing[] aliasingValues;
 
-	private static Rendering[] renderingValues;
+	private static final Rendering[] renderingValues;
 
 	static {
 		aliasingValues = Aliasing.values();
@@ -38,26 +38,11 @@ public class WinData {
 		return renderingValues;
 	}
 
-	/**
-	 * @param aliasingValues the aliasingValues to set
-	 */
-	public static void setAliasingValues(Aliasing[] aliasingValues) {
-		WinData.aliasingValues = aliasingValues;
-	}
-
-	/**
-	 * @param renderingValues the renderingValues to set
-	 */
-	public static void setRenderingValues(Rendering[] renderingValues) {
-		WinData.renderingValues = renderingValues;
-	}
-
 	private Point windowSize;
 
 	private Point halfWindowSize;
 
 	private Point screenSize;
-
 	private int margin, marginLeft, marginRight, marginTop, marginBottom;
 
 	private boolean fullScreen;
@@ -188,6 +173,12 @@ public class WinData {
 		return this.fullScreen;
 	}
 
+	public void setAlphaInterpolation(int rendering) {
+		assert rendering < renderingValues.length;
+
+		this.alphaInterpolation = renderingValues[rendering];
+	}
+
 	/**
 	 * @param alphaInterpolation the alphaInterpolation to set
 	 */
@@ -202,11 +193,23 @@ public class WinData {
 		this.antialiasing = antialiasing;
 	}
 
+	public void setAntialiasing(int aliasing) {
+		assert aliasing < aliasingValues.length;
+
+		this.antialiasing = aliasingValues[aliasing];
+	}
+
 	/**
 	 * @param borderless the borderless to set
 	 */
 	public void setBorderless(boolean borderless) {
 		this.borderless = borderless;
+	}
+
+	public void setColorRendering(int rendering) {
+		assert rendering < renderingValues.length;
+
+		this.colorRendering = renderingValues[rendering];
 	}
 
 	/**
@@ -256,6 +259,12 @@ public class WinData {
 	 */
 	public void setMarginTop(int marginTop) {
 		this.marginTop = marginTop;
+	}
+
+	public void setRendering(int rendering) {
+		assert rendering < renderingValues.length;
+
+		this.rendering = renderingValues[rendering];
 	}
 
 	/**
