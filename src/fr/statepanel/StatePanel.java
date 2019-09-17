@@ -3,6 +3,7 @@ package fr.statepanel;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 
 import javax.swing.JPanel;
 
@@ -80,6 +81,19 @@ public class StatePanel extends JPanel implements Statable {
 		final Graphics2D g = (Graphics2D) g2;
 
 		super.paintComponent(g);
+
+		Object antialias = this.winData.getAntialiasing();
+
+		if (antialias.equals(RenderingHints.VALUE_ANTIALIAS_OFF)) {
+			g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+		} else {
+			g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+			g.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, antialias);
+		}
+
+		g.setRenderingHint(RenderingHints.KEY_RENDERING, this.winData.getRendering());
+		g.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING, this.winData.getColorRendering());
+		g.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, this.winData.getAlphaInterpolation());
 
 		this.state.draw(g);
 	}

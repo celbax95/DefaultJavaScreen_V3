@@ -1,61 +1,45 @@
 package fr.window;
 
 import java.awt.Dimension;
+import java.awt.RenderingHints;
 import java.awt.Toolkit;
 
 import fr.util.point.Point;
 
 public class WinData {
 
-	enum Aliasing {
-		DISABLE, BICUBIC, BILINEAR, NEAREST_NEIGHBOR,
-	}
+	private static final Object[] antialiasingValues = { RenderingHints.VALUE_ANTIALIAS_DEFAULT,
+			RenderingHints.VALUE_INTERPOLATION_BICUBIC, RenderingHints.VALUE_INTERPOLATION_BILINEAR,
+			RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR };
 
-	enum Rendering {
-		DEFAULT, FAST, QUALITY,
-	}
+	private static final Object[] renderingValues = { RenderingHints.VALUE_RENDER_DEFAULT,
+			RenderingHints.VALUE_RENDER_SPEED, RenderingHints.VALUE_RENDER_QUALITY };
 
-	private static final Aliasing[] aliasingValues;
+	private static final Object[] colorRenderingValues = { RenderingHints.VALUE_COLOR_RENDER_DEFAULT,
+			RenderingHints.VALUE_COLOR_RENDER_SPEED, RenderingHints.VALUE_COLOR_RENDER_QUALITY };
 
-	private static final Rendering[] renderingValues;
-
-	static {
-		aliasingValues = Aliasing.values();
-		renderingValues = Rendering.values();
-	}
-
-	/**
-	 * @return the aliasingValues
-	 */
-	public static Aliasing[] getAliasingValues() {
-		return aliasingValues;
-	}
-
-	/**
-	 * @return the renderingValues
-	 */
-	public static Rendering[] getRenderingValues() {
-		return renderingValues;
-	}
+	private static final Object[] alphaInterpolationValues = {
+			RenderingHints.VALUE_ALPHA_INTERPOLATION_DEFAULT, RenderingHints.VALUE_ALPHA_INTERPOLATION_SPEED,
+			RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY };
 
 	private Point windowSize;
 
 	private Point halfWindowSize;
 
 	private Point screenSize;
+
 	private int margin, marginLeft, marginRight, marginTop, marginBottom;
 
 	private boolean fullScreen;
-
 	private boolean borderless;
 
-	private Aliasing antialiasing;
+	private int antialiasing;
 
-	private Rendering rendering;
+	private int rendering;
 
-	private Rendering colorRendering;
+	private int colorRendering;
 
-	private Rendering alphaInterpolation;
+	private int alphaInterpolation;
 
 	public WinData() {
 		super();
@@ -69,31 +53,22 @@ public class WinData {
 		this.marginRight = 0;
 		this.fullScreen = false;
 		this.borderless = false;
-		this.antialiasing = Aliasing.BILINEAR;
-		this.rendering = Rendering.DEFAULT;
-		this.colorRendering = Rendering.DEFAULT;
-		this.alphaInterpolation = Rendering.DEFAULT;
+		this.antialiasing = 0;
+		this.rendering = 0;
+		this.colorRendering = 0;
+		this.alphaInterpolation = 0;
 	}
 
-	/**
-	 * @return the alphaInterpolation
-	 */
-	public Rendering getAlphaInterpolation() {
-		return this.alphaInterpolation;
+	public Object getAlphaInterpolation() {
+		return alphaInterpolationValues[this.alphaInterpolation];
 	}
 
-	/**
-	 * @return the antialiasing
-	 */
-	public Aliasing getAntialiasing() {
-		return this.antialiasing;
+	public Object getAntialiasing() {
+		return antialiasingValues[this.antialiasing];
 	}
 
-	/**
-	 * @return the colorRendering
-	 */
-	public Rendering getColorRendering() {
-		return this.colorRendering;
+	public Object getColorRendering() {
+		return colorRenderingValues[this.colorRendering];
 	}
 
 	/**
@@ -138,11 +113,8 @@ public class WinData {
 		return this.marginTop;
 	}
 
-	/**
-	 * @return the rendering
-	 */
-	public Rendering getRendering() {
-		return this.rendering;
+	public Object getRendering() {
+		return renderingValues[this.rendering];
 	}
 
 	/**
@@ -173,30 +145,16 @@ public class WinData {
 		return this.fullScreen;
 	}
 
-	public void setAlphaInterpolation(int rendering) {
-		assert rendering < renderingValues.length;
+	public void setAlphaInterpolation(int alphaInterpolation) {
+		assert alphaInterpolation >= 0 && alphaInterpolation < alphaInterpolationValues.length;
 
-		this.alphaInterpolation = renderingValues[rendering];
-	}
-
-	/**
-	 * @param alphaInterpolation the alphaInterpolation to set
-	 */
-	public void setAlphaInterpolation(Rendering alphaInterpolation) {
 		this.alphaInterpolation = alphaInterpolation;
 	}
 
-	/**
-	 * @param antialiasing the antialiasing to set
-	 */
-	public void setAntialiasing(Aliasing antialiasing) {
+	public void setAntialiasing(int antialiasing) {
+		assert antialiasing >= 0 && antialiasing < antialiasingValues.length;
+
 		this.antialiasing = antialiasing;
-	}
-
-	public void setAntialiasing(int aliasing) {
-		assert aliasing < aliasingValues.length;
-
-		this.antialiasing = aliasingValues[aliasing];
 	}
 
 	/**
@@ -206,16 +164,9 @@ public class WinData {
 		this.borderless = borderless;
 	}
 
-	public void setColorRendering(int rendering) {
-		assert rendering < renderingValues.length;
+	public void setColorRendering(int colorRendering) {
+		assert colorRendering >= 0 && colorRendering < colorRenderingValues.length;
 
-		this.colorRendering = renderingValues[rendering];
-	}
-
-	/**
-	 * @param colorRendering the colorRendering to set
-	 */
-	public void setColorRendering(Rendering colorRendering) {
 		this.colorRendering = colorRendering;
 	}
 
@@ -262,15 +213,8 @@ public class WinData {
 	}
 
 	public void setRendering(int rendering) {
-		assert rendering < renderingValues.length;
+		assert rendering >= 0 && rendering < renderingValues.length;
 
-		this.rendering = renderingValues[rendering];
-	}
-
-	/**
-	 * @param rendering the rendering to set
-	 */
-	public void setRendering(Rendering rendering) {
 		this.rendering = rendering;
 	}
 
