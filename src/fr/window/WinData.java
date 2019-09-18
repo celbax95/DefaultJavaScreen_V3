@@ -28,6 +28,8 @@ public class WinData {
 
 	private Point windowSize;
 
+	private Point tmpWindowSize;
+
 	private Point halfWindowSize;
 
 	private Point screenSize;
@@ -48,6 +50,8 @@ public class WinData {
 	public WinData() {
 		super();
 		this.windowSize = new Point();
+		// Si on est en plein ecran, tmpWindowSize sert de zone tampon
+		this.tmpWindowSize = new Point();
 		this.halfWindowSize = new Point();
 		Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
 		this.screenSize = new Point(d.width, d.height);
@@ -189,7 +193,18 @@ public class WinData {
 	 * @param fullScreen the fullScreen to set
 	 */
 	public void setFullScreen(boolean fullScreen) {
-		this.fullScreen = fullScreen;
+		if (fullScreen != this.fullScreen) {
+			this.fullScreen = fullScreen;
+			if (fullScreen) {
+				this.windowRatio = this.screenSize.clone().div(defaultWindowSize);
+				this.tmpWindowSize.set(this.windowSize);
+				this.windowSize.set(this.screenSize);
+				this.halfWindowSize.set(this.windowSize.clone().div(2));
+			} else {
+				this.windowSize.set(this.tmpWindowSize);
+				this.windowRatio = this.windowSize.clone().div(defaultWindowSize);
+			}
+		}
 	}
 
 	/**
@@ -237,8 +252,11 @@ public class WinData {
 	 * @param windowSize the windowSize to set
 	 */
 	public void setWindowSize(Point windowSize) {
-		this.windowSize.set(windowSize);
-		this.halfWindowSize = windowSize.clone().div(2);
-		this.windowRatio = windowSize.clone().div(defaultWindowSize);
+		this.tmpWindowSize.set(windowSize);
+		if (!this.fullScreen) {
+			this.windowSize.set(this.tmpWindowSize);
+			this.windowRatio.set(this.windowSize.clone().div(defaultWindowSize));
+			this.halfWindowSize.set(this.windowSize.clone().div(2));
+		}
 	}
 }

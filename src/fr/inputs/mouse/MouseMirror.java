@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Vector;
 
 import fr.util.point.Point;
+import fr.window.WinData;
 
 /**
  * Gestionnaire de souris
@@ -19,17 +20,21 @@ public class MouseMirror implements Mouse {
 	public static final int MIDDLE = 1;
 	public static final int RIGHT = 2;
 
+	private WinData winData;
+
 	private Point pos;
 
 	private Vector<Boolean> mouseButtons;
 
 	private int wheelMove;
 
-	public MouseMirror() {
+	public MouseMirror(WinData w) {
 		this.pos = new Point();
 
 		this.mouseButtons = new Vector<>();
 		this.mouseButtons.setSize(BUTTONS_AMOUNT);
+
+		this.winData = w;
 
 		for (int i = 0; i < BUTTONS_AMOUNT; i++) {
 			this.mouseButtons.set(i, false);
@@ -60,7 +65,7 @@ public class MouseMirror implements Mouse {
 
 	@Override
 	public void mouseDragged(java.awt.event.MouseEvent e) {
-		this.pos.set(new Point(e.getX(), e.getY()));
+		this.pos.set(new Point(e.getX(), e.getY()).mult(this.winData.getWindowRatio()));
 	}
 
 	@Override
@@ -73,7 +78,7 @@ public class MouseMirror implements Mouse {
 
 	@Override
 	public void mouseMoved(java.awt.event.MouseEvent e) {
-		this.pos.set(new Point(e.getX(), e.getY()));
+		this.pos.set(new Point(e.getX(), e.getY()).mult(this.winData.getWindowRatio()));
 	}
 
 	@Override

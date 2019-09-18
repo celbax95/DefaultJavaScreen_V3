@@ -11,6 +11,7 @@ import fr.inputs.mouse.MouseEvent;
 import fr.inputs.mouse.MouseEventList;
 import fr.inputs.mouse.MouseMirror;
 import fr.util.point.Point;
+import fr.window.WinData;
 
 public class Input {
 
@@ -36,15 +37,15 @@ public class Input {
 
 	public int mouseWheel;
 
-	public Input() {
+	public Input(WinData w) {
 		this.keyboardEventHolder = new KeyboardEventList();
-		this.mouseEventHolder = new MouseEventList();
+		this.mouseEventHolder = new MouseEventList(w);
 
 		this.keyboardEvents = null;
 		this.mouseEvents = null;
 
 		this.keyboard = new KeyboardMirror();
-		this.mouse = new MouseMirror();
+		this.mouse = new MouseMirror(w);
 
 		this.mousePos = new Point();
 

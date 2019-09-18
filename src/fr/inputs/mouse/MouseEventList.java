@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Vector;
 
 import fr.util.point.Point;
+import fr.window.WinData;
 
 /**
  * Gestionnaire de souris
@@ -15,14 +16,17 @@ public class MouseEventList implements Mouse {
 
 	private Point pos;
 
+	private WinData winData;
+
 	private List<MouseEvent> events;
 
 	/**
 	 * Private constructor for singleton.
 	 */
-	public MouseEventList() {
-
+	public MouseEventList(WinData w) {
 		this.pos = new Point();
+
+		this.winData = w;
 
 		this.events = new Vector<>();
 	}
@@ -47,7 +51,7 @@ public class MouseEventList implements Mouse {
 
 	@Override
 	public void mouseDragged(java.awt.event.MouseEvent e) {
-		this.pos.set(new Point(e.getX(), e.getY()));
+		this.pos.set(new Point(e.getX(), e.getY()).mult(this.winData.getWindowRatio()));
 
 		this.addEvent(MouseEvent.MOVE);
 	}
@@ -62,7 +66,7 @@ public class MouseEventList implements Mouse {
 
 	@Override
 	public void mouseMoved(java.awt.event.MouseEvent e) {
-		this.pos.set(new Point(e.getX(), e.getY()));
+		this.pos.set(new Point(e.getX(), e.getY()).mult(this.winData.getWindowRatio()));
 
 		this.addEvent(MouseEvent.MOVE);
 	}

@@ -51,7 +51,7 @@ public class MenuState implements IAppState {
 
 		this.sp.setBackground(this.BACKGROUND);
 
-		this.input = new Input();
+		this.input = new Input(this.sp.getWinData());
 
 		this.sp.addKeyboardListener(this.input.getKeyboardEventListener());
 		this.sp.addKeyboardListener(this.input.getKeyboardMirrorListener());
