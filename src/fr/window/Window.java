@@ -10,6 +10,7 @@ import javax.swing.JPanel;
 import javax.swing.WindowConstants;
 
 import fr.logger.Logger;
+import fr.util.point.Point;
 
 /**
  * Classe representant une fenetre
@@ -88,13 +89,27 @@ public class Window extends JFrame {
 		if (this.winData.isFullScreen()) {
 			this.setSize(Toolkit.getDefaultToolkit().getScreenSize());
 			this.setUndecorated(true);
+			Logger.inf("Initialisation de la fenetre en mode plein ecran");
 		} else {
-			this.setSize(
-					this.winData.getMarginLeft() + this.winData.getMarginRight() + mainJpanel.getWidth()
-							+ this.winData.getMargin() * 2,
-					this.winData.getMarginTop() + this.winData.getMarginBottom() + mainJpanel.getHeight()
-							+ this.winData.getMargin() * 2);
-			this.setUndecorated(this.winData.isBorderless());
+
+			int width = this.winData.getMarginLeft() + this.winData.getMarginRight() + mainJpanel.getWidth()
+					+ this.winData.getMargin() * 2;
+
+			int height = this.winData.getMarginTop() + this.winData.getMarginBottom() + mainJpanel.getHeight()
+					+ this.winData.getMargin() * 2;
+
+			if (this.winData.isBorderless()) {
+				this.setUndecorated(true);
+			}
+
+			this.setSize(width, height);
+
+			Logger.inf("Initialisation de la fenetre en mode fenetré "
+					+ (this.winData.isBorderless() ? "sans bords" : "standard"));
+
+			Point winSize = winData.getWindowSize();
+
+			Logger.inf("Taille de la fenetre : " + winSize.ix() + "x" + winSize.iy());
 		}
 
 		this.setLocationRelativeTo(null);

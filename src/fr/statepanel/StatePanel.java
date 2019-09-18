@@ -9,6 +9,7 @@ import javax.swing.JPanel;
 
 import fr.inputs.keyboard.Keyboard;
 import fr.inputs.mouse.Mouse;
+import fr.util.point.Point;
 import fr.window.WinData;
 import fr.window.Window;
 
@@ -73,7 +74,7 @@ public class StatePanel extends JPanel implements Statable {
 		this.setFocusable(true);
 		this.requestFocusInWindow();
 
-		this.setSize(this.winData.getScreenSize().ix(), this.winData.getScreenSize().iy());
+		this.setSize(this.winData.getWindowSize().ix(), this.winData.getWindowSize().iy());
 	}
 
 	@Override
@@ -81,6 +82,10 @@ public class StatePanel extends JPanel implements Statable {
 		final Graphics2D g = (Graphics2D) g2;
 
 		super.paintComponent(g);
+
+		Point windowRatio = this.winData.getWindowRatio();
+
+		g.scale(windowRatio.x, windowRatio.y);
 
 		Object antialias = this.winData.getAntialiasing();
 

@@ -8,7 +8,7 @@ import fr.util.point.Point;
 
 public class WinData {
 
-	private static final Object[] antialiasingValues = { RenderingHints.VALUE_ANTIALIAS_DEFAULT,
+	private static final Object[] antialiasingValues = { RenderingHints.VALUE_ANTIALIAS_OFF,
 			RenderingHints.VALUE_INTERPOLATION_BICUBIC, RenderingHints.VALUE_INTERPOLATION_BILINEAR,
 			RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR };
 
@@ -21,6 +21,10 @@ public class WinData {
 	private static final Object[] alphaInterpolationValues = {
 			RenderingHints.VALUE_ALPHA_INTERPOLATION_DEFAULT, RenderingHints.VALUE_ALPHA_INTERPOLATION_SPEED,
 			RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY };
+
+	private static final Point defaultWindowSize = new Point(1366, 768);
+
+	private Point windowRatio;
 
 	private Point windowSize;
 
@@ -43,9 +47,11 @@ public class WinData {
 
 	public WinData() {
 		super();
-		this.setWindowSize(new Point());
+		this.windowSize = new Point();
+		this.halfWindowSize = new Point();
 		Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
 		this.screenSize = new Point(d.width, d.height);
+		this.windowRatio = new Point(1, 1);
 		this.margin = 0;
 		this.marginTop = 0;
 		this.marginBottom = 0;
@@ -89,7 +95,8 @@ public class WinData {
 	 * @return the marginBottom
 	 */
 	public int getMarginBottom() {
-		return this.marginBottom;
+		// 36 est la taille ajoutée par la bordure de la fenetre windows
+		return this.marginBottom + (this.borderless ? 0 : 36);
 	}
 
 	/**
@@ -103,7 +110,8 @@ public class WinData {
 	 * @return the marginRight
 	 */
 	public int getMarginRight() {
-		return this.marginRight;
+		// 6 est la taille ajoutée par la bordure de la fenetre windows
+		return this.marginRight + (this.borderless ? 0 : 6);
 	}
 
 	/**
@@ -122,6 +130,13 @@ public class WinData {
 	 */
 	public Point getScreenSize() {
 		return this.screenSize;
+	}
+
+	/**
+	 * @return the windowRatio
+	 */
+	public Point getWindowRatio() {
+		return this.windowRatio;
 	}
 
 	/**
@@ -224,5 +239,6 @@ public class WinData {
 	public void setWindowSize(Point windowSize) {
 		this.windowSize.set(windowSize);
 		this.halfWindowSize = windowSize.clone().div(2);
+		this.windowRatio = windowSize.clone().div(defaultWindowSize);
 	}
 }

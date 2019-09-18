@@ -5,6 +5,8 @@ import fr.datafilesmanager.XMLManager;
 import fr.state.menu.MenuState;
 import fr.statepanel.AppStateManager;
 import fr.statepanel.StatePanel;
+import fr.util.point.Point;
+import fr.window.WinData;
 import fr.window.Window;
 import fr.xmlmanager.XMLManagerDOM;
 
@@ -25,6 +27,33 @@ public class ConfInitializer {
 		winConf = this.dfm.getDocument("winConf");
 
 		return winConf;
+	}
+
+	private WinData getWinData(Object winConf) {
+		XMLManager manager = this.dfm.getXmlReader();
+
+		WinData w = new WinData();
+
+		int width = (int) manager.getParam(winConf, "width", 1366);
+
+		int height = (int) manager.getParam(winConf, "height", 768);
+
+		w.setWindowSize(new Point(width, height));
+
+		w.setMarginTop((int) manager.getParam(winConf, "marginTop", 0));
+		w.setMarginBottom((int) manager.getParam(winConf, "marginBottom", 0));
+		w.setMarginLeft((int) manager.getParam(winConf, "marginLeft", 0));
+		w.setMarginRight((int) manager.getParam(winConf, "marginRight", 0));
+		w.setMargin((int) manager.getParam(winConf, "margin", 0));
+
+		w.setFullScreen((boolean) manager.getParam(winConf, "fullscreen", false));
+		w.setBorderless((boolean) manager.getParam(winConf, "borderless", false));
+
+		w.setRendering((int) manager.getParam(winConf, "rendering", 0));
+		w.setColorRendering((int) manager.getParam(winConf, "colorRendering", 0));
+		w.setAlphaInterpolation((int) manager.getParam(winConf, "alphaInterpolation", 0));
+
+		return w;
 	}
 
 	/**
@@ -50,31 +79,21 @@ public class ConfInitializer {
 	/**
 	 * Creation de l'ecran
 	 *
-	 * @param configRoot : racine du fichier de configuration
+	 * @param winConf : racine du fichier de configuration
 	 */
-	private Window windowInitializers(Object configRoot) {
-
-		XMLManager reader = this.dfm.getXmlReader();
-
-		int width = (int) reader.getParam(configRoot, "width", 1366);
-
-		int height = (int) reader.getParam(configRoot, "height", 768);
-
+	private Window windowInitializers(Object winConf) {
 		final Window screen = new Window();
 		final StatePanel mainPanel = new StatePanel(screen);
+		final WinData winData = this.getWinData(winConf);
 
-		mainPanel.init(width, height);
+		mainPanel.init(winData);
 
 		final AppStateManager stator = new AppStateManager();
 		stator.addState(new MenuState());
 		stator.setStatable(mainPanel);
 		stator.applyState("menu");
 
-		int marginBottom = (int) reader.getParam(configRoot, "marginBottom", 35);
-		int marginRight = (int) reader.getParam(configRoot, "marginRight", 6);
-		int margin = (int) reader.getParam(configRoot, "margin", 2);
-
-		screen.init(mainPanel, marginRight, marginBottom, margin);
+		screen.init(mainPanel, winData);
 
 		return screen;
 	}
