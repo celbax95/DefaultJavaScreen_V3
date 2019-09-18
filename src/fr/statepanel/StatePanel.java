@@ -93,7 +93,7 @@ public class StatePanel extends JPanel implements Statable {
 			g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
 		} else {
 			g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-			g.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, antialias);
+			g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, antialias);
 		}
 
 		g.setRenderingHint(RenderingHints.KEY_RENDERING, this.winData.getRendering());

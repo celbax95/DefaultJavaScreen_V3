@@ -25,6 +25,7 @@ public class WinData {
 	private static final Point defaultWindowSize = new Point(1366, 768);
 
 	private Point windowRatio;
+	private Point invWindowRatio;
 
 	private Point windowSize;
 
@@ -56,6 +57,8 @@ public class WinData {
 		Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
 		this.screenSize = new Point(d.width, d.height);
 		this.windowRatio = new Point(1, 1);
+		this.invWindowRatio = new Point();
+		this.setInvWindowRatio();
 		this.margin = 0;
 		this.marginTop = 0;
 		this.marginBottom = 0;
@@ -86,6 +89,10 @@ public class WinData {
 	 */
 	public Point getHalfWindowSize() {
 		return this.halfWindowSize;
+	}
+
+	public Point getInvWindowRatio() {
+		return this.invWindowRatio;
 	}
 
 	/**
@@ -197,14 +204,20 @@ public class WinData {
 			this.fullScreen = fullScreen;
 			if (fullScreen) {
 				this.windowRatio = this.screenSize.clone().div(defaultWindowSize);
+				this.setInvWindowRatio();
 				this.tmpWindowSize.set(this.windowSize);
 				this.windowSize.set(this.screenSize);
 				this.halfWindowSize.set(this.windowSize.clone().div(2));
 			} else {
 				this.windowSize.set(this.tmpWindowSize);
 				this.windowRatio = this.windowSize.clone().div(defaultWindowSize);
+				this.setInvWindowRatio();
 			}
 		}
+	}
+
+	private void setInvWindowRatio() {
+		this.invWindowRatio.set(1 / this.windowRatio.x, 1 / this.windowRatio.y);
 	}
 
 	/**
@@ -256,6 +269,7 @@ public class WinData {
 		if (!this.fullScreen) {
 			this.windowSize.set(this.tmpWindowSize);
 			this.windowRatio.set(this.windowSize.clone().div(defaultWindowSize));
+			this.setInvWindowRatio();
 			this.halfWindowSize.set(this.windowSize.clone().div(2));
 		}
 	}

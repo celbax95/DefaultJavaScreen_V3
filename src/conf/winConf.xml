@@ -6,24 +6,26 @@
 	<param name="height" type="integer" value="1080"/>
 	-->
 
-	<!-- 1366 / 768 -->
+	<!-- 1366 / 768
 	<param name="width" type="integer" value="1366"/>
 	<param name="height" type="integer" value="768"/>
-	
+	-->
 
-	<!-- 1280 / 720 
+	<!-- 1280 / 720 -->
 	<param name="width" type="integer" value="1280"/>
 	<param name="height" type="integer" value="720"/>
-	-->
+	
 
 	<param name="marginTop" type="integer" value="0"/>
 	<param name="marginBottom" type="integer" value="0"/>
 	<param name="marginLeft" type="integer" value="0"/>
 	<param name="marginRight" type="integer" value="0"/>
-	<param name="margin" type="integer" value="2"/>
+	<param name="margin" type="integer" value="1"/>
 
-	<param name="fullscreen" type="boolean" value="true"/>
+	<param name="fullscreen" type="boolean" value="false"/>
 	<param name="borderless" type="boolean" value="false"/>
+
+	<param name="antialiasing" type="integer" value="2"/>
 
 	<param name="rendering" type="integer" value="0"/>
 	<param name="colorRendering" type="integer" value="0"/>

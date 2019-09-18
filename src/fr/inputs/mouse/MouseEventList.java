@@ -51,8 +51,7 @@ public class MouseEventList implements Mouse {
 
 	@Override
 	public void mouseDragged(java.awt.event.MouseEvent e) {
-		this.pos.set(new Point(e.getX(), e.getY()).mult(this.winData.getWindowRatio()));
-
+		this.pos.set(new Point(e.getX(), e.getY()).mult(this.winData.getInvWindowRatio()));
 		this.addEvent(MouseEvent.MOVE);
 	}
 
@@ -66,7 +65,7 @@ public class MouseEventList implements Mouse {
 
 	@Override
 	public void mouseMoved(java.awt.event.MouseEvent e) {
-		this.pos.set(new Point(e.getX(), e.getY()).mult(this.winData.getWindowRatio()));
+		this.pos.set(new Point(e.getX(), e.getY()).mult(this.winData.getInvWindowRatio()));
 
 		this.addEvent(MouseEvent.MOVE);
 	}

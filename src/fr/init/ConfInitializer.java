@@ -49,6 +49,8 @@ public class ConfInitializer {
 		w.setFullScreen((boolean) manager.getParam(winConf, "fullscreen", false));
 		w.setBorderless((boolean) manager.getParam(winConf, "borderless", false));
 
+		w.setAntialiasing((int) manager.getParam(winConf, "antialiasing", 0));
+
 		w.setRendering((int) manager.getParam(winConf, "rendering", 0));
 		w.setColorRendering((int) manager.getParam(winConf, "colorRendering", 0));
 		w.setAlphaInterpolation((int) manager.getParam(winConf, "alphaInterpolation", 0));
