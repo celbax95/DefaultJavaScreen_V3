@@ -22,7 +22,7 @@
 	<param name="marginRight" type="integer" value="0"/>
 	<param name="margin" type="integer" value="1"/>
 
-	<param name="fullscreen" type="boolean" value="false"/>
+	<param name="fullscreen" type="boolean" value="true"/>
 	<param name="borderless" type="boolean" value="false"/>
 
 	<param name="antialiasing" type="integer" value="2"/>

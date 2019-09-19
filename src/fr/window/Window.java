@@ -86,7 +86,7 @@ public class Window extends JFrame {
 		// Proprietes de la fenetres
 		this.setResizable(false);
 
-		if (this.winData.isFullScreen()) {
+		if (this.winData.isFullscreen()) {
 			this.setSize(Toolkit.getDefaultToolkit().getScreenSize());
 			this.setUndecorated(true);
 			Logger.inf("Initialisation de la fenetre en mode plein ecran");
