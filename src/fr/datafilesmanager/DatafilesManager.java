@@ -7,6 +7,7 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
+import fr.logger.Logger;
 import fr.xmlmanager.XMLManagerDOM;
 
 /**
@@ -40,7 +41,7 @@ public class DatafilesManager {
 	}
 
 	// Accesseur aux fichiers de configuration
-	private XMLManager xmlReader;
+	private XMLManager xmlManager;
 
 	// Fichiers sauvegardes
 	private Map<String, String> files;
@@ -71,23 +72,13 @@ public class DatafilesManager {
 			System.err.println("Ajout du fichier impossible :\n\tLe fichier \"" + url
 					+ "\" n'existe pas ou n'est pas un fichier .xml");
 		}
-	}
 
-	/**
-	 *
-	 * Recupere un document a partir de la liste de fichiers sauvegardes
-	 *
-	 * @param name : nom du fichier
-	 * @return : le document (racine) du fichier de configuration
-	 */
-	public Object getDocument(String name) {
-		try {
-			return this.xmlReader.getDocument(this.files.get(name));
-		} catch (Exception e) {
-			System.err.println("La valeur \"" + name + "\" n'existe pas dans les fichiers connus.");
-			System.exit(0);
+		if (this.xmlManager != null) {
+			this.xmlManager.saveFile(this.getFile(name));
+		} else {
+			Logger.warn(
+					"Pour une execution optimise, il est conseillé d'ajouter l'XML Manager avant d'ajouter les fichiers");
 		}
-		return null; // Inaccessible
 	}
 
 	/**
@@ -110,6 +101,23 @@ public class DatafilesManager {
 	}
 
 	/**
+	 *
+	 * Recupere un document a partir de la liste de fichiers sauvegardes
+	 *
+	 * @param name : nom du fichier
+	 * @return : le document (racine) du fichier de configuration
+	 */
+	public Object getFile(String name) {
+		try {
+			return this.xmlManager.getDocument(this.files.get(name));
+		} catch (Exception e) {
+			System.err.println("La valeur \"" + name + "\" n'existe pas dans les fichiers connus.");
+			System.exit(0);
+		}
+		return null; // Inaccessible
+	}
+
+	/**
 	 * Recupere la totalitee des fichiers sauvegardes
 	 *
 	 * @return une Map qui lie le nom du fichier a son chemin (path) d'acces
@@ -129,10 +137,10 @@ public class DatafilesManager {
 	 * @return
 	 * @throws RuntimeException
 	 */
-	public XMLManager getXmlReader() throws RuntimeException {
+	public XMLManager getXmlManager() throws RuntimeException {
 		if (!initialized)
 			throw new RuntimeException("Appeler la methode init() pour initialiser DatafilesManager");
-		return this.xmlReader;
+		return this.xmlManager;
 	}
 
 	/**
@@ -143,7 +151,7 @@ public class DatafilesManager {
 	 * @param xmlReader : accesseur de XML a affecter
 	 */
 	public void init(XMLManager xmlReader) {
-		this.xmlReader = xmlReader;
+		this.xmlManager = xmlReader;
 		initialized = true;
 	}
 }

@@ -49,6 +49,10 @@ public class MenuGraphics implements MenuPage {
 		}
 	}
 
+	private Object winConf;
+
+	private XMLManager manager;
+
 	private WButton[] exclusiveResBtn;
 
 	private int resBtnIndex;
@@ -75,12 +79,12 @@ public class MenuGraphics implements MenuPage {
 		this.resBtnIndex = 0;
 
 		DatafilesManager dfm = DatafilesManager.getInstance();
-		Object winConf = dfm.getDocument("winConf");
-		XMLManager manager = dfm.getXmlReader();
+		this.winConf = dfm.getFile("winConf");
+		this.manager = dfm.getXmlManager();
 
-		int width = (int) manager.getParam(winConf, "width", 0);
-		int height = (int) manager.getParam(winConf, "height", 0);
-		boolean fullscreen = (boolean) manager.getParam(winConf, "fullscreen", false);
+		int width = (int) this.manager.getParam(this.winConf, "width", 0);
+		int height = (int) this.manager.getParam(this.winConf, "height", 0);
+		boolean fullscreen = (boolean) this.manager.getParam(this.winConf, "fullscreen", false);
 
 		if (fullscreen) {
 			this.resBtnIndex = NB_RES_EXCLUSIVE_BTN - 1;
@@ -143,13 +147,10 @@ public class MenuGraphics implements MenuPage {
 			@Override
 			public void action() {
 				MenuGraphics.this.setResBtnIndex(0);
-				DatafilesManager dfm = DatafilesManager.getInstance();
-				Object winConf = dfm.getDocument("winConf");
-				XMLManager manager = dfm.getXmlReader();
-				manager.setParam(winConf, "width", res1280.ix());
-				manager.setParam(winConf, "height", res1280.iy());
-				manager.setParam(winConf, "fullscreen", false);
-				manager.saveFile(winConf);
+				MenuGraphics.this.manager.setParam(MenuGraphics.this.winConf, "width", res1280.ix());
+				MenuGraphics.this.manager.setParam(MenuGraphics.this.winConf, "height", res1280.iy());
+				MenuGraphics.this.manager.setParam(MenuGraphics.this.winConf, "fullscreen", false);
+				MenuGraphics.this.manager.saveFile(MenuGraphics.this.winConf);
 			}
 		};
 
@@ -186,13 +187,10 @@ public class MenuGraphics implements MenuPage {
 			@Override
 			public void action() {
 				MenuGraphics.this.setResBtnIndex(1);
-				DatafilesManager dfm = DatafilesManager.getInstance();
-				Object winConf = dfm.getDocument("winConf");
-				XMLManager manager = dfm.getXmlReader();
-				manager.setParam(winConf, "width", res1366.ix());
-				manager.setParam(winConf, "height", res1366.iy());
-				manager.setParam(winConf, "fullscreen", false);
-				manager.saveFile(winConf);
+				MenuGraphics.this.manager.setParam(MenuGraphics.this.winConf, "width", res1366.ix());
+				MenuGraphics.this.manager.setParam(MenuGraphics.this.winConf, "height", res1366.iy());
+				MenuGraphics.this.manager.setParam(MenuGraphics.this.winConf, "fullscreen", false);
+				MenuGraphics.this.manager.saveFile(MenuGraphics.this.winConf);
 			}
 		};
 
@@ -229,13 +227,10 @@ public class MenuGraphics implements MenuPage {
 			@Override
 			public void action() {
 				MenuGraphics.this.setResBtnIndex(2);
-				DatafilesManager dfm = DatafilesManager.getInstance();
-				Object winConf = dfm.getDocument("winConf");
-				XMLManager manager = dfm.getXmlReader();
-				manager.setParam(winConf, "width", res1920.ix());
-				manager.setParam(winConf, "height", res1920.iy());
-				manager.setParam(winConf, "fullscreen", false);
-				manager.saveFile(winConf);
+				MenuGraphics.this.manager.setParam(MenuGraphics.this.winConf, "width", res1920.ix());
+				MenuGraphics.this.manager.setParam(MenuGraphics.this.winConf, "height", res1920.iy());
+				MenuGraphics.this.manager.setParam(MenuGraphics.this.winConf, "fullscreen", false);
+				MenuGraphics.this.manager.saveFile(MenuGraphics.this.winConf);
 			}
 		};
 
@@ -297,11 +292,8 @@ public class MenuGraphics implements MenuPage {
 			@Override
 			public void action() {
 				MenuGraphics.this.setResBtnIndex(NB_RES_EXCLUSIVE_BTN - 1);
-				DatafilesManager dfm = DatafilesManager.getInstance();
-				Object winConf = dfm.getDocument("winConf");
-				XMLManager manager = dfm.getXmlReader();
-				manager.setParam(winConf, "fullscreen", true);
-				manager.saveFile(winConf);
+				MenuGraphics.this.manager.setParam(MenuGraphics.this.winConf, "fullscreen", true);
+				MenuGraphics.this.manager.saveFile(MenuGraphics.this.winConf);
 			}
 		};
 

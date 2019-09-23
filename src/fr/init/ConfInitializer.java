@@ -24,13 +24,13 @@ public class ConfInitializer {
 	 */
 	private Object getWinConf() {
 		Object winConf = null;
-		winConf = this.dfm.getDocument("winConf");
+		winConf = this.dfm.getFile("winConf");
 
 		return winConf;
 	}
 
 	private WinData getWinData(Object winConf) {
-		XMLManager manager = this.dfm.getXmlReader();
+		XMLManager manager = this.dfm.getXmlManager();
 
 		WinData w = new WinData();
 
