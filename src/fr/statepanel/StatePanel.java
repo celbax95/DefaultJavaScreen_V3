@@ -73,6 +73,7 @@ public class StatePanel extends JPanel implements Statable {
 		// Pour les listners
 		this.setFocusable(true);
 		this.requestFocusInWindow();
+		this.setFocusTraversalKeysEnabled(false);
 
 		this.setSize(this.winData.getWindowSize().ix(), this.winData.getWindowSize().iy());
 	}
