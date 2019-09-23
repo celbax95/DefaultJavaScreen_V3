@@ -25,6 +25,8 @@ public abstract class WSlider implements Widget {
 	private int scope;
 	private int value; // [0 ; scope]
 
+	private boolean visible;
+
 	private int minX, maxX;
 
 	// Position du slider
@@ -49,6 +51,7 @@ public abstract class WSlider implements Widget {
 		this.sliderPos = new Point();
 		this.pressed = false;
 		this.freeMove = false;
+		this.visible = true;
 		this.page = page;
 	}
 
@@ -107,6 +110,9 @@ public abstract class WSlider implements Widget {
 
 	@Override
 	public void draw(Graphics2D g) {
+		if (!this.visible)
+			return;
+
 		if (this.bar == null) {
 			Logger.err(
 					"Un " + this.getClass().getSimpleName() + " utilise n'a pas de de drawElement \"bar\"");
@@ -195,6 +201,11 @@ public abstract class WSlider implements Widget {
 	 */
 	public boolean isPressed() {
 		return this.pressed;
+	}
+
+	@Override
+	public boolean isVisible() {
+		return this.visible;
 	}
 
 	/**
@@ -303,7 +314,15 @@ public abstract class WSlider implements Widget {
 	}
 
 	@Override
+	public void setVisible(boolean visible) {
+		this.visible = visible;
+	}
+
+	@Override
 	public void update(Input input) {
+		if (!this.visible)
+			return;
+
 		for (MouseEvent e : input.mouseEvents) {
 			switch (e.id) {
 			case MouseEvent.LEFT_RELEASED:

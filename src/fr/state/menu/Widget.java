@@ -8,5 +8,9 @@ public interface Widget {
 
 	void draw(Graphics2D g);
 
+	boolean isVisible();
+
+	void setVisible(boolean visible);
+
 	void update(Input input);
 }

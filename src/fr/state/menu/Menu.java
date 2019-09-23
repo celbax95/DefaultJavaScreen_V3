@@ -3,7 +3,7 @@ package fr.state.menu;
 import java.awt.Graphics2D;
 
 import fr.inputs.Input;
-import fr.state.menu.page.MenuMain;
+import fr.state.menu.page.MenuGraphics;
 
 public class Menu {
 
@@ -16,7 +16,8 @@ public class Menu {
 	}
 
 	public void applyDefautPage() {
-		this.applyPage(new MenuMain(this));
+//		this.applyPage(new MenuMain(this));
+		this.applyPage(new MenuGraphics(this));
 	}
 
 	public void applyPage(MenuPage mp) {

@@ -103,5 +103,5 @@ public interface XMLManager {
 	 * @param paramName : nom du parametre
 	 * @param newValue  : valeur a affecter au parametre
 	 */
-	void setParam(Object doc, String paramName, String newValue);
+	void setParam(Object doc, String paramName, Object newValue);
 }

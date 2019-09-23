@@ -49,6 +49,8 @@ public class WinData {
 
 	private int alphaInterpolation;
 
+	private boolean needRestart;
+
 	public WinData() {
 		super();
 		this.windowSize = new Point();
@@ -183,6 +185,10 @@ public class WinData {
 		return this.fullscreen;
 	}
 
+	public boolean isNeedRestart() {
+		return this.needRestart;
+	}
+
 	public void setAlphaInterpolation(int alphaInterpolation) {
 		assert alphaInterpolation >= 0 && alphaInterpolation < alphaInterpolationValues.length;
 
@@ -265,6 +271,10 @@ public class WinData {
 	 */
 	public void setMarginTop(int marginTop) {
 		this.marginTop = marginTop;
+	}
+
+	public void setNeedRestart(boolean needRestart) {
+		this.needRestart = needRestart;
 	}
 
 	public void setRendering(int rendering) {

@@ -31,6 +31,21 @@ public class XMLManagerDOM implements XMLManager {
 	 */
 	private static volatile XMLManagerDOM instance;
 
+	/**
+	 * Return a singleton instance of XMLReader.
+	 */
+	public static XMLManagerDOM getInstance() {
+		// Double lock for thread safety.
+		if (instance == null) {
+			synchronized (XMLManagerDOM.class) {
+				if (instance == null) {
+					instance = new XMLManagerDOM();
+				}
+			}
+		}
+		return instance;
+	}
+
 	// Utilise pour recuperer le fichier xml
 	private DocumentBuilder builder;
 
@@ -52,6 +67,27 @@ public class XMLManagerDOM implements XMLManager {
 		}
 
 		this.xpath = XPathFactory.newInstance().newXPath();
+	}
+
+	/**
+	 * Cast dynamiquement la chaine 'value' dans le type 'type'
+	 *
+	 * @param value : la chaine a caster
+	 * @param type  : le type dans lequel il faut caster
+	 * @return : value caste dans le type 'type'
+	 */
+	private Object dynamicCast(String value, String type) {
+		switch (type.toLowerCase()) {
+		case "integer":
+			return Integer.valueOf(value);
+		case "number":
+			return Double.valueOf(value);
+		case "boolean":
+			return Boolean.valueOf(value);
+		case "string":
+			return value;
+		}
+		return null;
 	}
 
 	@Override
@@ -171,48 +207,6 @@ public class XMLManagerDOM implements XMLManager {
 		return this.xpath;
 	}
 
-	@Override
-	public void saveFile(Object doc) {
-
-		Document document = (Document) doc;
-
-		DOMSource source = new DOMSource(((Document) doc).getDocumentElement());
-		StreamResult result = new StreamResult(new File(document.getDocumentURI().substring(6)));
-		this.transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-		try {
-			this.transformer.transform(source, result);
-		} catch (TransformerException e) {
-			// e.printStackTrace();
-		}
-	}
-
-	@Override
-	public void setParam(Object doc, String paramName, String newValue) {
-		((Node) this.getNode(doc, "param", "name", paramName)).getAttributes().getNamedItem("value")
-				.setTextContent(newValue);
-	}
-
-	/**
-	 * Cast dynamiquement la chaine 'value' dans le type 'type'
-	 *
-	 * @param value : la chaine a caster
-	 * @param type  : le type dans lequel il faut caster
-	 * @return : value caste dans le type 'type'
-	 */
-	private Object dynamicCast(String value, String type) {
-		switch (type.toLowerCase()) {
-		case "integer":
-			return Integer.valueOf(value);
-		case "number":
-			return Double.valueOf(value);
-		case "boolean":
-			return Boolean.valueOf(value);
-		case "string":
-			return value;
-		}
-		return null;
-	}
-
 	/**
 	 * Transform une NodeList en tableau d'objet
 	 *
@@ -229,18 +223,28 @@ public class XMLManagerDOM implements XMLManager {
 		return oa;
 	}
 
-	/**
-	 * Return a singleton instance of XMLReader.
-	 */
-	public static XMLManagerDOM getInstance() {
-		// Double lock for thread safety.
-		if (instance == null) {
-			synchronized (XMLManagerDOM.class) {
-				if (instance == null) {
-					instance = new XMLManagerDOM();
-				}
-			}
+	@Override
+	public void saveFile(Object doc) {
+
+		Document document = (Document) doc;
+
+		DOMSource source = new DOMSource(((Document) doc).getDocumentElement());
+		StreamResult result = new StreamResult(new File(document.getDocumentURI().substring(6)));
+		this.transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+		try {
+			this.transformer.transform(source, result);
+		} catch (TransformerException e) {
+			// e.printStackTrace();
 		}
-		return instance;
+	}
+
+	@Override
+	public void setParam(Object doc, String paramName, Object newValue) {
+
+		assert newValue instanceof Integer || newValue instanceof Double || newValue instanceof Boolean
+				|| newValue instanceof String;
+
+		((Node) this.getNode(doc, "param", "name", paramName)).getAttributes().getNamedItem("value")
+				.setTextContent(String.valueOf(newValue));
 	}
 }

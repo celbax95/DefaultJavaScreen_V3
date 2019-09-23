@@ -1,16 +1,6 @@
 <?xml version="1.1" encoding="UTF-8"?><conf>
 	<!-- Window parameters -->
 
-	<!-- 1920 / 1080 
-	<param name="width" type="integer" value="1920"/>
-	<param name="height" type="integer" value="1080"/>
-	-->
-
-	<!-- 1366 / 768
-	<param name="width" type="integer" value="1366"/>
-	<param name="height" type="integer" value="768"/>
-	-->
-
 	<!-- 1280 / 720 -->
 	<param name="width" type="integer" value="1280"/>
 	<param name="height" type="integer" value="720"/>
@@ -22,7 +12,7 @@
 	<param name="marginRight" type="integer" value="0"/>
 	<param name="margin" type="integer" value="1"/>
 
-	<param name="fullscreen" type="boolean" value="true"/>
+	<param name="fullscreen" type="boolean" value="false"/>
 	<param name="borderless" type="boolean" value="false"/>
 
 	<param name="antialiasing" type="integer" value="2"/>

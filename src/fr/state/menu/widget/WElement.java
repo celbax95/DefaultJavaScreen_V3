@@ -13,12 +13,15 @@ public class WElement implements Widget {
 
 	private Point pos;
 
+	private boolean visible;
+
 	private MenuPage page;
 
 	public WElement(MenuPage p) {
 		this.page = p;
 		this.pos = new Point();
 		this.drawElement = null;
+		this.visible = true;
 	}
 
 	public WElement(WElement other) {
@@ -32,6 +35,9 @@ public class WElement implements Widget {
 
 	@Override
 	public void draw(Graphics2D g) {
+		if (!this.visible)
+			return;
+
 		if (this.drawElement == null) {
 			Logger.err("Un " + this.getClass().getSimpleName() + " utilise n'a pas de de drawElement");
 			return;
@@ -58,6 +64,11 @@ public class WElement implements Widget {
 		return this.drawElement.getSize();
 	}
 
+	@Override
+	public boolean isVisible() {
+		return this.visible;
+	}
+
 	/**
 	 * @param drawElement the drawElement to set
 	 */
@@ -74,6 +85,11 @@ public class WElement implements Widget {
 
 	public void setPos(Point pos) {
 		this.pos.set(pos);
+	}
+
+	@Override
+	public void setVisible(boolean visible) {
+		this.visible = visible;
 	}
 
 	@Override

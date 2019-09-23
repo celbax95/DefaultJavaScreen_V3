@@ -27,6 +27,8 @@ public abstract class WSwitch implements Widget {
 
 	private boolean mouseOn;
 
+	private boolean visible;
+
 	private MenuPage page;
 
 	public WSwitch(MenuPage p) {
@@ -46,6 +48,8 @@ public abstract class WSwitch implements Widget {
 		this.pressed = false;
 
 		this.mouseOn = false;
+
+		this.visible = true;
 
 		this.currentDE = null;
 	}
@@ -76,6 +80,9 @@ public abstract class WSwitch implements Widget {
 
 	@Override
 	public void draw(Graphics2D g) {
+		if (!this.visible)
+			return;
+
 		if (this.currentDE != null) {
 			this.currentDE.draw(g, this.pos);
 		} else {
@@ -159,6 +166,11 @@ public abstract class WSwitch implements Widget {
 	 */
 	public boolean isPressed() {
 		return this.pressed;
+	}
+
+	@Override
+	public boolean isVisible() {
+		return this.visible;
 	}
 
 	/**
@@ -298,7 +310,15 @@ public abstract class WSwitch implements Widget {
 	}
 
 	@Override
+	public void setVisible(boolean visible) {
+		this.visible = visible;
+	}
+
+	@Override
 	public void update(Input input) {
+		if (!this.visible)
+			return;
+
 		for (MouseEvent e : input.mouseEvents) {
 			switch (e.id) {
 			case MouseEvent.LEFT_PRESSED:

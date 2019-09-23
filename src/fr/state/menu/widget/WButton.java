@@ -20,6 +20,8 @@ public abstract class WButton implements Widget {
 
 	private DrawElement pressedDrawElement;
 
+	private DrawElement cantPressDrawElement;
+
 	private DrawElement currentDE;
 
 	private boolean pressed;
@@ -27,6 +29,8 @@ public abstract class WButton implements Widget {
 	private boolean mouseOn;
 
 	private boolean canPressed;
+
+	private boolean visible;
 
 	private MenuPage page;
 
@@ -37,6 +41,8 @@ public abstract class WButton implements Widget {
 		this.hitbox = new AABB(this.pos, new Point(), new Point());
 
 		this.canPressed = true;
+
+		this.visible = true;
 
 		this.stdDrawElement = null;
 
@@ -70,11 +76,18 @@ public abstract class WButton implements Widget {
 
 	@Override
 	public void draw(Graphics2D g) {
+		if (!this.visible)
+			return;
+
 		if (this.currentDE != null) {
 			this.currentDE.draw(g, this.pos);
 		} else {
 			Logger.err("Un " + this.getClass().getSimpleName() + " n'a pas de drawElement");
 		}
+	}
+
+	public DrawElement getCantPressDrawElement() {
+		return this.cantPressDrawElement;
 	}
 
 	public AABB getHitbox() {
@@ -122,11 +135,29 @@ public abstract class WButton implements Widget {
 		return this.pressed;
 	}
 
+	@Override
+	public boolean isVisible() {
+		return this.visible;
+	}
+
 	public void setCanPressed(boolean canPressed) {
-		this.canPressed = canPressed;
+		if (canPressed != this.canPressed) {
+			this.canPressed = canPressed;
+			this.setPressed(false);
+			this.setCurrentDE();
+		}
+	}
+
+	public void setCantPressDrawElement(DrawElement cantPressDrawElement) {
+		this.cantPressDrawElement = cantPressDrawElement;
 	}
 
 	private void setCurrentDE() {
+		if (!this.canPressed && this.cantPressDrawElement != null) {
+			this.currentDE = this.cantPressDrawElement;
+			return;
+		}
+
 		// Changement du drawElement courant
 
 		if (this.pressedDrawElement == null)
@@ -197,7 +228,15 @@ public abstract class WButton implements Widget {
 	}
 
 	@Override
+	public void setVisible(boolean visible) {
+		this.visible = visible;
+	}
+
+	@Override
 	public void update(Input input) {
+		if (!this.canPressed || !this.visible)
+			return;
+
 		for (MouseEvent e : input.mouseEvents) {
 			switch (e.id) {
 			case MouseEvent.LEFT_PRESSED:
