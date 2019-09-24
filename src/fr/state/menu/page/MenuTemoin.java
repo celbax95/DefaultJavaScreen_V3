@@ -185,7 +185,12 @@ public class MenuTemoin implements MenuPage {
 	}
 
 	private void wUserInput() {
-		WUserInput u = new WUserInput(this);
+		WUserInput u = new WUserInput(this) {
+			@Override
+			public void dataChanged(String data) {
+				System.out.println(data);
+			}
+		};
 
 		BorderData border = new BorderData(2, Color.WHITE, 0);
 

@@ -13,7 +13,7 @@ import fr.util.collider.AABB;
 import fr.util.collider.Collider;
 import fr.util.point.Point;
 
-public class WUserInput implements Widget {
+public abstract class WUserInput implements Widget {
 	private abstract class LabelDrawer {
 		public int prevLabelState;
 
@@ -43,6 +43,8 @@ public class WUserInput implements Widget {
 	private String data;
 
 	private boolean eraseOnEdit;
+
+	private boolean lostFocusToValidate;
 
 	private String saveData;
 
@@ -83,6 +85,7 @@ public class WUserInput implements Widget {
 		this.saveData = "";
 
 		this.eraseOnEdit = false;
+		this.lostFocusToValidate = false;
 	}
 
 	private void changeLabelDrawer() {
@@ -142,6 +145,8 @@ public class WUserInput implements Widget {
 		}
 	}
 
+	public abstract void dataChanged(String data);
+
 	@Override
 	public void draw(Graphics2D g) {
 		if (!this.visible)
@@ -200,6 +205,10 @@ public class WUserInput implements Widget {
 		return this.textData;
 	}
 
+	public boolean isEraseOnEdit() {
+		return this.eraseOnEdit;
+	}
+
 	public boolean isSelected() {
 		return this.selected;
 	}
@@ -220,6 +229,10 @@ public class WUserInput implements Widget {
 
 	public void setDataLength(int dataLength) {
 		this.dataLength = dataLength;
+	}
+
+	public void setEraseOnEdit(boolean eraseOnEdit) {
+		this.eraseOnEdit = eraseOnEdit;
 	}
 
 	public void setHitbox(AABB hitbox) {
@@ -318,14 +331,20 @@ public class WUserInput implements Widget {
 					} else if (e.key == 10) {
 						// ENTER
 						this.setSelected(false);
+						if (this.lostFocusToValidate) {
+							this.dataChanged(this.data);
+						}
 					} else if (this.data.length() < this.dataLength) {
 						if (e.key == 32) {
 							// SPACE
 							t = " ";
 						}
 						this.data += t;
+						if (!this.lostFocusToValidate) {
+							this.dataChanged(this.data);
+						}
+						this.data.replace("  ", " ");
 					}
-					System.out.println(this.data);
 				}
 			}
 		}
