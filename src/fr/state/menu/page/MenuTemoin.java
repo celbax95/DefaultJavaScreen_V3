@@ -17,6 +17,7 @@ import fr.state.menu.widget.WButton;
 import fr.state.menu.widget.WElement;
 import fr.state.menu.widget.WSlider;
 import fr.state.menu.widget.WSwitch;
+import fr.state.menu.widget.WUserInput;
 import fr.state.menu.widget.drawelements.DELabel;
 import fr.state.menu.widget.drawelements.DERectangle;
 import fr.util.point.Point;
@@ -37,6 +38,7 @@ public class MenuTemoin implements MenuPage {
 		this.wTitle();
 		this.wSwitch();
 		this.wSlide();
+		this.wUserInput();
 	}
 
 	@Override
@@ -105,7 +107,7 @@ public class MenuTemoin implements MenuPage {
 		slider.setSize(new Point(120, 30));
 		s.setSlider(slider);
 
-		s.setPos(new Point(300, 500));
+		s.setPos(new Point(150, 650));
 		s.setScope(10);
 		s.setHitboxFromDrawElement();
 
@@ -124,7 +126,7 @@ public class MenuTemoin implements MenuPage {
 				Logger.obs("SwitchButton : active");
 			}
 		};
-		TextData label = new TextData(new Point(), new Font("Arial", Font.PLAIN, 20), "Active moiiiii",
+		TextData label = new TextData(new Point(), new Font("Arial", Font.PLAIN, 20), "Active moi",
 				Color.WHITE, 3);
 		label.lock();
 
@@ -133,37 +135,32 @@ public class MenuTemoin implements MenuPage {
 
 		DERectangle rect = new DERectangle();
 
-		rect.setPos(new Point(800, 400));
 		rect.setLabel(label);
 		rect.setColor(Color.RED);
 		rect.setSize(new Point(200, 100));
 		rect.setBorder(border);
-		rect.lock();
 		s.setOffDrawElement(rect);
 
 		rect = (DERectangle) rect.clone();
 		label = new TextData(label);
 		label.setColor(Color.BLACK);
-		label.lock();
 		rect.setLabel(label);
 		rect.setColor(new Color(200, 30, 30));
-		rect.lock();
 		s.setPressedOffDrawElement(rect);
 
 		rect = (DERectangle) rect.clone();
 		label = new TextData(label);
 		label.setColor(Color.BLACK);
 		label.setText("Je suis activé :)");
-		label.lock();
 		rect.setLabel(label);
 		rect.setColor(Color.GREEN);
-		rect.lock();
 		s.setOnDrawElement(rect);
 
 		rect = (DERectangle) rect.clone();
 		rect.setColor(new Color(30, 200, 30));
-		rect.lock();
 		s.setPressedOnDrawElement(rect);
+
+		s.setPos(new Point(600, 620));
 
 		s.setHitboxFromDrawElement();
 
@@ -187,4 +184,31 @@ public class MenuTemoin implements MenuPage {
 		this.widgets.add(title);
 	}
 
+	private void wUserInput() {
+		WUserInput u = new WUserInput(this);
+
+		BorderData border = new BorderData(2, Color.WHITE, 0);
+
+		DERectangle rect = new DERectangle();
+		rect.setColor(Color.BLACK);
+		rect.setSize(new Point(300, 60));
+		rect.setBorder(border);
+		u.setStdDrawElement(rect);
+
+		rect = (DERectangle) rect.clone();
+		rect.setColor(new Color(0, 50, 50));
+		u.setSelectedDrawElement(rect);
+
+		u.setPos(new Point(770, 340));
+
+		TextData td = new TextData(new Point(), new Font("Copperplate Gothic Bold", Font.PLAIN, 35), "",
+				Color.WHITE, 3);
+
+		u.setTextData(td);
+
+		u.setDataLength(10);
+		u.setHitboxFromDrawElement();
+
+		this.widgets.add(u);
+	}
 }
