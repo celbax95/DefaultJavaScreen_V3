@@ -1,7 +1,6 @@
 package fr.state.menu.widget;
 
 import java.awt.Graphics2D;
-import java.awt.event.KeyEvent;
 
 import fr.inputs.Input;
 import fr.inputs.keyboard.KeyboardEvent;
@@ -320,10 +319,6 @@ public abstract class WUserInput implements Widget {
 
 		if (this.selected) {
 			for (KeyboardEvent e : input.keyboardEvents) {
-				String t = KeyEvent.getKeyText(e.key);
-				if (t.length() > 1) {
-					t = "";
-				}
 				if (e.pressed) {
 					if (e.key == 8 && this.data.length() > 0) {
 						// DELETE
@@ -334,12 +329,9 @@ public abstract class WUserInput implements Widget {
 						if (this.lostFocusToValidate) {
 							this.dataChanged(this.data);
 						}
-					} else if (this.data.length() < this.dataLength) {
-						if (e.key == 32) {
-							// SPACE
-							t = " ";
-						}
-						this.data += t;
+					} else if (this.data.length() < this.dataLength && e.keyChar != Character.MIN_VALUE) {
+						// System.out.println("\"" + +"\"");
+						this.data += e.keyChar;
 						if (!this.lostFocusToValidate) {
 							this.dataChanged(this.data);
 						}

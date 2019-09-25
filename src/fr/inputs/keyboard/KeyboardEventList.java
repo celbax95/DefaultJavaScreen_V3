@@ -25,14 +25,20 @@ public class KeyboardEventList implements Keyboard {
 		return this.events;
 	}
 
+	private char getValidKeyChar(char keyChar) {
+		return Character.isDefined(keyChar) ? keyChar : Character.MIN_VALUE;
+	}
+
 	@Override
 	public void keyPressed(KeyEvent arg0) {
-		this.events.add(new KeyboardEvent(arg0.getKeyCode(), true));
+		this.events.add(new KeyboardEvent(arg0.getKeyCode(), this.getValidKeyChar(arg0.getKeyChar()),
+				arg0.isShiftDown(), arg0.isControlDown(), arg0.isAltDown(), true));
 	}
 
 	@Override
 	public void keyReleased(KeyEvent arg0) {
-		this.events.add(new KeyboardEvent(arg0.getKeyCode(), false));
+		this.events.add(new KeyboardEvent(arg0.getKeyCode(), this.getValidKeyChar(arg0.getKeyChar()),
+				arg0.isShiftDown(), arg0.isControlDown(), arg0.isAltDown(), false));
 	}
 
 	@Override
