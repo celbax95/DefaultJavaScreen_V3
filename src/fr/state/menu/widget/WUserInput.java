@@ -169,6 +169,10 @@ public abstract class WUserInput implements Widget {
 		}
 	}
 
+	public String getData() {
+		return this.data;
+	}
+
 	public int getDataLength() {
 		return this.dataLength;
 	}
@@ -208,6 +212,10 @@ public abstract class WUserInput implements Widget {
 		return this.eraseOnEdit;
 	}
 
+	public boolean isLostFocusToValidate() {
+		return this.lostFocusToValidate;
+	}
+
 	public boolean isSelected() {
 		return this.selected;
 	}
@@ -224,6 +232,10 @@ public abstract class WUserInput implements Widget {
 			this.currentDE = this.selectedDrawElement;
 		}
 		this.halfSize.set(this.currentDE.getSize().clone().div(2));
+	}
+
+	public void setData(String data) {
+		this.data = data;
 	}
 
 	public void setDataLength(int dataLength) {
@@ -244,6 +256,10 @@ public abstract class WUserInput implements Widget {
 
 		this.hitbox.min(this.pos.clone().add(this.currentDE.getPos()));
 		this.hitbox.max(this.pos.clone().add(this.currentDE.getPos()).add(this.currentDE.getSize()));
+	}
+
+	public void setLostFocusToValidate(boolean lostFocusToValidate) {
+		this.lostFocusToValidate = lostFocusToValidate;
 	}
 
 	public void setPage(MenuPage page) {
@@ -320,9 +336,11 @@ public abstract class WUserInput implements Widget {
 		if (this.selected) {
 			for (KeyboardEvent e : input.keyboardEvents) {
 				if (e.pressed) {
-					if (e.key == 8 && this.data.length() > 0) {
+					if (e.key == 8) {
 						// DELETE
-						this.data = this.data.substring(0, this.data.length() - 1);
+						if (this.data.length() > 0) {
+							this.data = this.data.substring(0, this.data.length() - 1);
+						}
 					} else if (e.key == 10) {
 						// ENTER
 						this.setSelected(false);
