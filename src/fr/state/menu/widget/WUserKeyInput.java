@@ -1,6 +1,11 @@
 package fr.state.menu.widget;
 
 import java.awt.Graphics2D;
+import java.awt.event.KeyEvent;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import fr.inputs.Input;
 import fr.inputs.keyboard.KeyboardEvent;
@@ -17,6 +22,27 @@ public abstract class WUserKeyInput implements Widget {
 		public int prevLabelState;
 
 		public abstract void draw(Graphics2D g, Point absp);
+	}
+
+	private static final int DATA_MOUSE_LEFT = -1;
+	private static final int DATA_MOUSE_MIDDLE = -2;
+	private static final int DATA_MOUSE_RIGHT = -3;
+
+	private static final Map<Integer, String> MOUSE_LABELS;
+
+	private static final List<Integer> EXCLUDED_KEYS;
+
+	private static final String DEFAULT_LABEL_ON_SELECT = "-?-";
+
+	static {
+		MOUSE_LABELS = new HashMap<>();
+		MOUSE_LABELS.put(DATA_MOUSE_LEFT, "Mouse Left");
+		MOUSE_LABELS.put(DATA_MOUSE_MIDDLE, "Mouse Middle");
+		MOUSE_LABELS.put(DATA_MOUSE_RIGHT, "Mouse Right");
+
+		EXCLUDED_KEYS = new ArrayList<>();
+		EXCLUDED_KEYS.add(0); // NULL
+		EXCLUDED_KEYS.add(524); // WIN KEY
 	}
 
 	private Point pos;
@@ -39,15 +65,11 @@ public abstract class WUserKeyInput implements Widget {
 
 	private TextData textData;
 
-	private String data;
+	private String labelOnSelect;
 
-	private boolean eraseOnEdit;
+	private int data;
 
-	private boolean lostFocusToValidate;
-
-	private String saveData;
-
-	private int dataLength;
+	private String label;
 
 	private MenuPage page;
 
@@ -77,14 +99,10 @@ public abstract class WUserKeyInput implements Widget {
 		};
 		this.labelDrawer.prevLabelState = -1;
 
-		this.data = "";
+		this.labelOnSelect = DEFAULT_LABEL_ON_SELECT;
 
-		this.dataLength = 0;
-
-		this.saveData = "";
-
-		this.eraseOnEdit = false;
-		this.lostFocusToValidate = false;
+		this.data = 0;
+		this.label = "";
 	}
 
 	private void changeLabelDrawer() {
@@ -147,7 +165,7 @@ public abstract class WUserKeyInput implements Widget {
 		}
 	}
 
-	public abstract void dataChanged(String data);
+	public abstract void dataChanged(int data);
 
 	@Override
 	public void draw(Graphics2D g) {
@@ -164,7 +182,7 @@ public abstract class WUserKeyInput implements Widget {
 
 	public void drawData(Graphics2D g) {
 		if (this.textData != null) {
-			this.textData.setText(this.data);
+			this.textData.setText(this.label);
 
 			g.setFont(this.textData.getFont());
 			g.setColor(this.textData.getColor());
@@ -172,12 +190,20 @@ public abstract class WUserKeyInput implements Widget {
 		}
 	}
 
-	public int getDataLength() {
-		return this.dataLength;
+	public int getData() {
+		return this.data;
 	}
 
 	public AABB getHitbox() {
 		return this.hitbox;
+	}
+
+	public String getLabel() {
+		return this.label;
+	}
+
+	public String getLabelOnSelect() {
+		return this.labelOnSelect;
 	}
 
 	public MenuPage getPage() {
@@ -207,10 +233,6 @@ public abstract class WUserKeyInput implements Widget {
 		return this.textData;
 	}
 
-	public boolean isEraseOnEdit() {
-		return this.eraseOnEdit;
-	}
-
 	public boolean isSelected() {
 		return this.selected;
 	}
@@ -229,12 +251,17 @@ public abstract class WUserKeyInput implements Widget {
 		this.halfSize.set(this.currentDE.getSize().clone().div(2));
 	}
 
-	public void setDataLength(int dataLength) {
-		this.dataLength = dataLength;
-	}
-
-	public void setEraseOnEdit(boolean eraseOnEdit) {
-		this.eraseOnEdit = eraseOnEdit;
+	public void setData(int key) {
+		this.data = key;
+		if (this.data > 0) {
+			this.setLabel(KeyEvent.getKeyText(this.data));
+		} else if (MOUSE_LABELS.containsKey(this.data)) {
+			this.setLabel(MOUSE_LABELS.get(this.data));
+		} else {
+			this.setLabel("None");
+		}
+		this.setSelected(false);
+		this.dataChanged(this.data);
 	}
 
 	public void setHitbox(AABB hitbox) {
@@ -247,6 +274,14 @@ public abstract class WUserKeyInput implements Widget {
 
 		this.hitbox.min(this.pos.clone().add(this.currentDE.getPos()));
 		this.hitbox.max(this.pos.clone().add(this.currentDE.getPos()).add(this.currentDE.getSize()));
+	}
+
+	public void setLabel(String label) {
+		this.label = label;
+	}
+
+	public void setLabelOnSelect(String labelOnSelect) {
+		this.labelOnSelect = labelOnSelect;
 	}
 
 	public void setPage(MenuPage page) {
@@ -262,15 +297,8 @@ public abstract class WUserKeyInput implements Widget {
 			this.selected = selected;
 			this.setCurrentDE();
 
-			if (this.eraseOnEdit) {
-				if (selected) {
-					this.saveData = "" + this.data;
-					this.data = "";
-				} else {
-					if (this.data.equals(this.saveData)) {
-						this.data = "" + this.saveData;
-					}
-				}
+			if (selected) {
+				this.label = this.labelOnSelect;
 			}
 		}
 	}
@@ -311,10 +339,20 @@ public abstract class WUserKeyInput implements Widget {
 		for (MouseEvent e : input.mouseEvents) {
 			switch (e.id) {
 			case MouseEvent.LEFT_PRESSED:
-				if (Collider.AABBvsPoint(this.hitbox, e.pos)) {
+				if (!this.selected && Collider.AABBvsPoint(this.hitbox, e.pos)) {
 					this.setSelected(true);
-				} else {
-					this.setSelected(false);
+				} else if (this.selected) {
+					this.setData(DATA_MOUSE_LEFT);
+				}
+				continue;
+			case MouseEvent.MIDDLE_PRESSED:
+				if (this.selected) {
+					this.setData(DATA_MOUSE_MIDDLE);
+				}
+				continue;
+			case MouseEvent.RIGHT_PRESSED:
+				if (this.selected) {
+					this.setData(DATA_MOUSE_RIGHT);
 				}
 				continue;
 			}
@@ -322,23 +360,11 @@ public abstract class WUserKeyInput implements Widget {
 
 		if (this.selected) {
 			for (KeyboardEvent e : input.keyboardEvents) {
-				if (e.pressed) {
-					if (e.key == 8 && this.data.length() > 0) {
-						// DELETE
-						this.data = this.data.substring(0, this.data.length() - 1);
-					} else if (e.key == 10) {
-						// ENTER
-						this.setSelected(false);
-						if (this.lostFocusToValidate) {
-							this.dataChanged(this.data);
-						}
-					} else if (this.data.length() < this.dataLength && e.keyChar != Character.MIN_VALUE) {
-						// System.out.println("\"" + +"\"");
-						this.data += e.keyChar;
-						if (!this.lostFocusToValidate) {
-							this.dataChanged(this.data);
-						}
-						this.data.replace("  ", " ");
+				if (e.pressed && !EXCLUDED_KEYS.contains(e.key)) {
+					if (e.key == 27) {
+						this.setData(0);
+					} else {
+						this.setData(e.key);
 					}
 				}
 			}

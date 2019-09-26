@@ -18,6 +18,7 @@ import fr.state.menu.widget.WElement;
 import fr.state.menu.widget.WSlider;
 import fr.state.menu.widget.WSwitch;
 import fr.state.menu.widget.WUserInput;
+import fr.state.menu.widget.WUserKeyInput;
 import fr.state.menu.widget.drawelements.DELabel;
 import fr.state.menu.widget.drawelements.DERectangle;
 import fr.util.point.Point;
@@ -39,6 +40,7 @@ public class MenuTemoin implements MenuPage {
 		this.wSwitch();
 		this.wSlide();
 		this.wUserInput();
+		this.wUserKeyInput();
 	}
 
 	@Override
@@ -204,7 +206,7 @@ public class MenuTemoin implements MenuPage {
 		rect.setColor(new Color(0, 50, 50));
 		u.setSelectedDrawElement(rect);
 
-		u.setPos(new Point(770, 340));
+		u.setPos(new Point(150, 470));
 
 		TextData td = new TextData(new Point(), new Font("Copperplate Gothic Bold", Font.PLAIN, 35), "",
 				Color.WHITE, 3);
@@ -212,6 +214,38 @@ public class MenuTemoin implements MenuPage {
 		u.setTextData(td);
 
 		u.setDataLength(10);
+		u.setHitboxFromDrawElement();
+
+		this.widgets.add(u);
+	}
+
+	private void wUserKeyInput() {
+		WUserKeyInput u = new WUserKeyInput(this) {
+			@Override
+			public void dataChanged(int data) {
+				System.out.println(data);
+			}
+		};
+
+		BorderData border = new BorderData(2, Color.WHITE, 0);
+
+		DERectangle rect = new DERectangle();
+		rect.setColor(Color.BLACK);
+		rect.setSize(new Point(260, 70));
+		rect.setBorder(border);
+		u.setStdDrawElement(rect);
+
+		rect = (DERectangle) rect.clone();
+		rect.setColor(new Color(0, 50, 50));
+		u.setSelectedDrawElement(rect);
+
+		u.setPos(new Point(680, 280));
+
+		TextData td = new TextData(new Point(), new Font("Copperplate Gothic Bold", Font.PLAIN, 35), "",
+				Color.WHITE, 3);
+
+		u.setTextData(td);
+
 		u.setHitboxFromDrawElement();
 
 		this.widgets.add(u);
