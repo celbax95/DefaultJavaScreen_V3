@@ -231,7 +231,7 @@ public class MenuTemoin implements MenuPage {
 
 		DERectangle rect = new DERectangle();
 		rect.setColor(Color.BLACK);
-		rect.setSize(new Point(260, 70));
+		rect.setSize(new Point(150, 70));
 		rect.setBorder(border);
 		u.setStdDrawElement(rect);
 

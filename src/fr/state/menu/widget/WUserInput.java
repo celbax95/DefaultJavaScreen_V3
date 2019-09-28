@@ -362,7 +362,9 @@ public abstract class WUserInput implements Widget {
 	}
 
 	public void setTextData(TextData textData) {
-		this.currentTextData = textData;
+		if (currentTextData == null) {
+			currentTextData = textData;
+		}
 		this.originalTextData = new TextData(textData);
 		this.changeLabelDrawer();
 	}
