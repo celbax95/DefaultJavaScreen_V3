@@ -2,6 +2,8 @@ package fr.xmlmanager;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -30,21 +32,6 @@ public class XMLManagerDOM implements XMLManager {
 	 * static Singleton instance.
 	 */
 	private static volatile XMLManagerDOM instance;
-
-	/**
-	 * Return a singleton instance of XMLReader.
-	 */
-	public static XMLManagerDOM getInstance() {
-		// Double lock for thread safety.
-		if (instance == null) {
-			synchronized (XMLManagerDOM.class) {
-				if (instance == null) {
-					instance = new XMLManagerDOM();
-				}
-			}
-		}
-		return instance;
-	}
 
 	// Utilise pour recuperer le fichier xml
 	private DocumentBuilder builder;
@@ -229,7 +216,13 @@ public class XMLManagerDOM implements XMLManager {
 		Document document = (Document) doc;
 
 		DOMSource source = new DOMSource(((Document) doc).getDocumentElement());
-		StreamResult result = new StreamResult(new File(document.getDocumentURI().substring(6)));
+		StreamResult result = null;
+		try {
+			result = new StreamResult(
+					new File(URLDecoder.decode(document.getBaseURI(), "UTF-8").substring(6)));
+		} catch (UnsupportedEncodingException e1) {
+			// e1.printStackTrace();
+		}
 		this.transformer.setOutputProperty(OutputKeys.INDENT, "yes");
 		try {
 			this.transformer.transform(source, result);
@@ -246,5 +239,20 @@ public class XMLManagerDOM implements XMLManager {
 
 		((Node) this.getNode(doc, "param", "name", paramName)).getAttributes().getNamedItem("value")
 				.setTextContent(String.valueOf(newValue));
+	}
+
+	/**
+	 * Return a singleton instance of XMLReader.
+	 */
+	public static XMLManagerDOM getInstance() {
+		// Double lock for thread safety.
+		if (instance == null) {
+			synchronized (XMLManagerDOM.class) {
+				if (instance == null) {
+					instance = new XMLManagerDOM();
+				}
+			}
+		}
+		return instance;
 	}
 }
