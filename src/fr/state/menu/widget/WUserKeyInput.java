@@ -79,6 +79,8 @@ public abstract class WUserKeyInput implements Widget {
 
 	private MenuPage page;
 
+	int a = 0;
+
 	public WUserKeyInput(MenuPage p) {
 		this.page = p;
 		this.pos = new Point();
@@ -114,6 +116,11 @@ public abstract class WUserKeyInput implements Widget {
 		this.label = "";
 	}
 
+	private void changeData(int key) {
+		this.setData(key);
+		this.dataChanged(this.data);
+	}
+
 	private boolean changeFontSize() {
 		TextData tmpt = new TextData(this.originalTextData);
 		tmpt.setText(this.label);
@@ -147,6 +154,10 @@ public abstract class WUserKeyInput implements Widget {
 	private void changeLabelDrawer() {
 		if (this.labelDrawer.prevLabelState == this.currentTextData.getState())
 			return;
+
+		if (this.halfSize == null) {
+			this.setHalfSize();
+		}
 
 		switch (this.currentTextData.getState()) {
 		case 0:
@@ -225,6 +236,7 @@ public abstract class WUserKeyInput implements Widget {
 
 			g.setFont(this.currentTextData.getFont());
 			g.setColor(this.currentTextData.getColor());
+
 			this.labelDrawer.draw(g, this.getPos());
 		}
 	}
@@ -287,7 +299,7 @@ public abstract class WUserKeyInput implements Widget {
 		} else if (this.selectedDrawElement != null) {
 			this.currentDE = this.selectedDrawElement;
 		}
-		this.halfSize.set(this.currentDE.getSize().clone().div(2));
+		this.setHalfSize();
 	}
 
 	public void setData(int key) {
@@ -300,7 +312,12 @@ public abstract class WUserKeyInput implements Widget {
 			this.setLabel("None");
 		}
 		this.setSelected(false);
-		this.dataChanged(this.data);
+	}
+
+	private void setHalfSize() {
+		if (this.currentDE != null) {
+			this.halfSize.set(this.currentDE.getSize().clone().div(2));
+		}
 	}
 
 	public void setHitbox(AABB hitbox) {
@@ -313,6 +330,8 @@ public abstract class WUserKeyInput implements Widget {
 
 		this.hitbox.min(this.pos.clone().add(this.currentDE.getPos()));
 		this.hitbox.max(this.pos.clone().add(this.currentDE.getPos()).add(this.currentDE.getSize()));
+
+		this.setHalfSize();
 	}
 
 	public void setLabel(String label) {
@@ -385,17 +404,17 @@ public abstract class WUserKeyInput implements Widget {
 				if (!this.selected && Collider.AABBvsPoint(this.hitbox, e.pos)) {
 					this.setSelected(true);
 				} else if (this.selected) {
-					this.setData(DATA_MOUSE_LEFT);
+					this.changeData(DATA_MOUSE_LEFT);
 				}
 				continue;
 			case MouseEvent.MIDDLE_PRESSED:
 				if (this.selected) {
-					this.setData(DATA_MOUSE_MIDDLE);
+					this.changeData(DATA_MOUSE_MIDDLE);
 				}
 				continue;
 			case MouseEvent.RIGHT_PRESSED:
 				if (this.selected) {
-					this.setData(DATA_MOUSE_RIGHT);
+					this.changeData(DATA_MOUSE_RIGHT);
 				}
 				continue;
 			}
@@ -405,9 +424,9 @@ public abstract class WUserKeyInput implements Widget {
 			for (KeyboardEvent e : input.keyboardEvents) {
 				if (e.pressed && !EXCLUDED_KEYS.contains(e.key)) {
 					if (e.key == 27) {
-						this.setData(0);
+						this.changeData(0);
 					} else {
-						this.setData(e.key);
+						this.changeData(e.key);
 					}
 				}
 			}

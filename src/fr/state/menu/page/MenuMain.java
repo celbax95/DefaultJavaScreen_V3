@@ -54,7 +54,7 @@ public class MenuMain implements MenuPage {
 		this.wJoinButton();
 		this.wHostButton();
 		this.wExitButton();
-		this.wOptionButton();
+		this.wSettingsButton();
 	}
 
 	@Override
@@ -165,7 +165,7 @@ public class MenuMain implements MenuPage {
 		this.widgets.add(b);
 	}
 
-	private void wOptionButton() {
+	private void wSettingsButton() {
 		WButton b = new WButton(this) {
 			@Override
 			public void action() {

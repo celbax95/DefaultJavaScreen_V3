@@ -136,6 +136,10 @@ public abstract class WUserInput implements Widget {
 		if (this.labelDrawer.prevLabelState == this.currentTextData.getState())
 			return;
 
+		if (this.halfSize == null) {
+			this.setHalfSize();
+		}
+
 		switch (this.currentTextData.getState()) {
 		case 0:
 			// Relative
@@ -286,7 +290,7 @@ public abstract class WUserInput implements Widget {
 		} else if (this.selectedDrawElement != null) {
 			this.currentDE = this.selectedDrawElement;
 		}
-		this.halfSize.set(this.currentDE.getSize().clone().div(2));
+		this.setHalfSize();
 	}
 
 	public void setData(String data) {
@@ -301,6 +305,12 @@ public abstract class WUserInput implements Widget {
 		this.eraseOnEdit = eraseOnEdit;
 	}
 
+	private void setHalfSize() {
+		if (this.currentDE != null) {
+			this.halfSize.set(this.currentDE.getSize().clone().div(2));
+		}
+	}
+
 	public void setHitbox(AABB hitbox) {
 		this.hitbox = hitbox;
 	}
@@ -311,6 +321,7 @@ public abstract class WUserInput implements Widget {
 
 		this.hitbox.min(this.pos.clone().add(this.currentDE.getPos()));
 		this.hitbox.max(this.pos.clone().add(this.currentDE.getPos()).add(this.currentDE.getSize()));
+		this.setHalfSize();
 	}
 
 	public void setLostFocusToValidate(boolean lostFocusToValidate) {
@@ -362,8 +373,8 @@ public abstract class WUserInput implements Widget {
 	}
 
 	public void setTextData(TextData textData) {
-		if (currentTextData == null) {
-			currentTextData = textData;
+		if (this.currentTextData == null) {
+			this.currentTextData = textData;
 		}
 		this.originalTextData = new TextData(textData);
 		this.changeLabelDrawer();
