@@ -69,6 +69,8 @@ public class MenuControls implements MenuPage {
 		int jumpKey = (int) this.manager.getParam(this.controlsConf, "jump", 0);
 		int useKey = (int) this.manager.getParam(this.controlsConf, "use", 0);
 
+		System.out.println(leftMouvementKey);
+
 		this.wTitle();
 		this.wBack();
 		this.wLeftMouvementInput().setData(leftMouvementKey);
@@ -126,8 +128,8 @@ public class MenuControls implements MenuPage {
 		WUserKeyInput u = new WUserKeyInput(this) {
 			@Override
 			public void dataChanged(int data) {
-//				MenuControls.this.manager.setParam(MenuControls.this.controlsConf, "jump", data);
-//				MenuControls.this.manager.saveFile(MenuControls.this.controlsConf);
+				MenuControls.this.manager.setParam(MenuControls.this.controlsConf, "jump", data);
+				MenuControls.this.manager.saveFile(MenuControls.this.controlsConf);
 			}
 		};
 
@@ -161,8 +163,8 @@ public class MenuControls implements MenuPage {
 		WUserKeyInput u = new WUserKeyInput(this) {
 			@Override
 			public void dataChanged(int data) {
-//				MenuControls.this.manager.setParam(MenuControls.this.controlsConf, "leftMouvement", data);
-//				MenuControls.this.manager.saveFile(MenuControls.this.controlsConf);
+				MenuControls.this.manager.setParam(MenuControls.this.controlsConf, "leftMovement", data);
+				MenuControls.this.manager.saveFile(MenuControls.this.controlsConf);
 			}
 		};
 
@@ -196,8 +198,8 @@ public class MenuControls implements MenuPage {
 		WUserKeyInput u = new WUserKeyInput(this) {
 			@Override
 			public void dataChanged(int data) {
-//				MenuControls.this.manager.setParam(MenuControls.this.controlsConf, "rightMouvement", data);
-//				MenuControls.this.manager.saveFile(MenuControls.this.controlsConf);
+				MenuControls.this.manager.setParam(MenuControls.this.controlsConf, "rightMovement", data);
+				MenuControls.this.manager.saveFile(MenuControls.this.controlsConf);
 			}
 		};
 
@@ -244,8 +246,8 @@ public class MenuControls implements MenuPage {
 		WUserKeyInput u = new WUserKeyInput(this) {
 			@Override
 			public void dataChanged(int data) {
-//				MenuControls.this.manager.setParam(MenuControls.this.controlsConf, "use", data);
-//				MenuControls.this.manager.saveFile(MenuControls.this.controlsConf);
+				MenuControls.this.manager.setParam(MenuControls.this.controlsConf, "use", data);
+				MenuControls.this.manager.saveFile(MenuControls.this.controlsConf);
 			}
 		};
 
