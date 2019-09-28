@@ -19,6 +19,9 @@ public abstract class WUserInput implements Widget {
 		public abstract void draw(Graphics2D g, Point absp);
 	}
 
+	private final int PADDING = 10;
+	private final int MIN_FONT_SIZE = 10;
+
 	private Point pos;
 
 	private Point halfSize;
@@ -37,7 +40,9 @@ public abstract class WUserInput implements Widget {
 
 	private LabelDrawer labelDrawer;
 
-	private TextData textData;
+	private TextData currentTextData;
+
+	private TextData originalTextData;
 
 	private String data;
 
@@ -69,7 +74,10 @@ public abstract class WUserInput implements Widget {
 
 		this.selected = false;
 
-		this.textData = null;
+		this.currentTextData = null;
+
+		this.originalTextData = null;
+
 		this.labelDrawer = new LabelDrawer() {
 			@Override
 			public void draw(Graphics2D g, Point absp) {
@@ -87,19 +95,56 @@ public abstract class WUserInput implements Widget {
 		this.lostFocusToValidate = false;
 	}
 
+	private void addCharToData(char keyChar) {
+		String tmpData = this.data + keyChar;
+		if (this.changeFontSize(tmpData)) {
+			this.data = tmpData;
+		}
+	}
+
+	private boolean changeFontSize(String tmpData) {
+		TextData tmpt = new TextData(this.originalTextData);
+		tmpt.setText(tmpData);
+
+		float newFontSize = -1;
+
+		float step = 1f;
+
+		while (tmpt.getSize().ix() >= this.stdDrawElement.getSize().ix() - this.PADDING * 2) {
+			newFontSize = tmpt.getFont().getSize() - step;
+
+			if (newFontSize > this.MIN_FONT_SIZE) {
+				tmpt.setFont(tmpt.getFont().deriveFont(newFontSize));
+			} else {
+				break;
+			}
+		}
+
+		if (newFontSize > this.MIN_FONT_SIZE) {
+			tmpt.setFont(tmpt.getFont().deriveFont(newFontSize - 1));
+		}
+
+		if (newFontSize == -1 || newFontSize > this.MIN_FONT_SIZE) {
+			this.currentTextData.setFont(tmpt.getFont());
+			return true;
+		}
+
+		return false;
+	}
+
 	private void changeLabelDrawer() {
-		if (this.labelDrawer.prevLabelState == this.textData.getState())
+		if (this.labelDrawer.prevLabelState == this.currentTextData.getState())
 			return;
 
-		switch (this.textData.getState()) {
+		switch (this.currentTextData.getState()) {
 		case 0:
 			// Relative
 			this.labelDrawer = new LabelDrawer() {
 				@Override
 				public void draw(Graphics2D g, Point absp) {
-					Point absoluteTextPos = absp.clone().add(WUserInput.this.textData.getPos());
+					Point absoluteTextPos = absp.clone().add(WUserInput.this.currentTextData.getPos());
 
-					g.drawString(WUserInput.this.textData.getText(), absoluteTextPos.ix(),
+					g.drawString(WUserInput.this.currentTextData.getText(), absoluteTextPos.ix(),
 							absoluteTextPos.iy());
 				}
 			};
@@ -109,10 +154,12 @@ public abstract class WUserInput implements Widget {
 			this.labelDrawer = new LabelDrawer() {
 				@Override
 				public void draw(Graphics2D g, Point absp) {
-					Point absoluteTextPos = absp.clone().add(WUserInput.this.textData.getPos());
+					Point absoluteTextPos = absp.clone().add(WUserInput.this.currentTextData.getPos());
 
-					g.drawString(WUserInput.this.textData.getText(), absp.ix() + WUserInput.this.halfSize.ix()
-							- WUserInput.this.textData.getSize().ix() / 2, absoluteTextPos.iy());
+					g.drawString(WUserInput.this.currentTextData.getText(),
+							absp.ix() + WUserInput.this.halfSize.ix()
+									- WUserInput.this.currentTextData.getSize().ix() / 2,
+							absoluteTextPos.iy());
 				}
 			};
 			break;
@@ -121,10 +168,11 @@ public abstract class WUserInput implements Widget {
 			this.labelDrawer = new LabelDrawer() {
 				@Override
 				public void draw(Graphics2D g, Point absp) {
-					Point absoluteTextPos = absp.clone().add(WUserInput.this.textData.getPos());
+					Point absoluteTextPos = absp.clone().add(WUserInput.this.currentTextData.getPos());
 
-					g.drawString(WUserInput.this.textData.getText(), absoluteTextPos.ix(), absp.iy()
-							+ WUserInput.this.halfSize.iy() + WUserInput.this.textData.getSize().iy() / 4);
+					g.drawString(WUserInput.this.currentTextData.getText(), absoluteTextPos.ix(),
+							absp.iy() + WUserInput.this.halfSize.iy()
+									+ WUserInput.this.currentTextData.getSize().iy() / 4);
 				}
 			};
 			break;
@@ -133,11 +181,11 @@ public abstract class WUserInput implements Widget {
 			this.labelDrawer = new LabelDrawer() {
 				@Override
 				public void draw(Graphics2D g, Point absp) {
-					g.drawString(WUserInput.this.textData.getText(),
+					g.drawString(WUserInput.this.currentTextData.getText(),
 							absp.ix() + WUserInput.this.halfSize.ix()
-									- WUserInput.this.textData.getSize().ix() / 2,
+									- WUserInput.this.currentTextData.getSize().ix() / 2,
 							absp.iy() + WUserInput.this.halfSize.iy()
-									+ WUserInput.this.textData.getSize().iy() / 4);
+									+ WUserInput.this.currentTextData.getSize().iy() / 4);
 				}
 			};
 			break;
@@ -160,11 +208,11 @@ public abstract class WUserInput implements Widget {
 	}
 
 	public void drawData(Graphics2D g) {
-		if (this.textData != null) {
-			this.textData.setText(this.data);
+		if (this.currentTextData != null) {
+			this.currentTextData.setText(this.data);
 
-			g.setFont(this.textData.getFont());
-			g.setColor(this.textData.getColor());
+			g.setFont(this.currentTextData.getFont());
+			g.setColor(this.currentTextData.getColor());
 			this.labelDrawer.draw(g, this.getPos());
 		}
 	}
@@ -205,7 +253,7 @@ public abstract class WUserInput implements Widget {
 	}
 
 	public TextData getTextData() {
-		return this.textData;
+		return this.currentTextData;
 	}
 
 	public boolean isEraseOnEdit() {
@@ -223,6 +271,13 @@ public abstract class WUserInput implements Widget {
 	@Override
 	public boolean isVisible() {
 		return this.visible;
+	}
+
+	private void removeCharToData() {
+		String tmpData = this.data.substring(0, this.data.length() - 1);
+
+		this.changeFontSize(tmpData);
+		this.data = tmpData;
 	}
 
 	private void setCurrentDE() {
@@ -307,7 +362,8 @@ public abstract class WUserInput implements Widget {
 	}
 
 	public void setTextData(TextData textData) {
-		this.textData = textData;
+		this.currentTextData = textData;
+		this.originalTextData = new TextData(textData);
 		this.changeLabelDrawer();
 	}
 
@@ -339,7 +395,7 @@ public abstract class WUserInput implements Widget {
 					if (e.key == 8) {
 						// DELETE
 						if (this.data.length() > 0) {
-							this.data = this.data.substring(0, this.data.length() - 1);
+							this.removeCharToData();
 						}
 					} else if (e.key == 10) {
 						// ENTER
@@ -348,8 +404,7 @@ public abstract class WUserInput implements Widget {
 							this.dataChanged(this.data);
 						}
 					} else if (this.data.length() < this.dataLength && e.keyChar != Character.MIN_VALUE) {
-						// System.out.println("\"" + +"\"");
-						this.data += e.keyChar;
+						this.addCharToData(e.keyChar);
 						if (!this.lostFocusToValidate) {
 							this.dataChanged(this.data);
 						}

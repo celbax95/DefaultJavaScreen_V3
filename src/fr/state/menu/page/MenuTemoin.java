@@ -213,7 +213,7 @@ public class MenuTemoin implements MenuPage {
 
 		u.setTextData(td);
 
-		u.setDataLength(10);
+		u.setDataLength(200);
 		u.setHitboxFromDrawElement();
 
 		this.widgets.add(u);
