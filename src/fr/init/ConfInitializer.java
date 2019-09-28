@@ -64,6 +64,7 @@ public class ConfInitializer {
 	private void initConfFiles() {
 		this.dfm.init(new XMLManagerDOM());
 		this.dfm.addFile("winConf", "/conf/winConf.xml");
+		this.dfm.addFile("controls", "/conf/controls.xml");
 	}
 
 	/**
