@@ -106,7 +106,7 @@ public class MenuControls implements MenuPage {
 		WButton btn = new WButton(this) {
 			@Override
 			public void action() {
-				MenuControls.this.m.applyPage(new MenuMain(MenuControls.this.m));
+				MenuControls.this.m.applyPage(new MenuSettings(MenuControls.this.m));
 			}
 		};
 
