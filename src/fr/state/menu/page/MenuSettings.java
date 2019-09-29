@@ -109,6 +109,7 @@ public class MenuSettings implements MenuPage {
 		WButton btn = new WButton(this) {
 			@Override
 			public void action() {
+				MenuSettings.this.m.applyPage(new MenuControls(MenuSettings.this.m));
 			}
 		};
 
@@ -182,6 +183,7 @@ public class MenuSettings implements MenuPage {
 		WButton btn = new WButton(this) {
 			@Override
 			public void action() {
+				MenuSettings.this.m.applyPage(new MenuProfile(MenuSettings.this.m));
 			}
 		};
 

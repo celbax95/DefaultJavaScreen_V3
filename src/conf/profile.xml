@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?><conf>
+	<!-- Profile -->
+
+	<param name="username" type="string" value="0"/>
+	<param name="color" type="string" value="0"/>
+	
+</conf>
