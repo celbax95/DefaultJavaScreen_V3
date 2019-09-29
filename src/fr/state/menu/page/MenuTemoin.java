@@ -92,7 +92,7 @@ public class MenuTemoin implements MenuPage {
 	private void wSlide() {
 		WSlider s = new WSlider(this) {
 			@Override
-			public void valueChanged(int value) {
+			public void valueChanged(int value, boolean pressed) {
 				Logger.obs("Valeur du slider : " + value);
 			}
 		};
