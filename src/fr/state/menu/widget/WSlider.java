@@ -104,7 +104,7 @@ public abstract class WSlider implements Widget {
 
 		if (tmpValue != this.value) {
 			this.value = tmpValue;
-			this.valueChanged(this.value);
+			this.valueChanged(this.value, this.pressed);
 		}
 	}
 
@@ -242,7 +242,7 @@ public abstract class WSlider implements Widget {
 		Point min = null, max = null;
 
 		minBY = this.pos.iy() + this.bar.getPos().iy();
-		minSY = this.pos.iy() + this.sliderPos.iy() + this.slider.getPos().iy();
+		minSY = this.sliderPos.iy() + this.slider.getPos().iy();
 
 		min = new Point(this.minX, minBY <= minSY ? minBY : minSY);
 
@@ -310,7 +310,15 @@ public abstract class WSlider implements Widget {
 	 * @param value the value to set
 	 */
 	public void setValue(int value) {
-		this.value = value;
+		if (value != this.value) {
+			this.value = value;
+
+			if (this.slider != null) {
+				// moveSlider
+				int xposScope = this.maxX - this.minX;
+				this.sliderPos.x = this.minX + Math.round(value * xposScope / (double) this.scope);
+			}
+		}
 	}
 
 	@Override
@@ -326,7 +334,10 @@ public abstract class WSlider implements Widget {
 		for (MouseEvent e : input.mouseEvents) {
 			switch (e.id) {
 			case MouseEvent.LEFT_RELEASED:
-				this.setPressed(false);
+				if (this.pressed) {
+					this.setPressed(false);
+					this.valueChanged(this.value, this.pressed);
+				}
 				continue;
 			case MouseEvent.MOVE:
 				if (this.pressed) {
@@ -345,5 +356,5 @@ public abstract class WSlider implements Widget {
 		}
 	}
 
-	public abstract void valueChanged(int value);
+	public abstract void valueChanged(int value, boolean pressed);
 }
