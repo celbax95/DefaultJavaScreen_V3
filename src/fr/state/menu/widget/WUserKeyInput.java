@@ -304,10 +304,10 @@ public abstract class WUserKeyInput implements Widget {
 
 	public void setData(int key) {
 		this.data = key;
-		if (this.data > 0) {
-			this.setLabel(KeyEvent.getKeyText(this.data));
-		} else if (MOUSE_LABELS.containsKey(this.data)) {
+		if (MOUSE_LABELS.containsKey(this.data)) {
 			this.setLabel(MOUSE_LABELS.get(this.data));
+		} else if (this.data > 0) {
+			this.setLabel(KeyEvent.getKeyText(this.data));
 		} else {
 			this.setLabel("None");
 		}

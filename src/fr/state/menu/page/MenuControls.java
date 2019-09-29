@@ -34,6 +34,11 @@ public class MenuControls implements MenuPage {
 
 	private static final String PAGE_NAME = "menuControls";
 
+	private static final String PARAM_NAME_LEFT = "leftMovement";
+	private static final String PARAM_NAME_RIGHT = "rightMovement";
+	private static final String PARAM_NAME_JUMP = "jump";
+	private static final String PARAM_NAME_USE = "use";
+
 	static {
 		for (int i = 0; i < RES_NAMES.length; i++) {
 			RES_NAMES[i] = PAGE_NAME + "/" + RES_NAMES[i];
@@ -64,12 +69,10 @@ public class MenuControls implements MenuPage {
 		this.controlsConf = dfm.getFile("controls");
 		this.manager = dfm.getXmlManager();
 
-		int leftMouvementKey = (int) this.manager.getParam(this.controlsConf, "leftMouvement", 0);
-		int rightMouvementKey = (int) this.manager.getParam(this.controlsConf, "rightMouvement", 0);
-		int jumpKey = (int) this.manager.getParam(this.controlsConf, "jump", 0);
-		int useKey = (int) this.manager.getParam(this.controlsConf, "use", 0);
-
-		System.out.println(leftMouvementKey);
+		int leftMouvementKey = (int) this.manager.getParam(this.controlsConf, PARAM_NAME_LEFT, 0);
+		int rightMouvementKey = (int) this.manager.getParam(this.controlsConf, PARAM_NAME_RIGHT, 0);
+		int jumpKey = (int) this.manager.getParam(this.controlsConf, PARAM_NAME_JUMP, 0);
+		int useKey = (int) this.manager.getParam(this.controlsConf, PARAM_NAME_USE, 0);
 
 		this.wTitle();
 		this.wBack();
@@ -128,7 +131,7 @@ public class MenuControls implements MenuPage {
 		WUserKeyInput u = new WUserKeyInput(this) {
 			@Override
 			public void dataChanged(int data) {
-				MenuControls.this.manager.setParam(MenuControls.this.controlsConf, "jump", data);
+				MenuControls.this.manager.setParam(MenuControls.this.controlsConf, PARAM_NAME_JUMP, data);
 				MenuControls.this.manager.saveFile(MenuControls.this.controlsConf);
 			}
 		};
@@ -163,7 +166,7 @@ public class MenuControls implements MenuPage {
 		WUserKeyInput u = new WUserKeyInput(this) {
 			@Override
 			public void dataChanged(int data) {
-				MenuControls.this.manager.setParam(MenuControls.this.controlsConf, "leftMovement", data);
+				MenuControls.this.manager.setParam(MenuControls.this.controlsConf, PARAM_NAME_LEFT, data);
 				MenuControls.this.manager.saveFile(MenuControls.this.controlsConf);
 			}
 		};
@@ -198,7 +201,7 @@ public class MenuControls implements MenuPage {
 		WUserKeyInput u = new WUserKeyInput(this) {
 			@Override
 			public void dataChanged(int data) {
-				MenuControls.this.manager.setParam(MenuControls.this.controlsConf, "rightMovement", data);
+				MenuControls.this.manager.setParam(MenuControls.this.controlsConf, PARAM_NAME_RIGHT, data);
 				MenuControls.this.manager.saveFile(MenuControls.this.controlsConf);
 			}
 		};
@@ -246,7 +249,7 @@ public class MenuControls implements MenuPage {
 		WUserKeyInput u = new WUserKeyInput(this) {
 			@Override
 			public void dataChanged(int data) {
-				MenuControls.this.manager.setParam(MenuControls.this.controlsConf, "use", data);
+				MenuControls.this.manager.setParam(MenuControls.this.controlsConf, PARAM_NAME_USE, data);
 				MenuControls.this.manager.saveFile(MenuControls.this.controlsConf);
 			}
 		};
