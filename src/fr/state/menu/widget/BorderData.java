@@ -2,6 +2,8 @@ package fr.state.menu.widget;
 
 import java.awt.Color;
 
+import fr.logger.Logger;
+
 public class BorderData {
 
 	private int thickness;
@@ -37,6 +39,11 @@ public class BorderData {
 		this.setState(state);
 	}
 
+	@Override
+	public BorderData clone() {
+		return new BorderData(this);
+	}
+
 	/**
 	 * @return the color
 	 */
@@ -66,12 +73,14 @@ public class BorderData {
 		this.lock = true;
 	}
 
+	private void lockWarn() {
+		Logger.warn("Les paramêtres de n'ont pas été changés car l'objet est verouillé");
+	}
+
 	/**
 	 * @param color the color to set
 	 */
 	public void setColor(Color color) {
-		if (this.lock)
-			return;
 		assert color != null;
 		this.color = color;
 	}
@@ -80,8 +89,10 @@ public class BorderData {
 	 * @param state the state to set
 	 */
 	public void setState(int state) {
-		if (this.lock)
+		if (this.lock) {
+			this.lockWarn();
 			return;
+		}
 		assert state >= 0;
 		this.state = state;
 	}
@@ -90,8 +101,10 @@ public class BorderData {
 	 * @param size the size to set
 	 */
 	public void setThickness(int size) {
-		if (this.lock)
+		if (this.lock) {
+			this.lockWarn();
 			return;
+		}
 		assert size >= 0;
 		this.thickness = size;
 	}

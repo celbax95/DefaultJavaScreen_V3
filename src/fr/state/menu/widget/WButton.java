@@ -208,9 +208,9 @@ public abstract class WButton implements Widget {
 	 */
 	public void setPressedDrawElement(DrawElement pressedDrawElement) {
 		if (pressedDrawElement != null) {
-			pressedDrawElement.lock();
+			this.pressedDrawElement = pressedDrawElement.clone();
+			this.pressedDrawElement.lock();
 		}
-		this.pressedDrawElement = pressedDrawElement;
 	}
 
 	/**
@@ -218,12 +218,12 @@ public abstract class WButton implements Widget {
 	 */
 	public void setStdDrawElement(DrawElement drawElement) {
 		if (drawElement != null) {
-			drawElement.lock();
-		}
+			this.stdDrawElement = drawElement.clone();
+			this.stdDrawElement.lock();
 
-		this.stdDrawElement = drawElement;
-		if (this.currentDE == null) {
-			this.currentDE = this.stdDrawElement;
+			if (this.currentDE == null) {
+				this.currentDE = this.stdDrawElement;
+			}
 		}
 	}
 

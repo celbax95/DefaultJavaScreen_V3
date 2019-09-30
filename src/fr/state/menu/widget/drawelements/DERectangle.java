@@ -5,6 +5,7 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.geom.Area;
 
+import fr.logger.Logger;
 import fr.state.menu.widget.BorderData;
 import fr.state.menu.widget.DrawElement;
 import fr.state.menu.widget.TextData;
@@ -293,12 +294,14 @@ public class DERectangle implements DrawElement {
 		}
 	}
 
+	private void lockWarn() {
+		Logger.warn("Les paramêtres de n'ont pas été changés car l'objet est verouillé");
+	}
+
 	/**
 	 * @param border the border to set
 	 */
 	public void setBorder(BorderData border) {
-		if (this.lock)
-			return;
 		this.border = border;
 	}
 
@@ -306,8 +309,6 @@ public class DERectangle implements DrawElement {
 	 * @param color the color to set
 	 */
 	public void setColor(Color color) {
-		if (this.lock)
-			return;
 		this.color = color;
 	}
 
@@ -319,8 +320,6 @@ public class DERectangle implements DrawElement {
 	 * @param label the label to set
 	 */
 	public void setLabel(TextData label) {
-		if (this.lock)
-			return;
 		this.label = label;
 	}
 
@@ -329,8 +328,10 @@ public class DERectangle implements DrawElement {
 	 */
 	@Override
 	public void setPos(Point pos) {
-		if (this.lock)
+		if (this.lock) {
+			this.lockWarn();
 			return;
+		}
 		this.pos = pos;
 	}
 
@@ -338,8 +339,10 @@ public class DERectangle implements DrawElement {
 	 * @param size the size to set
 	 */
 	public void setSize(Point size) {
-		if (this.lock)
+		if (this.lock) {
+			this.lockWarn();
 			return;
+		}
 		this.size = size;
 		this.halfSize = size.clone().div(2);
 	}

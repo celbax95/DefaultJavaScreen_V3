@@ -363,7 +363,10 @@ public abstract class WUserKeyInput implements Widget {
 	}
 
 	public void setSelectedDrawElement(DrawElement selectedDrawElement) {
-		this.selectedDrawElement = selectedDrawElement;
+		if (selectedDrawElement != null) {
+			this.selectedDrawElement = selectedDrawElement.clone();
+			this.selectedDrawElement.lock();
+		}
 	}
 
 	/**
@@ -371,10 +374,10 @@ public abstract class WUserKeyInput implements Widget {
 	 */
 	public void setStdDrawElement(DrawElement drawElement) {
 		if (drawElement != null) {
-			drawElement.lock();
+			this.stdDrawElement = drawElement.clone();
+			this.stdDrawElement.lock();
 		}
 
-		this.stdDrawElement = drawElement;
 		if (this.currentDE == null) {
 			this.currentDE = this.stdDrawElement;
 		}

@@ -213,9 +213,9 @@ public abstract class WSlider implements Widget {
 	 */
 	public void setBar(DrawElement bar) {
 		if (bar != null) {
-			bar.lock();
+			this.bar = bar.clone();
+			this.bar.lock();
 		}
-		this.bar = bar;
 
 		if (this.bar != null && this.slider != null) {
 			this.initDrawElements();
@@ -292,10 +292,9 @@ public abstract class WSlider implements Widget {
 
 	public void setSlider(DrawElement slider) {
 		if (slider != null) {
-			slider.lock();
+			this.slider = slider.clone();
+			this.slider.lock();
 		}
-
-		this.slider = slider;
 
 		if (this.bar != null && slider != null) {
 			this.initDrawElements();
