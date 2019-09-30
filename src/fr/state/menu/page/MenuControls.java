@@ -49,6 +49,10 @@ public class MenuControls implements MenuPage {
 		}
 	}
 
+	private static final Color COLOR = Color.black;
+
+	private static final Color INVALID_COLOR = Color.black;
+
 	private List<Widget> widgets;
 
 	private Menu m;
@@ -56,6 +60,8 @@ public class MenuControls implements MenuPage {
 	private Object controlsConf;
 
 	private XMLManager manager;
+
+	private WUserKeyInput[] controls;
 
 	public MenuControls(Menu m) {
 
@@ -76,10 +82,35 @@ public class MenuControls implements MenuPage {
 
 		this.wTitle();
 		this.wBack();
-		this.wLeftMouvementInput().setData(leftMouvementKey);
-		this.wRightMouvementInput().setData(rightMouvementKey);
-		this.wJumpInput().setData(jumpKey);
-		this.wUseInput().setData(useKey);
+
+		this.controls = new WUserKeyInput[4];
+
+		this.controls[0] = this.wLeftMouvementInput();
+		this.controls[0].setData(leftMouvementKey);
+
+		this.controls[1] = this.wRightMouvementInput();
+		this.controls[1].setData(rightMouvementKey);
+
+		this.controls[2] = this.wJumpInput();
+		this.controls[2].setData(jumpKey);
+
+		this.controls[3] = this.wUseInput();
+		this.controls[3].setData(useKey);
+	}
+
+	private void changeColorOnSame() {
+		for (int i = 0; i < this.controls.length; i++) {
+			for (int j = 0; j < this.controls.length; j++) {
+				if (i == j) {
+					continue;
+				}
+//				if (this.controls[i].getData() == this.controls[j].getData()) {
+//					this.controls[j].getTextData().setColor(INVALID_COLOR);
+//				} else {
+//					this.controls[j].getTextData().setColor(COLOR);
+//				}
+			}
+		}
 	}
 
 	@Override
@@ -131,6 +162,7 @@ public class MenuControls implements MenuPage {
 		WUserKeyInput u = new WUserKeyInput(this) {
 			@Override
 			public void dataChanged(int data) {
+				MenuControls.this.changeColorOnSame();
 				MenuControls.this.manager.setParam(MenuControls.this.controlsConf, PARAM_NAME_JUMP, data);
 				MenuControls.this.manager.saveFile(MenuControls.this.controlsConf);
 			}
@@ -166,6 +198,7 @@ public class MenuControls implements MenuPage {
 		WUserKeyInput u = new WUserKeyInput(this) {
 			@Override
 			public void dataChanged(int data) {
+				MenuControls.this.changeColorOnSame();
 				MenuControls.this.manager.setParam(MenuControls.this.controlsConf, PARAM_NAME_LEFT, data);
 				MenuControls.this.manager.saveFile(MenuControls.this.controlsConf);
 			}
@@ -201,6 +234,7 @@ public class MenuControls implements MenuPage {
 		WUserKeyInput u = new WUserKeyInput(this) {
 			@Override
 			public void dataChanged(int data) {
+				MenuControls.this.changeColorOnSame();
 				MenuControls.this.manager.setParam(MenuControls.this.controlsConf, PARAM_NAME_RIGHT, data);
 				MenuControls.this.manager.saveFile(MenuControls.this.controlsConf);
 			}
@@ -249,6 +283,7 @@ public class MenuControls implements MenuPage {
 		WUserKeyInput u = new WUserKeyInput(this) {
 			@Override
 			public void dataChanged(int data) {
+				MenuControls.this.changeColorOnSame();
 				MenuControls.this.manager.setParam(MenuControls.this.controlsConf, PARAM_NAME_USE, data);
 				MenuControls.this.manager.saveFile(MenuControls.this.controlsConf);
 			}
