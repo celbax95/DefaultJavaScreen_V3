@@ -75,8 +75,8 @@ public class DERectangle implements DrawElement {
 		this.setSize(new Point(other.size));
 		this.setColor(new Color(other.color.getRed(), other.color.getGreen(), other.color.getBlue(),
 				other.color.getAlpha()));
-		this.border = new BorderData(other.border);
-		this.label = new TextData(other.label);
+		this.border = other.border == null ? null : other.border.clone();
+		this.label = other.label == null ? null : other.label.clone();
 		this.lock = false;
 	}
 
@@ -104,8 +104,8 @@ public class DERectangle implements DrawElement {
 			this.borderDrawer = new BorderDrawer() {
 				@Override
 				public void draw(Graphics2D g, Point absp) {
-					Area a = new Area(new Rectangle(absp.ix(), absp.iy(), DERectangle.this.size.ix(),
-							DERectangle.this.size.iy()));
+					Area a = new Area(new Rectangle(absp.ix() - 1, absp.iy() - 1,
+							DERectangle.this.size.ix() + 2, DERectangle.this.size.iy() + 2));
 
 					Area b = new Area(new Rectangle(absp.ix() + DERectangle.this.border.getThickness(),
 							absp.iy() + DERectangle.this.border.getThickness(),
@@ -299,10 +299,15 @@ public class DERectangle implements DrawElement {
 	}
 
 	/**
-	 * @param border the border to set
+	 * @param border the border to set</br>
+	 *               border.state = 0 : inner</br>
+	 *               border.state = 1 : outter
 	 */
 	public void setBorder(BorderData border) {
-		this.border = border;
+		if (border != null) {
+			this.border = border.clone();
+			this.border.lock();
+		}
 	}
 
 	/**
@@ -317,10 +322,17 @@ public class DERectangle implements DrawElement {
 	}
 
 	/**
-	 * @param label the label to set
+	 * @param label the label to set</br>
+	 *              label.state = 0 : x and y relative</br>
+	 *              label.state = 1 : x center / y relative</br>
+	 *              label.state = 2 : x relative / y </br>
+	 *              label.state = 3 : x and y center
 	 */
 	public void setLabel(TextData label) {
-		this.label = label;
+		if (label != null) {
+			this.label = label.clone();
+			this.label.lock();
+		}
 	}
 
 	/**
