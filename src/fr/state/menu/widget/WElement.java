@@ -28,7 +28,7 @@ public class WElement implements Widget {
 		this(other == null ? null : other.page);
 		if (other == null)
 			return;
-		this.setDrawElement(other.drawElement.clone());
+		this.setDrawElement(other.drawElement == null ? null : other.drawElement.clone());
 		this.setPos(other.pos);
 		this.setPage(other.page);
 	}

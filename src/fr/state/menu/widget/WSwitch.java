@@ -60,10 +60,10 @@ public abstract class WSwitch implements Widget {
 			return;
 
 		this.setPos(new Point(other.pos));
-		this.setOnDrawElement(other.on.clone());
-		this.setPressedOnDrawElement(other.pressedOn.clone());
-		this.setOffDrawElement(other.off.clone());
-		this.setPressedOffDrawElement(other.pressedOff.clone());
+		this.setOnDrawElement(other.on == null ? null : other.on.clone());
+		this.setPressedOnDrawElement(other.pressedOn == null ? null : other.pressedOn.clone());
+		this.setOffDrawElement(other.off == null ? null : other.off.clone());
+		this.setPressedOffDrawElement(other.pressedOff == null ? null : other.pressedOff.clone());
 
 		AABB hb = new AABB(this.pos, new Point(), new Point());
 		hb.min(new Point(other.hitbox.min()));
@@ -206,7 +206,6 @@ public abstract class WSwitch implements Widget {
 		}
 	}
 
-	@SuppressWarnings("unused")
 	private void setCurrentDE(DrawElement currentDE) {
 		this.currentDE = currentDE;
 	}

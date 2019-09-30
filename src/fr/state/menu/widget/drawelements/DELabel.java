@@ -31,7 +31,7 @@ public class DELabel implements DrawElement {
 		if (other == null)
 			return;
 		this.setPos(new Point(other.pos));
-		this.setLabel(new TextData(other.label));
+		this.setLabel(other.label == null ? null : this.label.clone());
 		this.lock = false;
 	}
 
@@ -103,11 +103,14 @@ public class DELabel implements DrawElement {
 	 * @param label the label to set
 	 */
 	public void setLabel(TextData label) {
-		if (this.lock) {
-			this.lockWarn();
-			return;
+		if (label != null) {
+			if (this.lock) {
+				this.lockWarn();
+				return;
+			}
+			this.label = label.clone();
+			this.label.lock();
 		}
-		this.label = label;
 	}
 
 	/**
