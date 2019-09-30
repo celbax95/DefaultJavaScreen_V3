@@ -76,8 +76,8 @@ public class DEImage implements DrawElement {
 		this.lock = false;
 		this.setPos(new Point(other.pos));
 		this.setSize(new Point(other.size));
-		this.border = new BorderData(other.border);
-		this.label = new TextData(other.label);
+		this.border = other.border == null ? null : other.border.clone();
+		this.label = other.label == null ? null : other.label.clone();
 		this.setImage(other.image);
 	}
 
@@ -106,8 +106,8 @@ public class DEImage implements DrawElement {
 			this.borderDrawer = new BorderDrawer() {
 				@Override
 				public void draw(Graphics2D g, Point absp) {
-					Area a = new Area(new Rectangle(absp.ix(), absp.iy(), DEImage.this.size.ix(),
-							DEImage.this.size.iy()));
+					Area a = new Area(new Rectangle(absp.ix() - 1, absp.iy() - 1, DEImage.this.size.ix() + 2,
+							DEImage.this.size.iy() + 2));
 
 					Area b = new Area(new Rectangle(absp.ix() + DEImage.this.border.getThickness(),
 							absp.iy() + DEImage.this.border.getThickness(),
@@ -262,7 +262,10 @@ public class DEImage implements DrawElement {
 	 * @param border the border to set
 	 */
 	public void setBorder(BorderData border) {
-		this.border = border;
+		if (border != null) {
+			this.border = border.clone();
+			this.border.lock();
+		}
 	}
 
 	/**
@@ -282,7 +285,10 @@ public class DEImage implements DrawElement {
 	 * @param label the label to set
 	 */
 	public void setLabel(TextData label) {
-		this.label = label;
+		if (label != null) {
+			this.label = label.clone();
+			this.label.lock();
+		}
 	}
 
 	/**

@@ -66,8 +66,9 @@ public abstract class WButton implements Widget {
 
 		this.setHitbox(hb);
 
-		this.setStdDrawElement(other.stdDrawElement.clone());
-		this.setPressedDrawElement(other.pressedDrawElement.clone());
+		this.setStdDrawElement(other.stdDrawElement == null ? null : other.stdDrawElement.clone());
+		this.setPressedDrawElement(
+				other.pressedDrawElement == null ? null : other.pressedDrawElement.clone());
 		this.setCanPressed(other.canPressed);
 		this.setPage(other.page);
 	}
@@ -167,6 +168,7 @@ public abstract class WButton implements Widget {
 	}
 
 	public void setHitbox(AABB hitbox) {
+		assert hitbox != null;
 		this.hitbox = hitbox;
 	}
 

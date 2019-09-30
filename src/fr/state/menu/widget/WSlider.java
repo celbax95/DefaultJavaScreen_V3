@@ -67,8 +67,8 @@ public abstract class WSlider implements Widget {
 
 		this.setHitbox(hb);
 
-		this.setBar(other.bar.clone());
-		this.setSlider(other.slider.clone());
+		this.setBar(other.bar == null ? null : other.bar.clone());
+		this.setSlider(other.slider == null ? null : other.slider.clone());
 		this.setScope(this.scope);
 		this.setValue(0);
 		this.setMinX(other.minX);
