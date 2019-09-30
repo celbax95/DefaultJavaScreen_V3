@@ -2,6 +2,7 @@ package fr.state.menu.widget.drawelements;
 
 import java.awt.Graphics2D;
 
+import fr.logger.Logger;
 import fr.state.menu.widget.DrawElement;
 import fr.state.menu.widget.TextData;
 import fr.util.point.Point;
@@ -94,12 +95,18 @@ public class DELabel implements DrawElement {
 		this.label.lock();
 	}
 
+	private void lockWarn() {
+		Logger.warn("Les paramêtres de n'ont pas été changés car l'objet est verouillé");
+	}
+
 	/**
 	 * @param label the label to set
 	 */
 	public void setLabel(TextData label) {
-		if (this.lock)
+		if (this.lock) {
+			this.lockWarn();
 			return;
+		}
 		this.label = label;
 	}
 
@@ -108,8 +115,10 @@ public class DELabel implements DrawElement {
 	 */
 	@Override
 	public void setPos(Point pos) {
-		if (this.lock)
+		if (this.lock) {
+			this.lockWarn();
 			return;
+		}
 		this.pos = pos;
 	}
 }

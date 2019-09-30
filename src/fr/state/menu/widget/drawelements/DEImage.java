@@ -5,6 +5,7 @@ import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.geom.Area;
 
+import fr.logger.Logger;
 import fr.state.menu.widget.BorderData;
 import fr.state.menu.widget.DrawElement;
 import fr.state.menu.widget.TextData;
@@ -253,12 +254,14 @@ public class DEImage implements DrawElement {
 		}
 	}
 
+	private void lockWarn() {
+		Logger.warn("Les paramêtres de n'ont pas été changés car l'objet est verouillé");
+	}
+
 	/**
 	 * @param border the border to set
 	 */
 	public void setBorder(BorderData border) {
-		if (this.lock)
-			return;
 		this.border = border;
 	}
 
@@ -266,8 +269,10 @@ public class DEImage implements DrawElement {
 	 * @param image the image to set
 	 */
 	public void setImage(Image image) {
-		if (this.lock)
+		if (this.lock) {
+			this.lockWarn();
 			return;
+		}
 		assert image != null;
 		this.image = image;
 		this.size.set(image.getWidth(null), image.getHeight(null));
@@ -277,8 +282,6 @@ public class DEImage implements DrawElement {
 	 * @param label the label to set
 	 */
 	public void setLabel(TextData label) {
-		if (this.lock)
-			return;
 		this.label = label;
 	}
 
@@ -287,8 +290,10 @@ public class DEImage implements DrawElement {
 	 */
 	@Override
 	public void setPos(Point pos) {
-		if (this.lock)
+		if (this.lock) {
+			this.lockWarn();
 			return;
+		}
 		this.pos = pos;
 	}
 

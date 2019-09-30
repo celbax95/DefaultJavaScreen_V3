@@ -241,14 +241,14 @@ public abstract class WSwitch implements Widget {
 	 */
 	public void setOffDrawElement(DrawElement off) {
 		if (off != null) {
-			off.lock();
+			this.off = off.clone();
+			this.off.lock();
+
+			if (!this.active) {
+				this.currentDE = this.off;
+			}
 		}
 
-		this.off = off;
-
-		if (!this.active) {
-			this.currentDE = off;
-		}
 	}
 
 	/**
@@ -256,14 +256,14 @@ public abstract class WSwitch implements Widget {
 	 */
 	public void setOnDrawElement(DrawElement on) {
 		if (on != null) {
-			on.lock();
+			this.on = on.clone();
+			this.on.lock();
+
+			if (this.active) {
+				this.currentDE = this.on;
+			}
 		}
 
-		this.on = on;
-
-		if (this.active) {
-			this.currentDE = on;
-		}
 	}
 
 	/**
@@ -295,9 +295,9 @@ public abstract class WSwitch implements Widget {
 	 */
 	public void setPressedOffDrawElement(DrawElement pressedOff) {
 		if (pressedOff != null) {
-			pressedOff.lock();
+			this.pressedOff = pressedOff.clone();
+			this.pressedOff.lock();
 		}
-		this.pressedOff = pressedOff;
 	}
 
 	/**
@@ -305,9 +305,9 @@ public abstract class WSwitch implements Widget {
 	 */
 	public void setPressedOnDrawElement(DrawElement pressedOn) {
 		if (pressedOn != null) {
-			pressedOn.lock();
+			this.pressedOn = pressedOn.clone();
+			this.pressedOn.lock();
 		}
-		this.pressedOn = pressedOn;
 	}
 
 	@Override

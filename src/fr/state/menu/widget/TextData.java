@@ -5,6 +5,7 @@ import java.awt.Font;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.AffineTransform;
 
+import fr.logger.Logger;
 import fr.util.point.Point;
 
 public class TextData {
@@ -74,6 +75,11 @@ public class TextData {
 		this.lock = false;
 	}
 
+	@Override
+	public TextData clone() {
+		return new TextData(this);
+	}
+
 	/**
 	 * @return the color
 	 */
@@ -124,12 +130,14 @@ public class TextData {
 		this.lock = true;
 	}
 
+	private void lockWarn() {
+		Logger.warn("Les paramêtres de n'ont pas été changés car l'objet est verouillé");
+	}
+
 	/**
 	 * @param color the color to set
 	 */
 	public void setColor(Color color) {
-		if (this.lock)
-			return;
 		assert color != null;
 		this.color = color;
 	}
@@ -138,8 +146,10 @@ public class TextData {
 	 * @param font the font to set
 	 */
 	public void setFont(Font font) {
-		if (this.lock)
+		if (this.lock) {
+			this.lockWarn();
 			return;
+		}
 		assert font != null;
 		this.font = font;
 		this.setSize();
@@ -149,8 +159,10 @@ public class TextData {
 	 * @param pos the pos to set
 	 */
 	public void setPos(Point pos) {
-		if (this.lock)
+		if (this.lock) {
+			this.lockWarn();
 			return;
+		}
 		assert pos != null;
 		this.pos = pos;
 	}
@@ -170,8 +182,10 @@ public class TextData {
 	 * @param state the state to set
 	 */
 	public void setState(int state) {
-		if (this.lock)
+		if (this.lock) {
+			this.lockWarn();
 			return;
+		}
 		assert state >= 0;
 		this.state = state;
 	}
@@ -180,8 +194,10 @@ public class TextData {
 	 * @param text the text to set
 	 */
 	public void setText(String text) {
-		if (this.lock)
+		if (this.lock) {
+			this.lockWarn();
 			return;
+		}
 		assert text != null;
 		this.text = text;
 		this.setSize();

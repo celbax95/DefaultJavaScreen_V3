@@ -74,9 +74,9 @@ public class WElement implements Widget {
 	 */
 	public void setDrawElement(DrawElement drawElement) {
 		if (drawElement != null) {
-			drawElement.lock();
+			this.drawElement = drawElement.clone();
+			this.drawElement.lock();
 		}
-		this.drawElement = drawElement;
 	}
 
 	public void setPage(MenuPage page) {
