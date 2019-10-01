@@ -147,11 +147,12 @@ public abstract class WUserKeyInput implements Widget {
 			if (this.currentTextData != null) {
 
 				if (this.selected) {
-					this.currentTextData.setText(this.labelOnSelect);
+					this.originalTextData.setText(this.labelOnSelect);
+					this.originalTextData.draw(g, this.pos, this.size);
 				} else {
 					this.currentTextData.setText(this.label);
+					this.currentTextData.draw(g, this.pos, this.size);
 				}
-				this.currentTextData.draw(g, this.pos, this.size);
 			}
 		} else {
 			Logger.err("Un " + this.getClass().getSimpleName() + " n'a pas de drawElement");
