@@ -49,9 +49,9 @@ public class MenuControls implements MenuPage {
 		}
 	}
 
-	private static final Color COLOR = Color.black;
+	private static final Color COLOR = Color.WHITE;
 
-	private static final Color INVALID_COLOR = Color.black;
+	private static final Color INVALID_COLOR = Color.RED;
 
 	private List<Widget> widgets;
 
@@ -96,19 +96,23 @@ public class MenuControls implements MenuPage {
 
 		this.controls[3] = this.wUseInput();
 		this.controls[3].setData(useKey);
+
+		this.changeColorOnSame();
 	}
 
 	private void changeColorOnSame() {
+		for (WUserKeyInput w : this.controls) {
+			w.getTextData().setColor(COLOR);
+		}
 		for (int i = 0; i < this.controls.length; i++) {
 			for (int j = 0; j < this.controls.length; j++) {
-				if (i == j) {
+				if (i >= j) {
 					continue;
 				}
-//				if (this.controls[i].getData() == this.controls[j].getData()) {
-//					this.controls[j].getTextData().setColor(INVALID_COLOR);
-//				} else {
-//					this.controls[j].getTextData().setColor(COLOR);
-//				}
+				if (this.controls[i].getData() == this.controls[j].getData()) {
+					this.controls[i].getTextData().setColor(INVALID_COLOR);
+					this.controls[j].getTextData().setColor(INVALID_COLOR);
+				}
 			}
 		}
 	}
