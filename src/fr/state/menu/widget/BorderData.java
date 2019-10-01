@@ -48,7 +48,13 @@ public class BorderData {
 		return new BorderData(this);
 	}
 
+	/**
+	 * state = 0 : Inner state = 1 : Outer
+	 */
 	public void draw(Graphics2D g, Point holderPos, Point holderSize) {
+
+		g.setColor(this.color);
+
 		switch (this.state) {
 		case 0:
 			Area a0 = new Area(new Rectangle(holderPos.ix() - 1, holderPos.iy() - 1, holderSize.ix() + 2,

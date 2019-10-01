@@ -53,12 +53,10 @@ public class DELabel implements DrawElement {
 
 	@Override
 	public void draw(Graphics2D g, Point ref) {
-		g.setColor(this.label.getColor());
-		g.setFont(this.label.getFont());
+		// Absolute Point
+		Point absp = ref.clone().add(this.pos);
 
-		Point absTextPos = ref.clone().add(this.pos).add(this.label.getPos());
-
-		g.drawString(this.label.getText(), absTextPos.ix(), absTextPos.iy());
+		this.label.draw(g, absp, null);
 	}
 
 	/**

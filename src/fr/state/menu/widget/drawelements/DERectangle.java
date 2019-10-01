@@ -2,8 +2,6 @@ package fr.state.menu.widget.drawelements;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.Rectangle;
-import java.awt.geom.Area;
 
 import fr.logger.Logger;
 import fr.state.menu.widget.BorderData;
@@ -12,18 +10,6 @@ import fr.state.menu.widget.TextData;
 import fr.util.point.Point;
 
 public class DERectangle implements DrawElement {
-
-	private abstract class BorderDrawer {
-		public int prevBorderState;
-
-		public abstract void draw(Graphics2D g, Point absp);
-	}
-
-	private abstract class LabelDrawer {
-		public int prevLabelState;
-
-		public abstract void draw(Graphics2D g, Point absp);
-	}
 
 	private boolean lock;
 
@@ -38,10 +24,6 @@ public class DERectangle implements DrawElement {
 
 	private TextData label;
 
-	private LabelDrawer labelDrawer;
-
-	private BorderDrawer borderDrawer;
-
 	/**
 	 *
 	 */
@@ -52,18 +34,6 @@ public class DERectangle implements DrawElement {
 		this.color = Color.black;
 		this.border = null;
 		this.label = null;
-		this.labelDrawer = new LabelDrawer() {
-			@Override
-			public void draw(Graphics2D g, Point absp) {
-			}
-		};
-		this.labelDrawer.prevLabelState = -1;
-		this.borderDrawer = new BorderDrawer() {
-			@Override
-			public void draw(Graphics2D g, Point absp) {
-			}
-		};
-		this.borderDrawer.prevBorderState = -1;
 	}
 
 	public DERectangle(DERectangle other) {
@@ -94,109 +64,6 @@ public class DERectangle implements DrawElement {
 		this.setLabel(label);
 	}
 
-	private void changeBorderDrawer() {
-		if (this.borderDrawer.prevBorderState == this.border.getState())
-			return;
-
-		switch (this.border.getState()) {
-		case 0:
-			// Inner
-			this.borderDrawer = new BorderDrawer() {
-				@Override
-				public void draw(Graphics2D g, Point absp) {
-					Area a = new Area(new Rectangle(absp.ix() - 1, absp.iy() - 1,
-							DERectangle.this.size.ix() + 2, DERectangle.this.size.iy() + 2));
-
-					Area b = new Area(new Rectangle(absp.ix() + DERectangle.this.border.getThickness(),
-							absp.iy() + DERectangle.this.border.getThickness(),
-							DERectangle.this.size.ix() - DERectangle.this.border.getThickness() * 2,
-							DERectangle.this.size.iy() - DERectangle.this.border.getThickness() * 2));
-
-					a.subtract(b);
-
-					g.fill(a);
-				}
-			};
-			break;
-		case 1:
-			// outter
-			this.borderDrawer = new BorderDrawer() {
-				@Override
-				public void draw(Graphics2D g, Point absp) {
-					Area a = new Area(new Rectangle(absp.ix() - DERectangle.this.border.getThickness(),
-							absp.iy() - DERectangle.this.border.getThickness(),
-							DERectangle.this.size.ix() + DERectangle.this.border.getThickness() * 2,
-							DERectangle.this.size.iy() + DERectangle.this.border.getThickness() * 2));
-
-					Area b = new Area(new Rectangle(absp.ix(), absp.iy(), DERectangle.this.size.ix(),
-							DERectangle.this.size.iy()));
-
-					a.subtract(b);
-
-					g.fill(a);
-				}
-			};
-			break;
-		}
-	}
-
-	private void changeLabelDrawer() {
-		if (this.labelDrawer.prevLabelState == this.label.getState())
-			return;
-
-		switch (this.label.getState()) {
-		case 0:
-			// Relative
-			this.labelDrawer = new LabelDrawer() {
-				@Override
-				public void draw(Graphics2D g, Point absp) {
-					Point absoluteTextPos = absp.clone().add(DERectangle.this.label.getPos());
-
-					g.drawString(DERectangle.this.label.getText(), absoluteTextPos.ix(),
-							absoluteTextPos.iy());
-				}
-			};
-			break;
-		case 1:
-			// X centered - Y relative
-			this.labelDrawer = new LabelDrawer() {
-				@Override
-				public void draw(Graphics2D g, Point absp) {
-					Point absoluteTextPos = absp.clone().add(DERectangle.this.label.getPos());
-
-					g.drawString(DERectangle.this.label.getText(), absp.ix() + DERectangle.this.halfSize.ix()
-							- DERectangle.this.label.getSize().ix() / 2, absoluteTextPos.iy());
-				}
-			};
-			break;
-		case 2:
-			// X relative - Y centered
-			this.labelDrawer = new LabelDrawer() {
-				@Override
-				public void draw(Graphics2D g, Point absp) {
-					Point absoluteTextPos = absp.clone().add(DERectangle.this.label.getPos());
-
-					g.drawString(DERectangle.this.label.getText(), absoluteTextPos.ix(), absp.iy()
-							+ DERectangle.this.halfSize.iy() + DERectangle.this.label.getSize().iy() / 4);
-				}
-			};
-			break;
-		case 3:
-			// Centered
-			this.labelDrawer = new LabelDrawer() {
-				@Override
-				public void draw(Graphics2D g, Point absp) {
-					g.drawString(DERectangle.this.label.getText(),
-							absp.ix() + DERectangle.this.halfSize.ix()
-									- DERectangle.this.label.getSize().ix() / 2,
-							absp.iy() + DERectangle.this.halfSize.iy()
-									+ DERectangle.this.label.getSize().iy() / 4);
-				}
-			};
-			break;
-		}
-	}
-
 	@Override
 	public DrawElement clone() {
 		return new DERectangle(this);
@@ -213,32 +80,13 @@ public class DERectangle implements DrawElement {
 
 		g.fillRect(absp.ix(), absp.iy(), this.size.ix(), this.size.iy());
 
-		this.drawBorder(g, absp);
+		if (this.border != null) {
+			this.border.draw(g, absp, this.size);
+		}
 
-		this.drawLabel(g, absp);
-	}
-
-	private void drawBorder(Graphics2D g, Point absp) {
-		if (this.border == null)
-			return;
-
-		this.changeBorderDrawer();
-
-		g.setColor(this.border.getColor());
-
-		this.borderDrawer.draw(g, absp);
-	}
-
-	private void drawLabel(Graphics2D g, Point absp) {
-		if (this.label == null)
-			return;
-
-		this.changeLabelDrawer();
-
-		g.setFont(this.label.getFont());
-		g.setColor(this.label.getColor());
-
-		this.labelDrawer.draw(g, absp);
+		if (this.label != null) {
+			this.label.draw(g, absp, this.size);
+		}
 	}
 
 	/**

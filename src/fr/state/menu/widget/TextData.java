@@ -88,8 +88,21 @@ public class TextData {
 	 * state = 3 : Centered
 	 */
 	public void draw(Graphics2D g, Point holderPos, Point holderSize) {
-		Point absp = holderPos.clone().add(this.pos);
-		switch (this.state) {
+
+		Point absp = this.pos.clone();
+
+		int state = this.state;
+
+		if (holderPos == null || holderSize == null) {
+			state = 0;
+		} else if (holderPos != null) {
+			absp.add(holderPos);
+		}
+
+		g.setFont(this.font);
+		g.setColor(this.color);
+
+		switch (state) {
 		case 0:
 			// Relative
 			g.drawString(this.text, absp.ix(), absp.iy());
