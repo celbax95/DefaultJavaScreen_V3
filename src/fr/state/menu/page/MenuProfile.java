@@ -57,6 +57,8 @@ public class MenuProfile implements MenuPage {
 
 	private Color color;
 
+	private WElement colorBlock;
+
 	public MenuProfile(Menu m) {
 
 		this.m = m;
@@ -80,6 +82,8 @@ public class MenuProfile implements MenuPage {
 		this.wColorRed().setValue(this.color.getRed());
 		this.wColorGreen().setValue(this.color.getGreen());
 		this.wColorBlue().setValue(this.color.getBlue());
+		this.colorBlock = this.wColorBlock();
+		this.setColor(this.color);
 	}
 
 	@Override
@@ -87,9 +91,6 @@ public class MenuProfile implements MenuPage {
 		for (Widget w : this.widgets) {
 			w.draw(g);
 		}
-
-		g.setColor(this.color);
-		g.fillRect(650, 500, 100, 100);
 	}
 
 	private void loadResources() {
@@ -104,6 +105,14 @@ public class MenuProfile implements MenuPage {
 
 		this.manager.setParam(this.profileConf, PARAM_NAME_COLOR, colorHex);
 		this.manager.saveFile(this.profileConf);
+	}
+
+	/**
+	 * @param color the color to set
+	 */
+	private void setColor(Color color) {
+		this.color = color;
+		((DERectangle) this.colorBlock.getDrawElement()).setColor(this.color);
 	}
 
 	@Override
@@ -138,12 +147,29 @@ public class MenuProfile implements MenuPage {
 		this.widgets.add(btn);
 	}
 
+	private WElement wColorBlock() {
+		BorderData border = new BorderData(4, Color.BLACK, 0);
+
+		DERectangle rect = new DERectangle();
+		rect.setColor(Color.BLACK);
+		rect.setSize(new Point(100, 100));
+		rect.setBorder(border);
+
+		WElement w = new WElement(this);
+		w.setDrawElement(rect);
+		w.setPos(new Point(650, 500));
+
+		this.widgets.add(w);
+
+		return w;
+	}
+
 	private WSlider wColorBlue() {
 		WSlider s = new WSlider(this) {
 			@Override
 			public void valueChanged(int value, boolean pressed) {
-				MenuProfile.this.color = new Color(MenuProfile.this.color.getRed(),
-						MenuProfile.this.color.getGreen(), value);
+				MenuProfile.this.setColor(
+						new Color(MenuProfile.this.color.getRed(), MenuProfile.this.color.getGreen(), value));
 				if (!pressed) {
 					MenuProfile.this.saveColor();
 				}
@@ -175,8 +201,8 @@ public class MenuProfile implements MenuPage {
 		WSlider s = new WSlider(this) {
 			@Override
 			public void valueChanged(int value, boolean pressed) {
-				MenuProfile.this.color = new Color(MenuProfile.this.color.getRed(), value,
-						MenuProfile.this.color.getBlue());
+				MenuProfile.this.setColor(
+						new Color(MenuProfile.this.color.getRed(), value, MenuProfile.this.color.getBlue()));
 				if (!pressed) {
 					MenuProfile.this.saveColor();
 				}
@@ -208,8 +234,8 @@ public class MenuProfile implements MenuPage {
 		WSlider s = new WSlider(this) {
 			@Override
 			public void valueChanged(int value, boolean pressed) {
-				MenuProfile.this.color = new Color(value, MenuProfile.this.color.getGreen(),
-						MenuProfile.this.color.getBlue());
+				MenuProfile.this.setColor(new Color(value, MenuProfile.this.color.getGreen(),
+						MenuProfile.this.color.getBlue()));
 				if (!pressed) {
 					MenuProfile.this.saveColor();
 				}
