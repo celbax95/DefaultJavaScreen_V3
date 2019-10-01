@@ -18,12 +18,6 @@ import fr.util.collider.Collider;
 import fr.util.point.Point;
 
 public abstract class WUserKeyInput implements Widget {
-	private abstract class LabelDrawer {
-		public int prevLabelState;
-
-		public abstract void draw(Graphics2D g, Point absp);
-	}
-
 	private static final int DATA_MOUSE_LEFT = -1;
 	private static final int DATA_MOUSE_MIDDLE = -2;
 	private static final int DATA_MOUSE_RIGHT = -3;
@@ -51,7 +45,7 @@ public abstract class WUserKeyInput implements Widget {
 
 	private Point pos;
 
-	private Point halfSize;
+	private Point size;
 
 	private AABB hitbox;
 
@@ -65,8 +59,6 @@ public abstract class WUserKeyInput implements Widget {
 
 	private boolean visible;
 
-	private LabelDrawer labelDrawer;
-
 	private TextData currentTextData;
 
 	private TextData originalTextData;
@@ -79,13 +71,11 @@ public abstract class WUserKeyInput implements Widget {
 
 	private MenuPage page;
 
-	int a = 0;
-
 	public WUserKeyInput(MenuPage p) {
 		this.page = p;
 		this.pos = new Point();
 
-		this.halfSize = new Point();
+		this.size = new Point();
 
 		this.hitbox = new AABB(this.pos, new Point(), new Point());
 
@@ -102,13 +92,6 @@ public abstract class WUserKeyInput implements Widget {
 		this.currentTextData = null;
 
 		this.originalTextData = null;
-
-		this.labelDrawer = new LabelDrawer() {
-			@Override
-			public void draw(Graphics2D g, Point absp) {
-			}
-		};
-		this.labelDrawer.prevLabelState = -1;
 
 		this.labelOnSelect = DEFAULT_LABEL_ON_SELECT;
 
@@ -151,70 +134,6 @@ public abstract class WUserKeyInput implements Widget {
 		return false;
 	}
 
-	private void changeLabelDrawer() {
-		if (this.labelDrawer.prevLabelState == this.currentTextData.getState())
-			return;
-
-		if (this.halfSize == null) {
-			this.setHalfSize();
-		}
-
-		switch (this.currentTextData.getState()) {
-		case 0:
-			// Relative
-			this.labelDrawer = new LabelDrawer() {
-				@Override
-				public void draw(Graphics2D g, Point absp) {
-					Point absoluteTextPos = absp.clone().add(WUserKeyInput.this.currentTextData.getPos());
-
-					g.drawString(WUserKeyInput.this.currentTextData.getText(), absoluteTextPos.ix(),
-							absoluteTextPos.iy());
-				}
-			};
-			break;
-		case 1:
-			// X centered - Y relative
-			this.labelDrawer = new LabelDrawer() {
-				@Override
-				public void draw(Graphics2D g, Point absp) {
-					Point absoluteTextPos = absp.clone().add(WUserKeyInput.this.currentTextData.getPos());
-
-					g.drawString(WUserKeyInput.this.currentTextData.getText(),
-							absp.ix() + WUserKeyInput.this.halfSize.ix()
-									- WUserKeyInput.this.currentTextData.getSize().ix() / 2,
-							absoluteTextPos.iy());
-				}
-			};
-			break;
-		case 2:
-			// X relative - Y centered
-			this.labelDrawer = new LabelDrawer() {
-				@Override
-				public void draw(Graphics2D g, Point absp) {
-					Point absoluteTextPos = absp.clone().add(WUserKeyInput.this.currentTextData.getPos());
-
-					g.drawString(WUserKeyInput.this.currentTextData.getText(), absoluteTextPos.ix(),
-							absp.iy() + WUserKeyInput.this.halfSize.iy()
-									+ WUserKeyInput.this.currentTextData.getSize().iy() / 4);
-				}
-			};
-			break;
-		case 3:
-			// Centered
-			this.labelDrawer = new LabelDrawer() {
-				@Override
-				public void draw(Graphics2D g, Point absp) {
-					g.drawString(WUserKeyInput.this.currentTextData.getText(),
-							absp.ix() + WUserKeyInput.this.halfSize.ix()
-									- WUserKeyInput.this.currentTextData.getSize().ix() / 2,
-							absp.iy() + WUserKeyInput.this.halfSize.iy()
-									+ WUserKeyInput.this.currentTextData.getSize().iy() / 4);
-				}
-			};
-			break;
-		}
-	}
-
 	public abstract void dataChanged(int data);
 
 	@Override
@@ -224,20 +143,18 @@ public abstract class WUserKeyInput implements Widget {
 
 		if (this.currentDE != null) {
 			this.currentDE.draw(g, this.getPos());
-			this.drawData(g);
+
+			if (this.currentTextData != null) {
+
+				if (this.selected) {
+					this.currentTextData.setText(this.labelOnSelect);
+				} else {
+					this.currentTextData.setText(this.label);
+				}
+				this.currentTextData.draw(g, this.pos, this.size);
+			}
 		} else {
 			Logger.err("Un " + this.getClass().getSimpleName() + " n'a pas de drawElement");
-		}
-	}
-
-	public void drawData(Graphics2D g) {
-		if (this.currentTextData != null) {
-			this.currentTextData.setText(this.label);
-
-			g.setFont(this.currentTextData.getFont());
-			g.setColor(this.currentTextData.getColor());
-
-			this.labelDrawer.draw(g, this.getPos());
 		}
 	}
 
@@ -270,7 +187,7 @@ public abstract class WUserKeyInput implements Widget {
 	}
 
 	public Point getSize() {
-		return null;
+		return this.size;
 	}
 
 	/**
@@ -299,7 +216,7 @@ public abstract class WUserKeyInput implements Widget {
 		} else if (this.selectedDrawElement != null) {
 			this.currentDE = this.selectedDrawElement;
 		}
-		this.setHalfSize();
+		this.setSize(this.currentDE.getSize().clone());
 	}
 
 	public void setData(int key) {
@@ -314,12 +231,6 @@ public abstract class WUserKeyInput implements Widget {
 		this.setSelected(false);
 	}
 
-	private void setHalfSize() {
-		if (this.currentDE != null) {
-			this.halfSize.set(this.currentDE.getSize().clone().div(2));
-		}
-	}
-
 	public void setHitbox(AABB hitbox) {
 		this.hitbox = hitbox;
 	}
@@ -330,8 +241,6 @@ public abstract class WUserKeyInput implements Widget {
 
 		this.hitbox.min(this.pos.clone().add(this.currentDE.getPos()));
 		this.hitbox.max(this.pos.clone().add(this.currentDE.getPos()).add(this.currentDE.getSize()));
-
-		this.setHalfSize();
 	}
 
 	public void setLabel(String label) {
@@ -369,6 +278,10 @@ public abstract class WUserKeyInput implements Widget {
 		}
 	}
 
+	private void setSize(Point size) {
+		this.size = size;
+	}
+
 	/**
 	 * @param drawElement the drawElement to set
 	 */
@@ -378,9 +291,7 @@ public abstract class WUserKeyInput implements Widget {
 			this.stdDrawElement.lock();
 		}
 
-		if (this.currentDE == null) {
-			this.currentDE = this.stdDrawElement;
-		}
+		this.setCurrentDE();
 	}
 
 	public void setTextData(TextData textData) {
@@ -388,7 +299,6 @@ public abstract class WUserKeyInput implements Widget {
 			this.currentTextData = textData;
 		}
 		this.originalTextData = new TextData(textData);
-		this.changeLabelDrawer();
 	}
 
 	@Override

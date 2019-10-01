@@ -1,8 +1,12 @@
 package fr.state.menu.widget;
 
 import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
+import java.awt.geom.Area;
 
 import fr.logger.Logger;
+import fr.util.point.Point;
 
 public class BorderData {
 
@@ -42,6 +46,39 @@ public class BorderData {
 	@Override
 	public BorderData clone() {
 		return new BorderData(this);
+	}
+
+	/**
+	 * state = 0 : Inner state = 1 : Outer
+	 */
+	public void draw(Graphics2D g, Point holderPos, Point holderSize) {
+
+		g.setColor(this.color);
+
+		switch (this.state) {
+		case 0:
+			Area a0 = new Area(new Rectangle(holderPos.ix() - 1, holderPos.iy() - 1, holderSize.ix() + 2,
+					holderSize.iy() + 2));
+
+			Area b0 = new Area(new Rectangle(holderPos.ix() + this.thickness, holderPos.iy() + this.thickness,
+					holderSize.ix() - this.thickness * 2, holderSize.iy() - this.thickness * 2));
+
+			a0.subtract(b0);
+
+			g.fill(a0);
+			break;
+		case 1:
+			Area a1 = new Area(new Rectangle(holderPos.ix() - this.thickness, holderPos.iy() - this.thickness,
+					holderSize.ix() + this.thickness * 2, holderSize.iy() + this.thickness * 2));
+
+			Area b1 = new Area(
+					new Rectangle(holderPos.ix(), holderPos.iy(), holderSize.ix(), holderSize.iy()));
+
+			a1.subtract(b1);
+
+			g.fill(a1);
+			break;
+		}
 	}
 
 	/**

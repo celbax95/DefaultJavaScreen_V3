@@ -2,8 +2,6 @@ package fr.state.menu.widget.drawelements;
 
 import java.awt.Graphics2D;
 import java.awt.Image;
-import java.awt.Rectangle;
-import java.awt.geom.Area;
 
 import fr.logger.Logger;
 import fr.state.menu.widget.BorderData;
@@ -13,23 +11,7 @@ import fr.util.point.Point;
 
 public class DEImage implements DrawElement {
 
-	private abstract class BorderDrawer {
-		public int prevBorderState;
-
-		public abstract void draw(Graphics2D g, Point absp);
-	}
-
-	private abstract class LabelDrawer {
-		public int prevLabelState;
-
-		public abstract void draw(Graphics2D g, Point absp);
-	}
-
 	private boolean lock;
-
-	private LabelDrawer labelDrawer;
-
-	private BorderDrawer borderDrawer;
 
 	private Point pos;
 	private Point size;
@@ -40,9 +22,6 @@ public class DEImage implements DrawElement {
 
 	private Image image;
 
-	/**
-	 *
-	 */
 	public DEImage() {
 		super();
 		this.pos = new Point();
@@ -53,20 +32,6 @@ public class DEImage implements DrawElement {
 		this.label = null;
 
 		this.image = null;
-
-		this.labelDrawer = new LabelDrawer() {
-			@Override
-			public void draw(Graphics2D g, Point absp) {
-			}
-		};
-		this.labelDrawer.prevLabelState = -1;
-
-		this.borderDrawer = new BorderDrawer() {
-			@Override
-			public void draw(Graphics2D g, Point absp) {
-			}
-		};
-		this.borderDrawer.prevBorderState = -1;
 	}
 
 	public DEImage(DEImage other) {
@@ -96,70 +61,6 @@ public class DEImage implements DrawElement {
 		this.setLabel(label);
 	}
 
-	private void changeBorderDrawer() {
-		if (this.borderDrawer.prevBorderState != this.border.getState())
-			return;
-
-		switch (this.border.getState()) {
-		case 0:
-			// Inner
-			this.borderDrawer = new BorderDrawer() {
-				@Override
-				public void draw(Graphics2D g, Point absp) {
-					Area a = new Area(new Rectangle(absp.ix() - 1, absp.iy() - 1, DEImage.this.size.ix() + 2,
-							DEImage.this.size.iy() + 2));
-
-					Area b = new Area(new Rectangle(absp.ix() + DEImage.this.border.getThickness(),
-							absp.iy() + DEImage.this.border.getThickness(),
-							DEImage.this.size.ix() - DEImage.this.border.getThickness() * 2,
-							DEImage.this.size.iy() - DEImage.this.border.getThickness() * 2));
-
-					a.subtract(b);
-
-					g.fill(a);
-				}
-			};
-			break;
-		case 1:
-			// outter
-			this.borderDrawer = new BorderDrawer() {
-				@Override
-				public void draw(Graphics2D g, Point absp) {
-					Area a = new Area(new Rectangle(absp.ix() - DEImage.this.border.getThickness(),
-							absp.iy() - DEImage.this.border.getThickness(),
-							DEImage.this.size.ix() + DEImage.this.border.getThickness() * 2,
-							DEImage.this.size.iy() + DEImage.this.border.getThickness() * 2));
-
-					Area b = new Area(new Rectangle(absp.ix(), absp.iy(), DEImage.this.size.ix(),
-							DEImage.this.size.iy()));
-
-					a.subtract(b);
-
-					g.fill(a);
-				}
-			};
-			break;
-		}
-	}
-
-	private void changeLabelDrawer() {
-		if (this.labelDrawer.prevLabelState == this.label.getState())
-			return;
-
-		switch (this.label.getState()) {
-		case 0:
-			// Relative
-			this.labelDrawer = new LabelDrawer() {
-				@Override
-				public void draw(Graphics2D g, Point absp) {
-					Point absTextPos = absp.clone().add(DEImage.this.label.getPos());
-					g.drawString(DEImage.this.label.getText(), absTextPos.ix(), absTextPos.iy());
-				}
-			};
-			break;
-		}
-	}
-
 	@Override
 	public DrawElement clone() {
 		return new DEImage(this);
@@ -170,35 +71,17 @@ public class DEImage implements DrawElement {
 		// Absolute Point
 		Point absp = ref.clone().add(this.pos);
 
-		this.drawBorder(g, absp);
-
 		if (this.image != null) {
 			g.drawImage(this.image, absp.ix(), absp.iy(), null);
 		}
 
-		this.drawLabel(g, absp);
-	}
+		if (this.border != null) {
+			this.border.draw(g, absp, this.size);
+		}
 
-	private void drawBorder(Graphics2D g, Point absp) {
-		if (this.border == null)
-			return;
-
-		this.changeBorderDrawer();
-		g.setColor(this.border.getColor());
-
-		this.borderDrawer.draw(g, absp);
-	}
-
-	private void drawLabel(Graphics2D g, Point absp) {
-		if (this.label == null)
-			return;
-
-		this.changeLabelDrawer();
-
-		g.setColor(this.label.getColor());
-		g.setFont(this.label.getFont());
-
-		this.labelDrawer.draw(g, absp);
+		if (this.label != null) {
+			this.label.draw(g, absp, this.size);
+		}
 	}
 
 	/**

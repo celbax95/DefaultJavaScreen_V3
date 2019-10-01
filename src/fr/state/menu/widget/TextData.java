@@ -2,6 +2,7 @@ package fr.state.menu.widget;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Graphics2D;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.AffineTransform;
 
@@ -78,6 +79,49 @@ public class TextData {
 	@Override
 	public TextData clone() {
 		return new TextData(this);
+	}
+
+	/**
+	 * state = 0 : Relative</br>
+	 * state = 1 : X centered</br>
+	 * state = 2 : Y centered</br>
+	 * state = 3 : Centered
+	 */
+	public void draw(Graphics2D g, Point holderPos, Point holderSize) {
+
+		Point absp = this.pos.clone();
+
+		int state = this.state;
+
+		if (holderPos == null || holderSize == null) {
+			state = 0;
+		} else if (holderPos != null) {
+			absp.add(holderPos);
+		}
+
+		g.setFont(this.font);
+		g.setColor(this.color);
+
+		switch (state) {
+		case 0:
+			// Relative
+			g.drawString(this.text, absp.ix(), absp.iy());
+			break;
+		case 1:
+			// X centered - Y relative
+			g.drawString(this.text, absp.ix() + holderSize.ix() / 2 - this.size.ix() / 2, absp.iy());
+			break;
+		case 2:
+			// X relative - Y centered
+			g.drawString(this.text, absp.ix(), absp.iy() + holderSize.iy() / 2 + holderSize.iy() / 4);
+			break;
+		case 3:
+			// Centered
+			Point holderHalfSize = holderSize.clone().div(2);
+			g.drawString(this.text, absp.ix() + holderHalfSize.ix() - this.size.ix() / 2,
+					absp.iy() + holderHalfSize.iy() + this.size.iy() / 4);
+			break;
+		}
 	}
 
 	/**
