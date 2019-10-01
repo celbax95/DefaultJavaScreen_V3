@@ -235,7 +235,11 @@ public abstract class WUserKeyInput implements Widget {
 			this.currentTextData.setText(this.label);
 
 			g.setFont(this.currentTextData.getFont());
-			g.setColor(this.currentTextData.getColor());
+			if (this.selected) {
+				g.setColor(this.originalTextData.getColor());
+			} else {
+				g.setColor(this.currentTextData.getColor());
+			}
 
 			this.labelDrawer.draw(g, this.getPos());
 		}
