@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?><conf>
+	<!-- Game Settings -->
+
+	<param name="itemFreq" type="integer" value="0"/>
+	
+</conf>

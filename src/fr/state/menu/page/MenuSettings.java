@@ -57,7 +57,7 @@ public class MenuSettings implements MenuPage {
 		this.wGraph();
 		this.wControls();
 		this.wProfile();
-		this.wGameopt();
+		this.wGameSettings();
 	}
 
 	@Override
@@ -130,10 +130,11 @@ public class MenuSettings implements MenuPage {
 		this.widgets.add(btn);
 	}
 
-	private void wGameopt() {
+	private void wGameSettings() {
 		WButton btn = new WButton(this) {
 			@Override
 			public void action() {
+				MenuSettings.this.m.applyPage(new MenuGameSettings(MenuSettings.this.m));
 			}
 		};
 
