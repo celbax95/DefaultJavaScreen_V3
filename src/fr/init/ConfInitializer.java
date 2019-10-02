@@ -66,6 +66,7 @@ public class ConfInitializer {
 		this.dfm.addFile("winConf", "/conf/winConf.xml");
 		this.dfm.addFile("controls", "/conf/controls.xml");
 		this.dfm.addFile("profile", "/conf/profile.xml");
+		this.dfm.addFile("gameSettings", "/conf/gameSettings.xml");
 	}
 
 	/**
