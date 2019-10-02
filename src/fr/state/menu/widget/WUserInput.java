@@ -80,6 +80,22 @@ public abstract class WUserInput implements Widget {
 		this.lostFocusToValidate = false;
 	}
 
+	public WUserInput(WUserInput other) {
+		this(other.page);
+
+		this.setPos(other.pos);
+		this.setHitbox(other.hitbox);
+		this.setStdDrawElement(other.stdDrawElement);
+		this.setSelectedDrawElement(other.selectedDrawElement);
+		this.setCurrentDE();
+		this.setVisible(other.visible);
+		this.setTextData(other.originalTextData);
+		this.setData("");
+		this.setEraseOnEdit(other.eraseOnEdit);
+		this.setLostFocusToValidate(other.lostFocusToValidate);
+		this.setDataLength(other.dataLength);
+	}
+
 	private void addCharToData(char keyChar) {
 		String tmpData = this.data + keyChar;
 		if (this.changeFontSize(tmpData)) {

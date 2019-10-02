@@ -99,6 +99,18 @@ public abstract class WUserKeyInput implements Widget {
 		this.label = "";
 	}
 
+	public WUserKeyInput(WUserKeyInput other) {
+		this(other.page);
+
+		this.setPos(other.pos);
+		this.setHitbox(other.hitbox);
+		this.setStdDrawElement(other.stdDrawElement);
+		this.setSelectedDrawElement(other.selectedDrawElement);
+		this.setVisible(other.visible);
+		this.setTextData(other.originalTextData);
+		this.setLabelOnSelect(other.labelOnSelect);
+	}
+
 	private void changeData(int key) {
 		this.setData(key);
 		this.dataChanged(this.data);
