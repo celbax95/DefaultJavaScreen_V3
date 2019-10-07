@@ -228,6 +228,7 @@ public abstract class WUserInput implements Widget {
 
 	public void setData(String data) {
 		this.data = data;
+		this.changeFontSize(data);
 	}
 
 	public void setDataLength(int dataLength) {
@@ -310,6 +311,7 @@ public abstract class WUserInput implements Widget {
 			this.currentTextData = textData;
 		}
 		this.originalTextData = new TextData(textData);
+		this.changeFontSize(this.data);
 	}
 
 	@Override
