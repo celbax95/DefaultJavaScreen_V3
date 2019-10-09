@@ -328,6 +328,7 @@ public class MenuProfile implements MenuPage {
 		WUserInput u = new WUserInput(this) {
 			@Override
 			public void dataChanged(String data) {
+				System.out.println(data);
 				MenuProfile.this.manager.setParam(MenuProfile.this.profileConf, PARAM_NAME_USERNAME, data);
 				MenuProfile.this.manager.saveFile(MenuProfile.this.profileConf);
 			}

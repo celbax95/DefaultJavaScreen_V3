@@ -343,6 +343,7 @@ public abstract class WUserInput implements Widget {
 						// DELETE
 						if (this.data.length() > 0) {
 							this.removeCharToData();
+							this.dataChanged(this.data);
 						}
 					} else if (e.key == 10) {
 						// ENTER
