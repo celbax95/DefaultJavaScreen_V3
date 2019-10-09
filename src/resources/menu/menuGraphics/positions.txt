@@ -1,6 +1,11 @@
 title			:	550		:	76
 back			:	42		:	42
-Graphics		:	98		:	451
-Controls		:	554		:	451
-Profile			:	1009	:	451
-Game Settings	:	1465	:	451
+frame			:	333		:	337
+resolution		:	804		:	401
+1280			:	531		:	532
+1366			:	746		:	532
+1600			:	960		:	532
+1920			:	1174	:	532
+fullscreen		:	745		:	675
+warning			:	593		:	859
+

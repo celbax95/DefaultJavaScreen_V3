@@ -1,0 +1,4 @@
+title			:	550		:	76
+back			:	42		:	42
+frame			:	333		:	337
+username		:	738		:	400
