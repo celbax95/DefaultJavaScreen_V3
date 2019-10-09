@@ -1,7 +1,5 @@
 package fr.state.menu.page;
 
-import java.awt.Color;
-import java.awt.Font;
 import java.awt.Graphics2D;
 import java.util.List;
 import java.util.Vector;
@@ -14,30 +12,59 @@ import fr.inputs.Input;
 import fr.state.menu.Menu;
 import fr.state.menu.MenuPage;
 import fr.state.menu.Widget;
-import fr.state.menu.widget.TextData;
 import fr.state.menu.widget.WButton;
 import fr.state.menu.widget.WElement;
 import fr.state.menu.widget.drawelements.DEImage;
-import fr.state.menu.widget.drawelements.DERectangle;
 import fr.util.point.Point;
 import fr.window.WinData;
 
 public class MenuGraphics implements MenuPage {
 
-	private static final String[] RES_NAMES = { "title", "backStd", "backPressed", };
+	private static final String[] RES_NAMES = {
+			"title",
+			"backStd",
+			"backPressed",
+			"frame",
+			"1280Std",
+			"1280Sel",
+			"1366Std",
+			"1366Sel",
+			"1600Std",
+			"1600Sel",
+			"1920Std",
+			"1920Sel",
+			"fullscreenStd",
+			"fullscreenSel",
+			"warning", };
 
-	private static final String[] RES_PATHS = { "title", "backStd", "backPressed", };
+	private static final String[] RES_PATHS = {
+			"title",
+			"backStd",
+			"backPressed",
+			"frame",
+			"1280Std",
+			"1280Sel",
+			"1366Std",
+			"1366Sel",
+			"1600Std",
+			"1600Sel",
+			"1920Std",
+			"1920Sel",
+			"fullscreenStd",
+			"fullscreenSel",
+			"warning", };
 
-	private static final String RES_FOLDER = "/resources/menu/menuSettings/";
+	private static final String RES_FOLDER = "/resources/menu/menuGraphics/";
 	private static final String RES_EXTENSION = ".png";
 
 	private static final String PAGE_NAME = "menuGraphics";
 
 	private static final Point res1280 = new Point(1280, 720);
 	private static final Point res1366 = new Point(1366, 768);
+	private static final Point res1600 = new Point(1600, 900);
 	private static final Point res1920 = new Point(1920, 1080);
 
-	private static final int NB_RES_EXCLUSIVE_BTN = 4;
+	private static final int NB_RES_EXCLUSIVE_BTN = 5;
 
 	static {
 		for (int i = 0; i < RES_NAMES.length; i++) {
@@ -92,16 +119,21 @@ public class MenuGraphics implements MenuPage {
 			this.resBtnIndex = 0;
 		} else if (width == 1366 && height == 768) {
 			this.resBtnIndex = 1;
-		} else if (width == 1920 && height == 1080) {
+		} else if (width == 1600 && height == 900) {
 			this.resBtnIndex = 2;
+		} else if (width == 1920 && height == 1080) {
+			this.resBtnIndex = 3;
 		}
 
 		this.wTitle();
 		this.wBack();
-		this.exclusiveResBtn[0] = this.w1280();
-		this.exclusiveResBtn[1] = this.w1366();
-		this.exclusiveResBtn[2] = this.w1920();
-		this.exclusiveResBtn[3] = this.wFullscreen();
+		this.wFrame();
+		int i = 0;
+		this.exclusiveResBtn[i++] = this.w1280();
+		this.exclusiveResBtn[i++] = this.w1366();
+		this.exclusiveResBtn[i++] = this.w1600();
+		this.exclusiveResBtn[i++] = this.w1920();
+		this.exclusiveResBtn[i++] = this.wFullscreen();
 		this.needRestart = this.wRestart();
 		this.switchResolutionBtn();
 	}
@@ -154,27 +186,18 @@ public class MenuGraphics implements MenuPage {
 			}
 		};
 
-		DERectangle rect = new DERectangle();
+		ImageManager im = ImageManager.getInstance();
 
-		TextData label = new TextData(new Point(), new Font("Arial", Font.BOLD, 22), "1280", Color.BLUE, 3);
-		label.lock();
+		DEImage std = new DEImage();
+		std.setImage(im.get("menuGraphics/1280Std"));
+		DEImage sel = new DEImage();
+		sel.setImage(im.get("menuGraphics/1280Sel"));
 
-		rect.setLabel(label);
-		rect.setColor(Color.RED);
-		rect.setSize(new Point(100, 100));
-		b.setStdDrawElement(rect);
+		b.setStdDrawElement(std);
+		b.setPressedDrawElement(sel);
+		b.setCantPressDrawElement(sel);
 
-		rect = (DERectangle) rect.clone();
-
-		rect.setColor(Color.PINK);
-		b.setPressedDrawElement(rect);
-
-		rect = (DERectangle) rect.clone();
-
-		rect.setColor(Color.GREEN);
-		b.setCantPressDrawElement(rect);
-
-		b.setPos(new Point(200, 200));
+		b.setPos(new Point(531, 532));
 		b.setHitboxFromDrawElement();
 
 		this.widgets.add(b);
@@ -194,27 +217,49 @@ public class MenuGraphics implements MenuPage {
 			}
 		};
 
-		DERectangle rect = new DERectangle();
+		ImageManager im = ImageManager.getInstance();
 
-		TextData label = new TextData(new Point(), new Font("Arial", Font.BOLD, 22), "1366", Color.BLUE, 3);
-		label.lock();
+		DEImage std = new DEImage();
+		std.setImage(im.get("menuGraphics/1366Std"));
+		DEImage sel = new DEImage();
+		sel.setImage(im.get("menuGraphics/1366Sel"));
 
-		rect.setLabel(label);
-		rect.setColor(Color.RED);
-		rect.setSize(new Point(100, 100));
-		b.setStdDrawElement(rect);
+		b.setStdDrawElement(std);
+		b.setPressedDrawElement(sel);
+		b.setCantPressDrawElement(sel);
 
-		rect = (DERectangle) rect.clone();
+		b.setPos(new Point(746, 532));
+		b.setHitboxFromDrawElement();
 
-		rect.setColor(Color.PINK);
-		b.setPressedDrawElement(rect);
+		this.widgets.add(b);
 
-		rect = (DERectangle) rect.clone();
+		return b;
+	}
 
-		rect.setColor(Color.GREEN);
-		b.setCantPressDrawElement(rect);
+	private WButton w1600() {
+		WButton b = new WButton(this) {
+			@Override
+			public void action() {
+				MenuGraphics.this.setResBtnIndex(2);
+				MenuGraphics.this.manager.setParam(MenuGraphics.this.winConf, "width", res1600.ix());
+				MenuGraphics.this.manager.setParam(MenuGraphics.this.winConf, "height", res1600.iy());
+				MenuGraphics.this.manager.setParam(MenuGraphics.this.winConf, "fullscreen", false);
+				MenuGraphics.this.manager.saveFile(MenuGraphics.this.winConf);
+			}
+		};
 
-		b.setPos(new Point(300, 200));
+		ImageManager im = ImageManager.getInstance();
+
+		DEImage std = new DEImage();
+		std.setImage(im.get("menuGraphics/1600Std"));
+		DEImage sel = new DEImage();
+		sel.setImage(im.get("menuGraphics/1600Sel"));
+
+		b.setStdDrawElement(std);
+		b.setPressedDrawElement(sel);
+		b.setCantPressDrawElement(sel);
+
+		b.setPos(new Point(960, 532));
 		b.setHitboxFromDrawElement();
 
 		this.widgets.add(b);
@@ -226,7 +271,7 @@ public class MenuGraphics implements MenuPage {
 		WButton b = new WButton(this) {
 			@Override
 			public void action() {
-				MenuGraphics.this.setResBtnIndex(2);
+				MenuGraphics.this.setResBtnIndex(3);
 				MenuGraphics.this.manager.setParam(MenuGraphics.this.winConf, "width", res1920.ix());
 				MenuGraphics.this.manager.setParam(MenuGraphics.this.winConf, "height", res1920.iy());
 				MenuGraphics.this.manager.setParam(MenuGraphics.this.winConf, "fullscreen", false);
@@ -234,27 +279,18 @@ public class MenuGraphics implements MenuPage {
 			}
 		};
 
-		DERectangle rect = new DERectangle();
+		ImageManager im = ImageManager.getInstance();
 
-		TextData label = new TextData(new Point(), new Font("Arial", Font.BOLD, 22), "1920", Color.BLUE, 3);
-		label.lock();
+		DEImage std = new DEImage();
+		std.setImage(im.get("menuGraphics/1920Std"));
+		DEImage sel = new DEImage();
+		sel.setImage(im.get("menuGraphics/1920Sel"));
 
-		rect.setLabel(label);
-		rect.setColor(Color.RED);
-		rect.setSize(new Point(100, 100));
-		b.setStdDrawElement(rect);
+		b.setStdDrawElement(std);
+		b.setPressedDrawElement(sel);
+		b.setCantPressDrawElement(sel);
 
-		rect = (DERectangle) rect.clone();
-
-		rect.setColor(Color.PINK);
-		b.setPressedDrawElement(rect);
-
-		rect = (DERectangle) rect.clone();
-
-		rect.setColor(Color.GREEN);
-		b.setCantPressDrawElement(rect);
-
-		b.setPos(new Point(400, 200));
+		b.setPos(new Point(1174, 532));
 		b.setHitboxFromDrawElement();
 
 		this.widgets.add(b);
@@ -270,21 +306,35 @@ public class MenuGraphics implements MenuPage {
 			}
 		};
 
-		btn.setPos(new Point(30, 30));
+		ImageManager im = ImageManager.getInstance();
 
 		DEImage i = new DEImage();
-		i.setImage(ImageManager.getInstance().get("menuGraphics/backStd"));
+		i.setImage(im.get("menuGraphics/backStd"));
 
 		btn.setStdDrawElement(i);
 
 		i = new DEImage();
-		i.setImage(ImageManager.getInstance().get("menuGraphics/backPressed"));
+		i.setImage(im.get("menuGraphics/backPressed"));
 
 		btn.setPressedDrawElement(i);
 
+		btn.setPos(new Point(42, 42));
 		btn.setHitboxFromDrawElement();
 
 		this.widgets.add(btn);
+	}
+
+	private void wFrame() {
+		WElement w = new WElement(this);
+
+		DEImage img = new DEImage();
+
+		img.setImage(ImageManager.getInstance().get("menuGraphics/frame"));
+
+		w.setDrawElement(img);
+		w.setPos(new Point(333, 337));
+
+		this.widgets.add(w);
 	}
 
 	private WButton wFullscreen() {
@@ -297,28 +347,19 @@ public class MenuGraphics implements MenuPage {
 			}
 		};
 
-		DERectangle rect = new DERectangle();
+		ImageManager im = ImageManager.getInstance();
 
-		TextData label = new TextData(new Point(), new Font("Arial", Font.BOLD, 22), "FULL", Color.BLUE, 3);
-		label.lock();
+		DEImage std = new DEImage();
+		std.setImage(im.get("menuGraphics/fullscreenStd"));
+		DEImage sel = new DEImage();
+		sel.setImage(im.get("menuGraphics/fullscreenSel"));
 
-		rect.setLabel(label);
-		rect.setColor(Color.RED);
-		rect.setSize(new Point(100, 100));
-		b.setStdDrawElement(rect);
+		b.setStdDrawElement(std);
+		b.setPressedDrawElement(sel);
+		b.setCantPressDrawElement(sel);
 
-		rect = (DERectangle) rect.clone();
-
-		rect.setColor(Color.PINK);
-		b.setPressedDrawElement(rect);
-
-		b.setPos(new Point(500, 200));
+		b.setPos(new Point(745, 675));
 		b.setHitboxFromDrawElement();
-
-		rect = (DERectangle) rect.clone();
-
-		rect.setColor(Color.GREEN);
-		b.setCantPressDrawElement(rect);
 
 		this.widgets.add(b);
 
@@ -328,18 +369,12 @@ public class MenuGraphics implements MenuPage {
 	private Widget wRestart() {
 		WElement e = new WElement(this);
 
-		DERectangle rect = new DERectangle();
+		DEImage img = new DEImage();
+		img.setImage(ImageManager.getInstance().get("menuGraphics/warning"));
 
-		TextData label = new TextData(new Point(), new Font("Arial", Font.BOLD, 18), "Need Restart",
-				Color.BLUE, 3);
+		e.setDrawElement(img);
 
-		rect.setLabel(label);
-		rect.setColor(new Color(175, 175, 90));
-		rect.setSize(new Point(150, 100));
-
-		e.setDrawElement(rect);
-
-		e.setPos(new Point(600, 200));
+		e.setPos(new Point(593, 859));
 
 		e.setVisible(this.winData.isNeedRestart());
 
@@ -351,12 +386,12 @@ public class MenuGraphics implements MenuPage {
 	private void wTitle() {
 		WElement title = new WElement(this);
 
-		title.setPos(new Point(392, 54));
+		title.setPos(new Point(550, 76));
 
-		DEImage i = new DEImage();
-		i.setImage(ImageManager.getInstance().get("menuGraphics/title"));
+		DEImage img = new DEImage();
+		img.setImage(ImageManager.getInstance().get("menuGraphics/title"));
 
-		title.setDrawElement(i);
+		title.setDrawElement(img);
 
 		this.widgets.add(title);
 	}

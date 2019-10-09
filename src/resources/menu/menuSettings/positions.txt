@@ -3,4 +3,4 @@ back			:	42		:	42
 Graphics		:	98		:	451
 Controls		:	554		:	451
 Profile			:	1009	:	451
-Game Settings	:	1465	:	451
+GameSettings	:	1465	:	451

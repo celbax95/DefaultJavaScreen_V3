@@ -17,11 +17,29 @@ import fr.util.point.Point;
 
 public class MenuMain implements MenuPage {
 
-	private static final String[] RES_NAMES = { "background", "title", "exitStd", "exitPressed", "hostStd",
-			"hostPressed", "joinStd", "joinPressed", "settingsStd", "settingsPressed" };
+	private static final String[] RES_NAMES = {
+			"background",
+			"title",
+			"exitStd",
+			"exitPressed",
+			"hostStd",
+			"hostPressed",
+			"joinStd",
+			"joinPressed",
+			"settingsStd",
+			"settingsPressed" };
 
-	private static final String[] RES_PATHS = { "background", "title", "exitStd", "exitPressed", "hostStd",
-			"hostPressed", "joinStd", "joinPressed", "settingsStd", "settingsPressed" };
+	private static final String[] RES_PATHS = {
+			"background",
+			"title",
+			"exitStd",
+			"exitPressed",
+			"hostStd",
+			"hostPressed",
+			"joinStd",
+			"joinPressed",
+			"settingsStd",
+			"settingsPressed" };
 
 	private static final String RES_FOLDER = "/resources/menu/menuMain/";
 	private static final String RES_EXTENSION = ".png";
@@ -84,7 +102,7 @@ public class MenuMain implements MenuPage {
 
 		image.setImage(ImageManager.getInstance().get("menuMain/background"));
 
-		i.setPos(new Point(416, 0));
+		i.setPos(new Point(585, 0));
 		i.setDrawElement(image);
 
 		this.widgets.add(i);
@@ -109,7 +127,7 @@ public class MenuMain implements MenuPage {
 		i.setImage(im.get("menuMain/exitPressed"));
 		b.setPressedDrawElement(i);
 
-		b.setPos(new Point(631, 631));
+		b.setPos(new Point(886, 886));
 		b.setHitboxFromDrawElement();
 
 		this.widgets.add(b);
@@ -134,7 +152,7 @@ public class MenuMain implements MenuPage {
 		i.setImage(im.get("menuMain/hostPressed"));
 		b.setPressedDrawElement(i);
 
-		b.setPos(new Point(568, 464));
+		b.setPos(new Point(799, 655));
 		b.setHitboxFromDrawElement();
 
 		this.widgets.add(b);
@@ -159,7 +177,7 @@ public class MenuMain implements MenuPage {
 		i.setImage(im.get("menuMain/joinPressed"));
 		b.setPressedDrawElement(i);
 
-		b.setPos(new Point(538, 298));
+		b.setPos(new Point(755, 419));
 		b.setHitboxFromDrawElement();
 
 		this.widgets.add(b);
@@ -184,7 +202,7 @@ public class MenuMain implements MenuPage {
 		i.setImage(im.get("menuMain/settingsPressed"));
 		b.setPressedDrawElement(i);
 
-		b.setPos(new Point(49, 648));
+		b.setPos(new Point(69, 911));
 		b.setHitboxFromDrawElement();
 
 		this.widgets.add(b);
@@ -198,7 +216,7 @@ public class MenuMain implements MenuPage {
 		i.setImage(ImageManager.getInstance().get("menuMain/title"));
 
 		title.setDrawElement(i);
-		title.setPos(new Point(392, 54));
+		title.setPos(new Point(551, 59));
 
 		this.widgets.add(title);
 	}

@@ -14,20 +14,18 @@ import fr.inputs.Input;
 import fr.state.menu.Menu;
 import fr.state.menu.MenuPage;
 import fr.state.menu.Widget;
-import fr.state.menu.widget.BorderData;
 import fr.state.menu.widget.TextData;
 import fr.state.menu.widget.WButton;
 import fr.state.menu.widget.WElement;
 import fr.state.menu.widget.WUserKeyInput;
 import fr.state.menu.widget.drawelements.DEImage;
-import fr.state.menu.widget.drawelements.DERectangle;
 import fr.util.point.Point;
 
 public class MenuControls implements MenuPage {
 
-	private static final String[] RES_NAMES = { "title" };
+	private static final String[] RES_NAMES = { "title", "backStd", "backPressed", "frame", "inputStd", "inputSel", };
 
-	private static final String[] RES_PATHS = { "title" };
+	private static final String[] RES_PATHS = { "title", "backStd", "backPressed", "frame", "inputStd", "inputSel", };
 
 	private static final String RES_FOLDER = "/resources/menu/menuControls/";
 	private static final String RES_EXTENSION = ".png";
@@ -37,6 +35,7 @@ public class MenuControls implements MenuPage {
 	private static final String PARAM_NAME_LEFT = "leftMovement";
 	private static final String PARAM_NAME_RIGHT = "rightMovement";
 	private static final String PARAM_NAME_JUMP = "jump";
+	private static final String PARAM_NAME_SHOOT = "shoot";
 	private static final String PARAM_NAME_USE = "use";
 
 	static {
@@ -49,7 +48,7 @@ public class MenuControls implements MenuPage {
 		}
 	}
 
-	private static final Color COLOR = Color.WHITE;
+	private static final Color COLOR = Color.BLACK;
 
 	private static final Color INVALID_COLOR = Color.RED;
 
@@ -78,24 +77,32 @@ public class MenuControls implements MenuPage {
 		int leftMouvementKey = (int) this.manager.getParam(this.controlsConf, PARAM_NAME_LEFT, 0);
 		int rightMouvementKey = (int) this.manager.getParam(this.controlsConf, PARAM_NAME_RIGHT, 0);
 		int jumpKey = (int) this.manager.getParam(this.controlsConf, PARAM_NAME_JUMP, 0);
+		int shootKey = (int) this.manager.getParam(this.controlsConf, PARAM_NAME_SHOOT, 0);
 		int useKey = (int) this.manager.getParam(this.controlsConf, PARAM_NAME_USE, 0);
 
 		this.wTitle();
 		this.wBack();
 
-		this.controls = new WUserKeyInput[4];
+		this.wframe();
 
-		this.controls[0] = this.wLeftMouvementInput();
-		this.controls[0].setData(leftMouvementKey);
+		this.controls = new WUserKeyInput[5];
 
-		this.controls[1] = this.wRightMouvementInput();
-		this.controls[1].setData(rightMouvementKey);
+		int i = 0;
 
-		this.controls[2] = this.wJumpInput();
-		this.controls[2].setData(jumpKey);
+		this.controls[i] = this.wLeftMouvementInput();
+		this.controls[i++].setData(leftMouvementKey);
 
-		this.controls[3] = this.wUseInput();
-		this.controls[3].setData(useKey);
+		this.controls[i] = this.wRightMouvementInput();
+		this.controls[i++].setData(rightMouvementKey);
+
+		this.controls[i] = this.wShootInput();
+		this.controls[i++].setData(shootKey);
+
+		this.controls[i] = this.wJumpInput();
+		this.controls[i++].setData(jumpKey);
+
+		this.controls[i] = this.wUseInput();
+		this.controls[i++].setData(useKey);
 
 		this.changeColorOnSame();
 	}
@@ -145,8 +152,6 @@ public class MenuControls implements MenuPage {
 			}
 		};
 
-		btn.setPos(new Point(30, 30));
-
 		DEImage i = new DEImage();
 		i.setImage(ImageManager.getInstance().get("menuSettings/backStd"));
 
@@ -157,9 +162,24 @@ public class MenuControls implements MenuPage {
 
 		btn.setPressedDrawElement(i);
 
+		btn.setPos(new Point(42, 42));
 		btn.setHitboxFromDrawElement();
 
 		this.widgets.add(btn);
+	}
+
+	private void wframe() {
+		WElement w = new WElement(this);
+
+		DEImage img = new DEImage();
+
+		img.setImage(ImageManager.getInstance().get("menuControls/frame"));
+
+		w.setDrawElement(img);
+
+		w.setPos(new Point(333, 337));
+
+		this.widgets.add(w);
 	}
 
 	private WUserKeyInput wJumpInput() {
@@ -172,22 +192,20 @@ public class MenuControls implements MenuPage {
 			}
 		};
 
-		BorderData border = new BorderData(2, Color.WHITE, 0);
+		ImageManager im = ImageManager.getInstance();
 
-		DERectangle rect = new DERectangle();
-		rect.setColor(Color.BLACK);
-		rect.setSize(new Point(110, 70));
-		rect.setBorder(border);
-		u.setStdDrawElement(rect);
+		DEImage std = new DEImage();
+		std.setImage(im.get("menuControls/inputStd"));
+		DEImage sel = new DEImage();
+		sel.setImage(im.get("menuControls/inputSel"));
 
-		rect = (DERectangle) rect.clone();
-		rect.setColor(new Color(0, 50, 50));
-		u.setSelectedDrawElement(rect);
+		u.setStdDrawElement(std);
 
-		u.setPos(new Point(420, 300));
+		u.setSelectedDrawElement(sel);
 
-		TextData td = new TextData(new Point(), new Font("Copperplate Gothic Bold", Font.PLAIN, 28), "",
-				Color.WHITE, 3);
+		u.setPos(new Point(1213, 609));
+
+		TextData td = new TextData(new Point(), new Font("Copperplate Gothic Bold", Font.PLAIN, 45), "", COLOR, 3);
 
 		u.setTextData(td);
 
@@ -208,22 +226,21 @@ public class MenuControls implements MenuPage {
 			}
 		};
 
-		BorderData border = new BorderData(2, Color.WHITE, 0);
+		ImageManager im = ImageManager.getInstance();
 
-		DERectangle rect = new DERectangle();
-		rect.setColor(Color.BLACK);
-		rect.setSize(new Point(110, 70));
-		rect.setBorder(border);
-		u.setStdDrawElement(rect);
+		DEImage std = new DEImage();
+		std.setImage(im.get("menuControls/inputStd"));
 
-		rect = (DERectangle) rect.clone();
-		rect.setColor(new Color(0, 50, 50));
-		u.setSelectedDrawElement(rect);
+		DEImage sel = new DEImage();
+		sel.setImage(im.get("menuControls/inputSel"));
 
-		u.setPos(new Point(200, 300));
+		u.setStdDrawElement(std);
 
-		TextData td = new TextData(new Point(), new Font("Copperplate Gothic Bold", Font.PLAIN, 28), "",
-				Color.WHITE, 3);
+		u.setSelectedDrawElement(sel);
+
+		u.setPos(new Point(1213, 352));
+
+		TextData td = new TextData(new Point(), new Font("Copperplate Gothic Bold", Font.PLAIN, 45), "", COLOR, 3);
 
 		u.setTextData(td);
 
@@ -244,22 +261,54 @@ public class MenuControls implements MenuPage {
 			}
 		};
 
-		BorderData border = new BorderData(2, Color.WHITE, 0);
+		ImageManager im = ImageManager.getInstance();
 
-		DERectangle rect = new DERectangle();
-		rect.setColor(Color.BLACK);
-		rect.setSize(new Point(110, 70));
-		rect.setBorder(border);
-		u.setStdDrawElement(rect);
+		DEImage std = new DEImage();
+		std.setImage(im.get("menuControls/inputStd"));
+		DEImage sel = new DEImage();
+		sel.setImage(im.get("menuControls/inputSel"));
 
-		rect = (DERectangle) rect.clone();
-		rect.setColor(new Color(0, 50, 50));
-		u.setSelectedDrawElement(rect);
+		u.setStdDrawElement(std);
 
-		u.setPos(new Point(310, 300));
+		u.setSelectedDrawElement(sel);
 
-		TextData td = new TextData(new Point(), new Font("Copperplate Gothic Bold", Font.PLAIN, 28), "",
-				Color.WHITE, 3);
+		u.setPos(new Point(1213, 481));
+
+		TextData td = new TextData(new Point(), new Font("Copperplate Gothic Bold", Font.PLAIN, 45), "", COLOR, 3);
+
+		u.setTextData(td);
+
+		u.setHitboxFromDrawElement();
+
+		this.widgets.add(u);
+
+		return u;
+	}
+
+	private WUserKeyInput wShootInput() {
+		WUserKeyInput u = new WUserKeyInput(this) {
+			@Override
+			public void dataChanged(int data) {
+				MenuControls.this.changeColorOnSame();
+				MenuControls.this.manager.setParam(MenuControls.this.controlsConf, PARAM_NAME_SHOOT, data);
+				MenuControls.this.manager.saveFile(MenuControls.this.controlsConf);
+			}
+		};
+
+		ImageManager im = ImageManager.getInstance();
+
+		DEImage std = new DEImage();
+		std.setImage(im.get("menuControls/inputStd"));
+		DEImage sel = new DEImage();
+		sel.setImage(im.get("menuControls/inputSel"));
+
+		u.setStdDrawElement(std);
+
+		u.setSelectedDrawElement(sel);
+
+		u.setPos(new Point(1213, 737));
+
+		TextData td = new TextData(new Point(), new Font("Copperplate Gothic Bold", Font.PLAIN, 45), "", COLOR, 3);
 
 		u.setTextData(td);
 
@@ -273,7 +322,7 @@ public class MenuControls implements MenuPage {
 	private void wTitle() {
 		WElement title = new WElement(this);
 
-		title.setPos(new Point(392, 54));
+		title.setPos(new Point(550, 76));
 
 		DEImage i = new DEImage();
 		i.setImage(ImageManager.getInstance().get("menuSettings/title"));
@@ -293,22 +342,20 @@ public class MenuControls implements MenuPage {
 			}
 		};
 
-		BorderData border = new BorderData(2, Color.WHITE, 0);
+		ImageManager im = ImageManager.getInstance();
 
-		DERectangle rect = new DERectangle();
-		rect.setColor(Color.BLACK);
-		rect.setSize(new Point(110, 70));
-		rect.setBorder(border);
-		u.setStdDrawElement(rect);
+		DEImage std = new DEImage();
+		std.setImage(im.get("menuControls/inputStd"));
+		DEImage sel = new DEImage();
+		sel.setImage(im.get("menuControls/inputSel"));
 
-		rect = (DERectangle) rect.clone();
-		rect.setColor(new Color(0, 50, 50));
-		u.setSelectedDrawElement(rect);
+		u.setStdDrawElement(std);
 
-		u.setPos(new Point(530, 300));
+		u.setSelectedDrawElement(sel);
 
-		TextData td = new TextData(new Point(), new Font("Copperplate Gothic Bold", Font.PLAIN, 28), "",
-				Color.WHITE, 3);
+		u.setPos(new Point(1213, 865));
+
+		TextData td = new TextData(new Point(), new Font("Copperplate Gothic Bold", Font.PLAIN, 45), "", COLOR, 3);
 
 		u.setTextData(td);
 

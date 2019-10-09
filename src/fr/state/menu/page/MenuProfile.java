@@ -26,9 +26,23 @@ import fr.util.point.Point;
 
 public class MenuProfile implements MenuPage {
 
-	private static final String[] RES_NAMES = { "title" };
+	private static final String[] RES_NAMES = {
+			"title",
+			"backStd",
+			"backPressed",
+			"frame",
+			"usernameInputStd",
+			"usernameInputSel",
+			"colorSelect", };
 
-	private static final String[] RES_PATHS = { "title" };
+	private static final String[] RES_PATHS = {
+			"title",
+			"backStd",
+			"backPressed",
+			"frame",
+			"usernameInputStd",
+			"usernameInputSel",
+			"colorSelect", };
 
 	private static final String RES_FOLDER = "/resources/menu/menuProfile/";
 	private static final String RES_EXTENSION = ".png";
@@ -78,11 +92,13 @@ public class MenuProfile implements MenuPage {
 
 		this.wTitle();
 		this.wBack();
+		this.wFrame();
 		this.wUsernameInput().setData(username);
 		this.wColorRed().setValue(this.color.getRed());
 		this.wColorGreen().setValue(this.color.getGreen());
 		this.wColorBlue().setValue(this.color.getBlue());
 		this.colorBlock = this.wColorBlock();
+		this.wColorSelect();
 		this.setColor(this.color);
 	}
 
@@ -130,7 +146,7 @@ public class MenuProfile implements MenuPage {
 			}
 		};
 
-		btn.setPos(new Point(30, 30));
+		btn.setPos(new Point(42, 42));
 
 		DEImage i = new DEImage();
 		i.setImage(ImageManager.getInstance().get("menuSettings/backStd"));
@@ -152,12 +168,12 @@ public class MenuProfile implements MenuPage {
 
 		DERectangle rect = new DERectangle();
 		rect.setColor(Color.BLACK);
-		rect.setSize(new Point(100, 100));
+		rect.setSize(new Point(52, 380));
 		rect.setBorder(border);
 
 		WElement w = new WElement(this);
 		w.setDrawElement(rect);
-		w.setPos(new Point(650, 500));
+		w.setPos(new Point(1014, 528));
 
 		this.widgets.add(w);
 
@@ -168,8 +184,8 @@ public class MenuProfile implements MenuPage {
 		WSlider s = new WSlider(this) {
 			@Override
 			public void valueChanged(int value, boolean pressed) {
-				MenuProfile.this.setColor(
-						new Color(MenuProfile.this.color.getRed(), MenuProfile.this.color.getGreen(), value));
+				MenuProfile.this
+						.setColor(new Color(MenuProfile.this.color.getRed(), MenuProfile.this.color.getGreen(), value));
 				if (!pressed) {
 					MenuProfile.this.saveColor();
 				}
@@ -179,16 +195,18 @@ public class MenuProfile implements MenuPage {
 		DERectangle bar = new DERectangle();
 
 		bar.setColor(Color.WHITE);
-		bar.setSize(new Point(400, 6));
+		bar.setSize(new Point(400, 8));
+		bar.setRoundBorder(3);
 		s.setBar(bar);
 
 		DERectangle slider = new DERectangle();
 
 		slider.setColor(Color.BLUE);
-		slider.setSize(new Point(12, 50));
+		slider.setSize(new Point(16, 60));
+		slider.setRoundBorder(8);
 		s.setSlider(slider);
 
-		s.setPos(new Point(200, 590));
+		s.setPos(new Point(1110, 845));
 		s.setScope(255);
 		s.setHitboxFromDrawElement();
 
@@ -201,8 +219,8 @@ public class MenuProfile implements MenuPage {
 		WSlider s = new WSlider(this) {
 			@Override
 			public void valueChanged(int value, boolean pressed) {
-				MenuProfile.this.setColor(
-						new Color(MenuProfile.this.color.getRed(), value, MenuProfile.this.color.getBlue()));
+				MenuProfile.this
+						.setColor(new Color(MenuProfile.this.color.getRed(), value, MenuProfile.this.color.getBlue()));
 				if (!pressed) {
 					MenuProfile.this.saveColor();
 				}
@@ -212,16 +230,18 @@ public class MenuProfile implements MenuPage {
 		DERectangle bar = new DERectangle();
 
 		bar.setColor(Color.WHITE);
-		bar.setSize(new Point(400, 6));
+		bar.setSize(new Point(400, 8));
+		bar.setRoundBorder(3);
 		s.setBar(bar);
 
 		DERectangle slider = new DERectangle();
 
 		slider.setColor(Color.GREEN);
-		slider.setSize(new Point(12, 50));
+		slider.setSize(new Point(16, 60));
+		slider.setRoundBorder(8);
 		s.setSlider(slider);
 
-		s.setPos(new Point(200, 520));
+		s.setPos(new Point(1110, 719));
 		s.setScope(255);
 		s.setHitboxFromDrawElement();
 
@@ -234,8 +254,8 @@ public class MenuProfile implements MenuPage {
 		WSlider s = new WSlider(this) {
 			@Override
 			public void valueChanged(int value, boolean pressed) {
-				MenuProfile.this.setColor(new Color(value, MenuProfile.this.color.getGreen(),
-						MenuProfile.this.color.getBlue()));
+				MenuProfile.this.setColor(
+						new Color(value, MenuProfile.this.color.getGreen(), MenuProfile.this.color.getBlue()));
 				if (!pressed) {
 					MenuProfile.this.saveColor();
 				}
@@ -245,16 +265,18 @@ public class MenuProfile implements MenuPage {
 		DERectangle bar = new DERectangle();
 
 		bar.setColor(Color.WHITE);
-		bar.setSize(new Point(400, 6));
+		bar.setSize(new Point(400, 8));
+		bar.setRoundBorder(3);
 		s.setBar(bar);
 
 		DERectangle slider = new DERectangle();
 
 		slider.setColor(Color.RED);
-		slider.setSize(new Point(12, 50));
+		slider.setSize(new Point(16, 60));
+		slider.setRoundBorder(8);
 		s.setSlider(slider);
 
-		s.setPos(new Point(200, 450));
+		s.setPos(new Point(1110, 585));
 		s.setScope(255);
 		s.setHitboxFromDrawElement();
 
@@ -263,13 +285,39 @@ public class MenuProfile implements MenuPage {
 		return s;
 	}
 
+	private void wColorSelect() {
+		WElement w = new WElement(this);
+
+		DEImage img = new DEImage();
+		img.setImage(ImageManager.getInstance().get("menuProfile/colorSelect"));
+
+		w.setDrawElement(img);
+
+		w.setPos(new Point(1012, 526));
+
+		this.widgets.add(w);
+	}
+
+	private void wFrame() {
+		WElement w = new WElement(this);
+
+		DEImage img = new DEImage();
+
+		img.setImage(ImageManager.getInstance().get("menuProfile/frame"));
+
+		w.setDrawElement(img);
+		w.setPos(new Point(333, 337));
+
+		this.widgets.add(w);
+	}
+
 	private void wTitle() {
 		WElement title = new WElement(this);
 
-		title.setPos(new Point(392, 54));
+		title.setPos(new Point(550, 76));
 
 		DEImage i = new DEImage();
-		i.setImage(ImageManager.getInstance().get("menuSettings/title"));
+		i.setImage(ImageManager.getInstance().get("menuProfile/title"));
 
 		title.setDrawElement(i);
 
@@ -280,27 +328,26 @@ public class MenuProfile implements MenuPage {
 		WUserInput u = new WUserInput(this) {
 			@Override
 			public void dataChanged(String data) {
-				MenuProfile.this.manager.setParam(MenuProfile.this.profileConf, "username", data);
+				MenuProfile.this.manager.setParam(MenuProfile.this.profileConf, PARAM_NAME_USERNAME, data);
 				MenuProfile.this.manager.saveFile(MenuProfile.this.profileConf);
 			}
 		};
 
-		BorderData border = new BorderData(2, Color.WHITE, 0);
+		ImageManager im = ImageManager.getInstance();
 
-		DERectangle rect = new DERectangle();
-		rect.setColor(Color.BLACK);
-		rect.setSize(new Point(300, 60));
-		rect.setBorder(border);
-		u.setStdDrawElement(rect);
+		DEImage std = new DEImage();
+		std.setImage(im.get("menuProfile/usernameInputStd"));
+		DEImage sel = new DEImage();
+		sel.setImage(im.get("menuProfile/usernameInputSel"));
 
-		rect = (DERectangle) rect.clone();
-		rect.setColor(new Color(0, 50, 50));
-		u.setSelectedDrawElement(rect);
+		u.setStdDrawElement(std);
 
-		u.setPos(new Point(200, 300));
+		u.setSelectedDrawElement(sel);
 
-		TextData td = new TextData(new Point(), new Font("Copperplate Gothic Bold", Font.PLAIN, 35), "",
-				Color.WHITE, 3);
+		u.setPos(new Point(434, 624));
+
+		TextData td = new TextData(new Point(), new Font("Copperplate Gothic Bold", Font.PLAIN, 45), "", Color.BLACK,
+				3);
 
 		u.setTextData(td);
 

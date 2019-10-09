@@ -22,7 +22,7 @@ public class WinData {
 			RenderingHints.VALUE_ALPHA_INTERPOLATION_DEFAULT, RenderingHints.VALUE_ALPHA_INTERPOLATION_SPEED,
 			RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY };
 
-	private static final Point defaultWindowSize = new Point(1366, 768);
+	private static final Point defaultWindowSize = new Point(1920, 1080);
 
 	private Point windowRatio;
 	private Point invWindowRatio;

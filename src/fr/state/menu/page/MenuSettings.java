@@ -17,12 +17,30 @@ import fr.util.point.Point;
 
 public class MenuSettings implements MenuPage {
 
-	private static final String[] RES_NAMES = { "title", "graphStd", "graphPressed", "controlsStd",
-			"controlsPressed", "profileStd", "profilePressed", "gameoptStd", "gameoptPressed", "backStd",
+	private static final String[] RES_NAMES = {
+			"title",
+			"graphStd",
+			"graphPressed",
+			"controlsStd",
+			"controlsPressed",
+			"profileStd",
+			"profilePressed",
+			"gameSettingsStd",
+			"gameSettingsPressed",
+			"backStd",
 			"backPressed", };
 
-	private static final String[] RES_PATHS = { "title", "graphStd", "graphPressed", "controlsStd",
-			"controlsPressed", "profileStd", "profilePressed", "gameoptStd", "gameoptPressed", "backStd",
+	private static final String[] RES_PATHS = {
+			"title",
+			"graphStd",
+			"graphPressed",
+			"controlsStd",
+			"controlsPressed",
+			"profileStd",
+			"profilePressed",
+			"gameSettingsStd",
+			"gameSettingsPressed",
+			"backStd",
 			"backPressed", };
 
 	private static final String RES_FOLDER = "/resources/menu/menuSettings/";
@@ -88,7 +106,7 @@ public class MenuSettings implements MenuPage {
 			}
 		};
 
-		btn.setPos(new Point(30, 30));
+		btn.setPos(new Point(42, 42));
 
 		DEImage i = new DEImage();
 		i.setImage(ImageManager.getInstance().get("menuSettings/backStd"));
@@ -113,7 +131,7 @@ public class MenuSettings implements MenuPage {
 			}
 		};
 
-		btn.setPos(new Point(394, 321));
+		btn.setPos(new Point(554, 451));
 
 		DEImage i = new DEImage();
 		i.setImage(ImageManager.getInstance().get("menuSettings/controlsStd"));
@@ -138,15 +156,15 @@ public class MenuSettings implements MenuPage {
 			}
 		};
 
-		btn.setPos(new Point(1042, 321));
+		btn.setPos(new Point(1465, 451));
 
 		DEImage i = new DEImage();
-		i.setImage(ImageManager.getInstance().get("menuSettings/gameoptStd"));
+		i.setImage(ImageManager.getInstance().get("menuSettings/gameSettingsStd"));
 
 		btn.setStdDrawElement(i);
 
 		i = new DEImage();
-		i.setImage(ImageManager.getInstance().get("menuSettings/gameoptPressed"));
+		i.setImage(ImageManager.getInstance().get("menuSettings/gameSettingsPressed"));
 
 		btn.setPressedDrawElement(i);
 
@@ -163,7 +181,7 @@ public class MenuSettings implements MenuPage {
 			}
 		};
 
-		btn.setPos(new Point(70, 321));
+		btn.setPos(new Point(98, 451));
 
 		DEImage i = new DEImage();
 		i.setImage(ImageManager.getInstance().get("menuSettings/graphStd"));
@@ -188,7 +206,7 @@ public class MenuSettings implements MenuPage {
 			}
 		};
 
-		btn.setPos(new Point(718, 321));
+		btn.setPos(new Point(1009, 451));
 
 		DEImage i = new DEImage();
 		i.setImage(ImageManager.getInstance().get("menuSettings/profileStd"));
@@ -208,7 +226,7 @@ public class MenuSettings implements MenuPage {
 	private void wTitle() {
 		WElement title = new WElement(this);
 
-		title.setPos(new Point(392, 54));
+		title.setPos(new Point(550, 76));
 
 		DEImage i = new DEImage();
 		i.setImage(ImageManager.getInstance().get("menuSettings/title"));

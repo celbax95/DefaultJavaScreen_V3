@@ -22,9 +22,9 @@ import fr.util.point.Point;
 
 public class MenuGameSettings implements MenuPage {
 
-	private static final String[] RES_NAMES = { "title" };
+	private static final String[] RES_NAMES = { "title", "backStd", "backPressed", "frame", "itemFreq", };
 
-	private static final String[] RES_PATHS = { "title" };
+	private static final String[] RES_PATHS = { "title", "backStd", "backPressed", "frame", "itemFreq", };
 
 	private static final String RES_FOLDER = "/resources/menu/menuGameSettings/";
 	private static final String RES_EXTENSION = ".png";
@@ -67,7 +67,9 @@ public class MenuGameSettings implements MenuPage {
 
 		this.wTitle();
 		this.wBack();
-		this.wFreqItem().setValue(itemFreq);
+		this.wFrame();
+		this.wItemFreq();
+		this.wItemFreqSlider().setValue(itemFreq);
 
 	}
 
@@ -99,15 +101,15 @@ public class MenuGameSettings implements MenuPage {
 			}
 		};
 
-		btn.setPos(new Point(30, 30));
+		btn.setPos(new Point(42, 42));
 
 		DEImage i = new DEImage();
-		i.setImage(ImageManager.getInstance().get("menuSettings/backStd"));
+		i.setImage(ImageManager.getInstance().get("menuGameSettings/backStd"));
 
 		btn.setStdDrawElement(i);
 
 		i = new DEImage();
-		i.setImage(ImageManager.getInstance().get("menuSettings/backPressed"));
+		i.setImage(ImageManager.getInstance().get("menuGameSettings/backPressed"));
 
 		btn.setPressedDrawElement(i);
 
@@ -116,13 +118,39 @@ public class MenuGameSettings implements MenuPage {
 		this.widgets.add(btn);
 	}
 
-	private WSlider wFreqItem() {
+	private void wFrame() {
+		WElement w = new WElement(this);
+
+		DEImage img = new DEImage();
+
+		img.setImage(ImageManager.getInstance().get("menuGameSettings/frame"));
+
+		w.setDrawElement(img);
+		w.setPos(new Point(333, 337));
+
+		this.widgets.add(w);
+	}
+
+	private void wItemFreq() {
+		WElement w = new WElement(this);
+
+		DEImage img = new DEImage();
+
+		img.setImage(ImageManager.getInstance().get("menuGameSettings/itemFreq"));
+
+		w.setDrawElement(img);
+		w.setPos(new Point(738, 400));
+
+		this.widgets.add(w);
+	}
+
+	private WSlider wItemFreqSlider() {
 		WSlider s = new WSlider(this) {
 			@Override
 			public void valueChanged(int value, boolean pressed) {
 				if (!pressed) {
-					MenuGameSettings.this.manager.setParam(MenuGameSettings.this.gameSettingsConf,
-							PARAM_NAME_ITEM, value);
+					MenuGameSettings.this.manager.setParam(MenuGameSettings.this.gameSettingsConf, PARAM_NAME_ITEM,
+							value);
 					MenuGameSettings.this.manager.saveFile(MenuGameSettings.this.gameSettingsConf);
 				}
 			}
@@ -131,16 +159,18 @@ public class MenuGameSettings implements MenuPage {
 		DERectangle bar = new DERectangle();
 
 		bar.setColor(Color.WHITE);
-		bar.setSize(new Point(400, 6));
+		bar.setSize(new Point(460, 8));
+		bar.setRoundBorder(3);
 		s.setBar(bar);
 
 		DERectangle slider = new DERectangle();
 
 		slider.setColor(Color.RED);
-		slider.setSize(new Point(12, 50));
+		slider.setSize(new Point(16, 60));
+		slider.setRoundBorder(8);
 		s.setSlider(slider);
 
-		s.setPos(new Point(200, 400));
+		s.setPos(new Point(730, 550));
 		s.setScope(100);
 		s.setFreeMove(true);
 		s.setHitboxFromDrawElement();
@@ -153,10 +183,10 @@ public class MenuGameSettings implements MenuPage {
 	private void wTitle() {
 		WElement title = new WElement(this);
 
-		title.setPos(new Point(392, 54));
+		title.setPos(new Point(550, 76));
 
 		DEImage i = new DEImage();
-		i.setImage(ImageManager.getInstance().get("menuSettings/title"));
+		i.setImage(ImageManager.getInstance().get("menuGameSettings/title"));
 
 		title.setDrawElement(i);
 

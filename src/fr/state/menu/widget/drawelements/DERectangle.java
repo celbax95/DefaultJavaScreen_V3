@@ -2,6 +2,7 @@ package fr.state.menu.widget.drawelements;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.geom.RoundRectangle2D;
 
 import fr.logger.Logger;
 import fr.state.menu.widget.BorderData;
@@ -22,6 +23,8 @@ public class DERectangle implements DrawElement {
 
 	private BorderData border;
 
+	private int roundBorder;
+
 	private TextData label;
 
 	/**
@@ -34,6 +37,7 @@ public class DERectangle implements DrawElement {
 		this.color = Color.black;
 		this.border = null;
 		this.label = null;
+		this.roundBorder = 0;
 	}
 
 	public DERectangle(DERectangle other) {
@@ -43,11 +47,12 @@ public class DERectangle implements DrawElement {
 		this.setPos(new Point(other.pos));
 		this.setHalfSize(new Point(other.halfSize));
 		this.setSize(new Point(other.size));
-		this.setColor(new Color(other.color.getRed(), other.color.getGreen(), other.color.getBlue(),
-				other.color.getAlpha()));
+		this.setColor(
+				new Color(other.color.getRed(), other.color.getGreen(), other.color.getBlue(), other.color.getAlpha()));
 		this.border = other.border == null ? null : other.border.clone();
 		this.label = other.label == null ? null : other.label.clone();
 		this.lock = false;
+		this.roundBorder = other.roundBorder;
 	}
 
 	/**
@@ -78,7 +83,12 @@ public class DERectangle implements DrawElement {
 			g.setColor(this.color);
 		}
 
-		g.fillRect(absp.ix(), absp.iy(), this.size.ix(), this.size.iy());
+		if (this.roundBorder == 0) {
+			g.fillRect(absp.ix(), absp.iy(), this.size.ix(), this.size.iy());
+		} else {
+			g.fill(new RoundRectangle2D.Double(absp.ix(), absp.iy(), this.size.ix(), this.size.iy(), this.roundBorder,
+					this.roundBorder));
+		}
 
 		if (this.border != null) {
 			this.border.draw(g, absp, this.size);
@@ -116,6 +126,10 @@ public class DERectangle implements DrawElement {
 	@Override
 	public Point getPos() {
 		return this.pos;
+	}
+
+	public int getRoundBorder() {
+		return this.roundBorder;
 	}
 
 	/**
@@ -193,6 +207,11 @@ public class DERectangle implements DrawElement {
 			return;
 		}
 		this.pos = pos;
+	}
+
+	public void setRoundBorder(int roundBorder) {
+		assert roundBorder >= 0;
+		this.roundBorder = roundBorder * 2;
 	}
 
 	/**

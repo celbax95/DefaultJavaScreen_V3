@@ -24,7 +24,9 @@ public class MenuLoop implements Runnable {
 
 					Thread.sleep(32);
 				} catch (InterruptedException | NullPointerException e) {
+					e.printStackTrace();
 					Thread.currentThread().interrupt();
+					System.exit(0);
 				}
 			}
 		}
