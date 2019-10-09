@@ -1,6 +1,6 @@
-title		:	392	:	54
-back		:	30	:	30
-Graphics	:	70	:	321
-Controls	:	394	:	321
-Profile		:	718	:	321
-Game Options:	1042:	321
+title			:	550		:	76
+back			:	42		:	42
+Graphics		:	98		:	451
+Controls		:	554		:	451
+Profile			:	1009	:	451
+Game Settings	:	1465	:	451
