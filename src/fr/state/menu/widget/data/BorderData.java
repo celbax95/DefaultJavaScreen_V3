@@ -1,4 +1,4 @@
-package fr.state.menu.widget;
+package fr.state.menu.widget.data;
 
 import java.awt.Color;
 import java.awt.Graphics2D;

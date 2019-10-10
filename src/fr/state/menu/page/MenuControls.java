@@ -14,10 +14,10 @@ import fr.inputs.Input;
 import fr.state.menu.Menu;
 import fr.state.menu.MenuPage;
 import fr.state.menu.Widget;
-import fr.state.menu.widget.TextData;
 import fr.state.menu.widget.WButton;
 import fr.state.menu.widget.WElement;
 import fr.state.menu.widget.WUserKeyInput;
+import fr.state.menu.widget.data.TextData;
 import fr.state.menu.widget.drawelements.DEImage;
 import fr.util.point.Point;
 

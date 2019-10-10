@@ -8,6 +8,7 @@ import fr.inputs.mouse.MouseEvent;
 import fr.logger.Logger;
 import fr.state.menu.MenuPage;
 import fr.state.menu.Widget;
+import fr.state.menu.widget.data.TextData;
 import fr.util.collider.AABB;
 import fr.util.collider.Collider;
 import fr.util.point.Point;

@@ -5,9 +5,9 @@ import java.awt.Graphics2D;
 import java.awt.geom.RoundRectangle2D;
 
 import fr.logger.Logger;
-import fr.state.menu.widget.BorderData;
 import fr.state.menu.widget.DrawElement;
-import fr.state.menu.widget.TextData;
+import fr.state.menu.widget.data.BorderData;
+import fr.state.menu.widget.data.TextData;
 import fr.util.point.Point;
 
 public class DERectangle implements DrawElement {
