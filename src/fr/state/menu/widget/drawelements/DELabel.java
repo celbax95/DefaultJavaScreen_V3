@@ -31,7 +31,7 @@ public class DELabel implements DrawElement {
 		if (other == null)
 			return;
 		this.setPos(new Point(other.pos));
-		this.setLabel(other.label == null ? null : this.label.clone());
+		this.setLabel(other.label == null ? null : other.label.clone());
 		this.lock = false;
 	}
 

@@ -70,8 +70,8 @@ public class TextData {
 
 		this.font = new Font(other.font.getFamily(), other.font.getStyle(), other.font.getSize());
 		this.setText(new String(other.text));
-		this.setColor(new Color(other.color.getRed(), other.color.getGreen(), other.color.getBlue(),
-				other.color.getAlpha()));
+		this.setColor(
+				new Color(other.color.getRed(), other.color.getGreen(), other.color.getBlue(), other.color.getAlpha()));
 		this.state = other.state;
 		this.lock = false;
 	}
@@ -95,7 +95,8 @@ public class TextData {
 
 		if (holderPos == null || holderSize == null) {
 			state = 0;
-		} else if (holderPos != null) {
+		}
+		if (holderPos != null) {
 			absp.add(holderPos);
 		}
 

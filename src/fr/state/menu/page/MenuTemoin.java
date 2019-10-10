@@ -13,6 +13,7 @@ import fr.state.menu.MenuPage;
 import fr.state.menu.Widget;
 import fr.state.menu.widget.WButton;
 import fr.state.menu.widget.WElement;
+import fr.state.menu.widget.WScroller;
 import fr.state.menu.widget.WSlider;
 import fr.state.menu.widget.WSwitch;
 import fr.state.menu.widget.WUserInput;
@@ -37,10 +38,12 @@ public class MenuTemoin implements MenuPage {
 
 		this.wButtonToMenu();
 		this.wTitle();
-		this.wSwitch();
+		WSwitch sw = this.wSwitch();
 		this.wSlide();
 		this.wUserInput();
 		this.wUserKeyInput();
+		WScroller scroller = this.wScroller();
+		scroller.add(sw);
 	}
 
 	@Override
@@ -67,8 +70,7 @@ public class MenuTemoin implements MenuPage {
 
 		DERectangle rect = new DERectangle();
 
-		TextData label = new TextData(new Point(), new Font("Arial", Font.BOLD, 22), "OPTIONS", Color.BLUE,
-				3);
+		TextData label = new TextData(new Point(), new Font("Arial", Font.BOLD, 22), "MENU", Color.BLUE, 3);
 		label.lock();
 
 		rect.setLabel(label);
@@ -87,6 +89,17 @@ public class MenuTemoin implements MenuPage {
 		b.setHitboxFromDrawElement();
 
 		this.widgets.add(b);
+	}
+
+	private WScroller wScroller() {
+		WScroller sc = new WScroller();
+
+		sc.setPos(new Point(950, 300));
+		sc.setSize(new Point(300, 200));
+
+		this.widgets.add(sc);
+
+		return sc;
 	}
 
 	private void wSlide() {
@@ -116,7 +129,7 @@ public class MenuTemoin implements MenuPage {
 		this.widgets.add(s);
 	}
 
-	private void wSwitch() {
+	private WSwitch wSwitch() {
 		WSwitch s = new WSwitch(this) {
 			@Override
 			public void actionOff() {
@@ -128,8 +141,7 @@ public class MenuTemoin implements MenuPage {
 				Logger.obs("SwitchButton : active");
 			}
 		};
-		TextData label = new TextData(new Point(), new Font("Arial", Font.PLAIN, 20), "Active moi",
-				Color.WHITE, 3);
+		TextData label = new TextData(new Point(), new Font("Arial", Font.PLAIN, 20), "Active moi", Color.WHITE, 3);
 		label.lock();
 
 		BorderData border = new BorderData(3, Color.white, 1);
@@ -162,18 +174,18 @@ public class MenuTemoin implements MenuPage {
 		rect.setColor(new Color(30, 200, 30));
 		s.setPressedOnDrawElement(rect);
 
-		s.setPos(new Point(600, 620));
+		s.setPos(new Point(20, 20));
 
 		s.setHitboxFromDrawElement();
 
-		this.widgets.add(s);
+		return s;
 	}
 
 	private void wTitle() {
 		WElement title = new WElement(this);
 
-		TextData td = new TextData(new Point(), new Font("Copperplate Gothic Bold", Font.PLAIN, 45),
-				"OPTIONS", Color.WHITE, 0);
+		TextData td = new TextData(new Point(), new Font("Copperplate Gothic Bold", Font.PLAIN, 45), "OPTIONS",
+				Color.WHITE, 0);
 		td.lock();
 
 		DELabel de = new DELabel(new Point(), td);
@@ -208,8 +220,8 @@ public class MenuTemoin implements MenuPage {
 
 		u.setPos(new Point(150, 470));
 
-		TextData td = new TextData(new Point(), new Font("Copperplate Gothic Bold", Font.PLAIN, 35), "",
-				Color.WHITE, 3);
+		TextData td = new TextData(new Point(), new Font("Copperplate Gothic Bold", Font.PLAIN, 35), "", Color.WHITE,
+				3);
 
 		u.setTextData(td);
 
@@ -241,8 +253,8 @@ public class MenuTemoin implements MenuPage {
 
 		u.setPos(new Point(680, 280));
 
-		TextData td = new TextData(new Point(), new Font("Copperplate Gothic Bold", Font.PLAIN, 35), "",
-				Color.WHITE, 3);
+		TextData td = new TextData(new Point(), new Font("Copperplate Gothic Bold", Font.PLAIN, 35), "", Color.WHITE,
+				3);
 
 		u.setTextData(td);
 

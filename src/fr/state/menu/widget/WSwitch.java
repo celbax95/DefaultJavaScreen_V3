@@ -122,6 +122,7 @@ public abstract class WSwitch implements Widget {
 	/**
 	 * @return the pos
 	 */
+	@Override
 	public Point getPos() {
 		return this.pos;
 	}
@@ -275,8 +276,10 @@ public abstract class WSwitch implements Widget {
 	/**
 	 * @param pos the pos to set
 	 */
+	@Override
 	public void setPos(Point pos) {
-		this.pos = pos;
+		this.pos.set(pos);
+
 	}
 
 	/**
