@@ -32,6 +32,13 @@ public class WScroller implements Widget {
 			this.w.draw(g);
 		}
 
+		/**
+		 * @return the originalPos
+		 */
+		public Point getOriginalPos() {
+			return this.originalPos;
+		}
+
 		@Override
 		public Point getPos() {
 			return this.w.getPos();
@@ -40,6 +47,13 @@ public class WScroller implements Widget {
 		@Override
 		public boolean isVisible() {
 			return this.w.isVisible();
+		}
+
+		/**
+		 * @param originalPos the originalPos to set
+		 */
+		public void setOriginalPos(Point originalPos) {
+			this.originalPos = originalPos;
 		}
 
 		@Override
@@ -65,14 +79,14 @@ public class WScroller implements Widget {
 	private final static int BAR_WIDTH = 20;
 	private final static int VERTICAL_PADDING = 3;
 	private final static int RIGHT_PADDING = 0;
-
+	private final static int MIN_SCROLL = 0;
 	private Point pos, size;
 
 	private int scrollPoint;
 
 	private int scrollStep;
 
-	private int minScroll, maxScroll;
+	private int maxScroll;
 
 	private List<ScrollWidget> widgets;
 
@@ -80,7 +94,7 @@ public class WScroller implements Widget {
 
 	private AABB hitbox;
 
-	private WVSlider slider;
+	private WVSlider scrollBar;
 
 	private MenuPage page;
 
@@ -88,16 +102,15 @@ public class WScroller implements Widget {
 		this.pos = new Point();
 		this.size = new Point();
 		this.scrollPoint = 0;
-		this.scrollStep = 10;
-		this.minScroll = 0;
-		this.maxScroll = 500;
+		this.scrollStep = 0;
+		this.maxScroll = 0;
 		this.widgets = new ArrayList<>();
 		this.visible = true;
 		this.page = page;
 
 		this.hitbox = new AABB(this.pos, new Point(), new Point());
 
-		this.slider = new WVSlider(page) {
+		this.scrollBar = new WVSlider(page) {
 			@Override
 			public void valueChanged(int value, boolean pressed) {
 				WScroller.this.changeByBar(value);
@@ -142,7 +155,7 @@ public class WScroller implements Widget {
 	}
 
 	private void drawBar(Graphics2D g) {
-		this.slider.draw(g);
+		this.scrollBar.draw(g);
 	}
 
 	/**
@@ -150,13 +163,6 @@ public class WScroller implements Widget {
 	 */
 	public int getMaxScroll() {
 		return this.maxScroll;
-	}
-
-	/**
-	 * @return the minScroll
-	 */
-	public int getMinScroll() {
-		return this.minScroll;
 	}
 
 	/**
@@ -193,18 +199,18 @@ public class WScroller implements Widget {
 
 		eBar.setColor(Color.WHITE);
 		eBar.setSize(new Point(0, this.size != null ? this.size.y - VERTICAL_PADDING * 2 : 0));
-		this.slider.setBar(eBar);
+		this.scrollBar.setBar(eBar);
 
 		DERectangle eSlider = new DERectangle();
 
 		eSlider.setColor(Color.RED);
 		eSlider.setSize(new Point(BAR_WIDTH, 50));
-		this.slider.setSlider(eSlider);
+		this.scrollBar.setSlider(eSlider);
 
-		this.slider.setPos(
+		this.scrollBar.setPos(
 				new Point(this.pos.x + this.size.x - BAR_WIDTH / 2 - RIGHT_PADDING, this.pos.y + VERTICAL_PADDING));
-		this.slider.setScope(this.maxScroll);
-		this.slider.setHitboxFromDrawElement();
+		this.scrollBar.setScope(this.maxScroll);
+		this.scrollBar.setHitboxFromDrawElement();
 	}
 
 	@Override
@@ -220,7 +226,7 @@ public class WScroller implements Widget {
 	}
 
 	private void scrollChanged() {
-		this.slider.setValue(this.scrollPoint);
+		this.scrollBar.setValue(this.scrollPoint);
 		for (ScrollWidget widget : this.widgets) {
 			widget.setScrollPoint(new Point(0, this.scrollPoint));
 		}
@@ -234,18 +240,18 @@ public class WScroller implements Widget {
 	}
 
 	/**
-	 * @param minScroll the minScroll to set
-	 */
-	public void setMinScroll(int minScroll) {
-		this.minScroll = minScroll;
-	}
-
-	/**
 	 * @param pos the pos to set
 	 */
 	@Override
 	public void setPos(Point pos) {
+		Point vectToNewPos = pos.clone().sub(this.pos);
 		this.pos.set(pos);
+
+		for (ScrollWidget sw : this.widgets) {
+			sw.setOriginalPos(sw.getOriginalPos().add(vectToNewPos));
+			sw.setPos(sw.getPos().add(vectToNewPos));
+		}
+
 		this.initSlider();
 	}
 
@@ -280,7 +286,7 @@ public class WScroller implements Widget {
 
 	@Override
 	public void update(Input input) {
-		this.slider.update(input);
+		this.scrollBar.update(input);
 
 		if (Collider.AABBvsPoint(this.hitbox, input.mousePos)) {
 			for (Widget widget : this.widgets) {
@@ -302,10 +308,10 @@ public class WScroller implements Widget {
 					continue;
 				case MouseEvent.WHEEL_UP:
 					oldScroll = this.scrollPoint;
-					if (this.scrollPoint - this.scrollStep >= this.minScroll) {
+					if (this.scrollPoint - this.scrollStep >= WScroller.MIN_SCROLL) {
 						this.scrollPoint -= this.scrollStep;
 					} else {
-						this.scrollPoint = this.minScroll;
+						this.scrollPoint = WScroller.MIN_SCROLL;
 					}
 					if (oldScroll != this.scrollPoint) {
 						this.scrollChanged();
