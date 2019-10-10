@@ -77,10 +77,16 @@ public class WScroller implements Widget {
 	}
 
 	private final static int BAR_WIDTH = 20;
-	private final static int VERTICAL_PADDING = 3;
-	private final static int RIGHT_PADDING = 0;
 	private final static int MIN_SCROLL = 0;
+	private final static Color ADVANCED_DRAW_COLOR = new Color(0, 255, 0);
+	private final static int PADDING_SLIDER = 4;
+	private final static Color TRANSLUCENT = new Color(0, 0, 0, 0);
+
 	private Point pos, size;
+
+	private int paddingTop, paddingBottom, paddingSide;
+
+	private Color scrollBarColor;
 
 	private int scrollPoint;
 
@@ -96,7 +102,15 @@ public class WScroller implements Widget {
 
 	private WVSlider scrollBar;
 
+	private boolean scrollBarVisible;
+
+	private boolean leftSide;
+
 	private MenuPage page;
+
+	private DrawElement slider;
+
+	private boolean drawAdvanced;
 
 	public WScroller(MenuPage page) {
 		this.pos = new Point();
@@ -106,6 +120,9 @@ public class WScroller implements Widget {
 		this.maxScroll = 0;
 		this.widgets = new ArrayList<>();
 		this.visible = true;
+		this.scrollBarVisible = true;
+		this.leftSide = false;
+		this.scrollBarColor = null;
 		this.page = page;
 
 		this.hitbox = new AABB(this.pos, new Point(), new Point());
@@ -114,10 +131,13 @@ public class WScroller implements Widget {
 			@Override
 			public void valueChanged(int value, boolean pressed) {
 				WScroller.this.changeByBar(value);
+				System.out.println(value);
 			}
 		};
 
-		this.initSlider();
+		this.slider = this.getDefaultSlider();
+
+		this.initScrollBar();
 	}
 
 	public void add(Widget w) {
@@ -139,8 +159,10 @@ public class WScroller implements Widget {
 		if (!this.visible)
 			return;
 
-		g.setColor(new Color(0, 255, 0, 30));
-		g.fillRect(this.pos.ix(), this.pos.iy(), this.size.ix(), this.size.iy());
+		if (this.drawAdvanced) {
+			g.setColor(ADVANCED_DRAW_COLOR);
+			g.drawRect(this.pos.ix(), this.pos.iy(), this.size.ix(), this.size.iy());
+		}
 
 		Shape oldClip = g.getClip();
 
@@ -158,11 +180,30 @@ public class WScroller implements Widget {
 		this.scrollBar.draw(g);
 	}
 
+	public DERectangle getDefaultSlider() {
+		DERectangle rect = new DERectangle();
+		rect.setColor(Color.WHITE);
+		rect.setSize(new Point(BAR_WIDTH, 50));
+		return rect;
+	}
+
 	/**
 	 * @return the maxScroll
 	 */
 	public int getMaxScroll() {
 		return this.maxScroll;
+	}
+
+	public int getPaddingBottom() {
+		return this.paddingBottom;
+	}
+
+	public int getPaddingSide() {
+		return this.paddingSide;
+	}
+
+	public int getPaddingTop() {
+		return this.paddingTop;
 	}
 
 	/**
@@ -171,6 +212,10 @@ public class WScroller implements Widget {
 	@Override
 	public Point getPos() {
 		return this.pos;
+	}
+
+	public Color getScrollBarColor() {
+		return this.scrollBarColor;
 	}
 
 	/**
@@ -194,23 +239,39 @@ public class WScroller implements Widget {
 		return this.size;
 	}
 
-	private void initSlider() {
+	private void initScrollBar() {
 		DERectangle eBar = new DERectangle();
 
-		eBar.setColor(Color.WHITE);
-		eBar.setSize(new Point(0, this.size != null ? this.size.y - VERTICAL_PADDING * 2 : 0));
+		eBar.setColor(this.scrollBarColor == null ? TRANSLUCENT : this.scrollBarColor);
+		eBar.setSize(new Point((this.scrollBarColor == null ? 0 : this.slider.getSize().x + PADDING_SLIDER) + 2,
+				(this.size != null ? this.size.y - this.paddingTop - this.paddingBottom : 0) + 2));
 		this.scrollBar.setBar(eBar);
 
-		DERectangle eSlider = new DERectangle();
+		this.scrollBar.setSlider(this.slider);
 
-		eSlider.setColor(Color.RED);
-		eSlider.setSize(new Point(BAR_WIDTH, 50));
-		this.scrollBar.setSlider(eSlider);
-
-		this.scrollBar.setPos(
-				new Point(this.pos.x + this.size.x - BAR_WIDTH / 2 - RIGHT_PADDING, this.pos.y + VERTICAL_PADDING));
+		if (!this.leftSide) {
+			this.scrollBar.setPos(new Point(this.pos.x + this.size.x - this.slider.getSize().x - this.paddingSide
+					- (this.scrollBarColor == null ? 0 : PADDING_SLIDER), this.pos.y + this.paddingTop - 1));
+		} else {
+			this.scrollBar.setPos(new Point(this.pos.x + this.paddingSide, this.pos.y + this.paddingTop - 1));
+		}
 		this.scrollBar.setScope(this.maxScroll);
 		this.scrollBar.setHitboxFromDrawElement();
+
+		this.scrollBar.setVisible(this.scrollBarVisible);
+		this.scrollChanged();
+	}
+
+	public boolean isDrawAdvanced() {
+		return this.drawAdvanced;
+	}
+
+	public boolean isLeftSide() {
+		return this.leftSide;
+	}
+
+	public boolean isScrollBarVisible() {
+		return this.scrollBarVisible;
 	}
 
 	@Override
@@ -232,11 +293,31 @@ public class WScroller implements Widget {
 		}
 	}
 
+	public void setDrawAdvanced(boolean drawAdvanced) {
+		this.drawAdvanced = drawAdvanced;
+	}
+
 	/**
 	 * @param maxScroll the maxScroll to set
 	 */
 	public void setMaxScroll(int maxScroll) {
 		this.maxScroll = maxScroll;
+		this.initScrollBar();
+	}
+
+	public void setPaddingBottom(int paddingBottom) {
+		this.paddingBottom = paddingBottom;
+		this.initScrollBar();
+	}
+
+	public void setPaddingSide(int paddingSide) {
+		this.paddingSide = paddingSide;
+		this.initScrollBar();
+	}
+
+	public void setPaddingTop(int paddingTop) {
+		this.paddingTop = paddingTop;
+		this.initScrollBar();
 	}
 
 	/**
@@ -252,7 +333,20 @@ public class WScroller implements Widget {
 			sw.setPos(sw.getPos().add(vectToNewPos));
 		}
 
-		this.initSlider();
+		this.initScrollBar();
+	}
+
+	/**
+	 * Mettre a null pour desafficher
+	 */
+	public void setScrollBarColor(Color scrollBarColor) {
+		this.scrollBarColor = scrollBarColor;
+		this.initScrollBar();
+	}
+
+	public void setScrollBarVisible(boolean scrollBarVisible) {
+		this.scrollBarVisible = scrollBarVisible;
+		this.initScrollBar();
 	}
 
 	/**
@@ -260,6 +354,8 @@ public class WScroller implements Widget {
 	 */
 	public void setScrollPoint(int scrollPoint) {
 		this.scrollPoint = scrollPoint;
+		this.scrollBar.setValue(scrollPoint);
+		this.scrollChanged();
 	}
 
 	/**
@@ -276,7 +372,19 @@ public class WScroller implements Widget {
 		this.size = size;
 		this.hitbox.max(this.pos.clone().add(size));
 
-		this.initSlider();
+		this.initScrollBar();
+	}
+
+	public void setSlider(DrawElement e) {
+		if (e != null) {
+			this.slider = e;
+		}
+		this.initScrollBar();
+	}
+
+	public void setSliderLeftSide(boolean leftSide) {
+		this.leftSide = leftSide;
+		this.initScrollBar();
 	}
 
 	@Override
@@ -286,6 +394,9 @@ public class WScroller implements Widget {
 
 	@Override
 	public void update(Input input) {
+		if (!this.visible)
+			return;
+
 		this.scrollBar.update(input);
 
 		if (Collider.AABBvsPoint(this.hitbox, input.mousePos)) {
@@ -320,5 +431,9 @@ public class WScroller implements Widget {
 				}
 			}
 		}
+	}
+
+	public static int getBarWidth() {
+		return BAR_WIDTH;
 	}
 }

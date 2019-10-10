@@ -98,6 +98,17 @@ public class MenuTemoin implements MenuPage {
 
 		sc.setPos(new Point(950, 300));
 		sc.setSize(new Point(300, 200));
+		sc.setMaxScroll(500);
+		sc.setScrollStep(30);
+		sc.setDrawAdvanced(true);
+		sc.setPaddingBottom(0);
+		sc.setPaddingTop(0);
+		sc.setPaddingSide(0);
+		sc.setSliderLeftSide(false);
+		sc.setScrollBarColor(Color.DARK_GRAY);
+		DERectangle rect = sc.getDefaultSlider();
+		rect.setColor(Color.gray);
+		sc.setSlider(rect);
 
 		this.widgets.add(sc);
 
@@ -176,7 +187,7 @@ public class MenuTemoin implements MenuPage {
 		rect.setColor(new Color(30, 200, 30));
 		s.setPressedOnDrawElement(rect);
 
-		s.setPos(new Point(20, 20));
+		s.setPos(new Point(50, 300));
 
 		s.setHitboxFromDrawElement();
 
