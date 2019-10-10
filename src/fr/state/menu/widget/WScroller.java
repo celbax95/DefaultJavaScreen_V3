@@ -9,6 +9,7 @@ import java.util.List;
 
 import fr.inputs.Input;
 import fr.inputs.mouse.MouseEvent;
+import fr.state.menu.MenuPage;
 import fr.state.menu.Widget;
 import fr.state.menu.widget.drawelements.DERectangle;
 import fr.util.collider.AABB;
@@ -62,6 +63,8 @@ public class WScroller implements Widget {
 	}
 
 	private final static int BAR_WIDTH = 20;
+	private final static int VERTICAL_PADDING = 3;
+	private final static int RIGHT_PADDING = 0;
 
 	private Point pos, size;
 
@@ -77,9 +80,11 @@ public class WScroller implements Widget {
 
 	private AABB hitbox;
 
-	private DERectangle bar;
+	private WVSlider slider;
 
-	public WScroller() {
+	private MenuPage page;
+
+	public WScroller(MenuPage page) {
 		this.pos = new Point();
 		this.size = new Point();
 		this.scrollPoint = 0;
@@ -88,13 +93,18 @@ public class WScroller implements Widget {
 		this.maxScroll = 500;
 		this.widgets = new ArrayList<>();
 		this.visible = true;
+		this.page = page;
 
 		this.hitbox = new AABB(this.pos, new Point(), new Point());
 
-		this.bar = new DERectangle();
-		this.bar.setPos(new Point(-BAR_WIDTH, 0));
-		this.bar.setSize(new Point(BAR_WIDTH, 60));
-		this.bar.setColor(Color.red);
+		this.slider = new WVSlider(page) {
+			@Override
+			public void valueChanged(int value, boolean pressed) {
+				WScroller.this.changeByBar(value);
+			}
+		};
+
+		this.initSlider();
 	}
 
 	public void add(Widget w) {
@@ -104,6 +114,11 @@ public class WScroller implements Widget {
 			w.setPos(wPos);
 			this.widgets.add(new ScrollWidget(w));
 		}
+	}
+
+	private void changeByBar(int value) {
+		this.scrollPoint = value;
+		this.scrollChanged();
 	}
 
 	@Override
@@ -127,11 +142,7 @@ public class WScroller implements Widget {
 	}
 
 	private void drawBar(Graphics2D g) {
-		int maxY = this.size.iy() - this.bar.getSize().iy();
-
-		int y = (int) ((double) this.scrollPoint / (double) this.maxScroll * maxY);
-
-		this.bar.draw(g, new Point(this.pos.x + this.size.x, this.pos.y + y));
+		this.slider.draw(g);
 	}
 
 	/**
@@ -177,6 +188,25 @@ public class WScroller implements Widget {
 		return this.size;
 	}
 
+	private void initSlider() {
+		DERectangle eBar = new DERectangle();
+
+		eBar.setColor(Color.WHITE);
+		eBar.setSize(new Point(0, this.size != null ? this.size.y - VERTICAL_PADDING * 2 : 0));
+		this.slider.setBar(eBar);
+
+		DERectangle eSlider = new DERectangle();
+
+		eSlider.setColor(Color.RED);
+		eSlider.setSize(new Point(BAR_WIDTH, 50));
+		this.slider.setSlider(eSlider);
+
+		this.slider.setPos(
+				new Point(this.pos.x + this.size.x - BAR_WIDTH / 2 - RIGHT_PADDING, this.pos.y + VERTICAL_PADDING));
+		this.slider.setScope(this.maxScroll);
+		this.slider.setHitboxFromDrawElement();
+	}
+
 	@Override
 	public boolean isVisible() {
 		return this.visible;
@@ -190,6 +220,7 @@ public class WScroller implements Widget {
 	}
 
 	private void scrollChanged() {
+		this.slider.setValue(this.scrollPoint);
 		for (ScrollWidget widget : this.widgets) {
 			widget.setScrollPoint(new Point(0, this.scrollPoint));
 		}
@@ -215,6 +246,7 @@ public class WScroller implements Widget {
 	@Override
 	public void setPos(Point pos) {
 		this.pos.set(pos);
+		this.initSlider();
 	}
 
 	/**
@@ -237,6 +269,8 @@ public class WScroller implements Widget {
 	public void setSize(Point size) {
 		this.size = size;
 		this.hitbox.max(this.pos.clone().add(size));
+
+		this.initSlider();
 	}
 
 	@Override
@@ -246,6 +280,7 @@ public class WScroller implements Widget {
 
 	@Override
 	public void update(Input input) {
+		this.slider.update(input);
 
 		if (Collider.AABBvsPoint(this.hitbox, input.mousePos)) {
 			for (Widget widget : this.widgets) {

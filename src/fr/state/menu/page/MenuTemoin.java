@@ -18,6 +18,7 @@ import fr.state.menu.widget.WSlider;
 import fr.state.menu.widget.WSwitch;
 import fr.state.menu.widget.WUserInput;
 import fr.state.menu.widget.WUserKeyInput;
+import fr.state.menu.widget.WVSlider;
 import fr.state.menu.widget.data.BorderData;
 import fr.state.menu.widget.data.TextData;
 import fr.state.menu.widget.drawelements.DELabel;
@@ -40,6 +41,7 @@ public class MenuTemoin implements MenuPage {
 		this.wTitle();
 		WSwitch sw = this.wSwitch();
 		this.wSlide();
+		this.wVSlide();
 		this.wUserInput();
 		this.wUserKeyInput();
 		WScroller scroller = this.wScroller();
@@ -92,7 +94,7 @@ public class MenuTemoin implements MenuPage {
 	}
 
 	private WScroller wScroller() {
-		WScroller sc = new WScroller();
+		WScroller sc = new WScroller(this);
 
 		sc.setPos(new Point(950, 300));
 		sc.setSize(new Point(300, 200));
@@ -261,5 +263,32 @@ public class MenuTemoin implements MenuPage {
 		u.setHitboxFromDrawElement();
 
 		this.widgets.add(u);
+	}
+
+	private void wVSlide() {
+		WVSlider s = new WVSlider(this) {
+			@Override
+			public void valueChanged(int value, boolean pressed) {
+				Logger.obs("Valeur du VSlider : " + value);
+			}
+		};
+
+		DERectangle bar = new DERectangle();
+
+		bar.setColor(Color.WHITE);
+		bar.setSize(new Point(20, 300));
+		s.setBar(bar);
+
+		DERectangle slider = new DERectangle();
+
+		slider.setColor(Color.RED);
+		slider.setSize(new Point(30, 120));
+		s.setSlider(slider);
+
+		s.setPos(new Point(150, 800));
+		s.setScope(10);
+		s.setHitboxFromDrawElement();
+
+		this.widgets.add(s);
 	}
 }

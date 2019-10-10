@@ -12,7 +12,7 @@ import fr.util.collider.AABB;
 import fr.util.collider.Collider;
 import fr.util.point.Point;
 
-public abstract class WSlider implements Widget {
+public abstract class WVSlider implements Widget {
 
 	private Point pos;
 
@@ -27,7 +27,7 @@ public abstract class WSlider implements Widget {
 
 	private boolean visible;
 
-	private int minX, maxX;
+	private int minY, maxY;
 
 	// Position du slider
 	private Point sliderPos;
@@ -38,7 +38,7 @@ public abstract class WSlider implements Widget {
 
 	private MenuPage page;
 
-	public WSlider(MenuPage page) {
+	public WVSlider(MenuPage page) {
 		super();
 		this.pos = new Point();
 		this.hitbox = new AABB(this.pos, this.pos, this.pos);
@@ -46,8 +46,8 @@ public abstract class WSlider implements Widget {
 		this.slider = null;
 		this.scope = 0;
 		this.value = 0;
-		this.minX = 0;
-		this.maxX = 0;
+		this.minY = 0;
+		this.maxY = 0;
 		this.sliderPos = new Point();
 		this.pressed = false;
 		this.freeMove = false;
@@ -55,7 +55,7 @@ public abstract class WSlider implements Widget {
 		this.page = page;
 	}
 
-	public WSlider(WSlider other) {
+	public WVSlider(WVSlider other) {
 		this(other == null ? null : other.page);
 		if (other == null)
 			return;
@@ -71,35 +71,35 @@ public abstract class WSlider implements Widget {
 		this.setSlider(other.slider == null ? null : other.slider.clone());
 		this.setScope(this.scope);
 		this.setValue(0);
-		this.setMinX(other.minX);
-		this.setMaxX(other.maxX);
-		this.setSliderPos(new Point(this.minX, other.sliderPos.y));
+		this.setMinY(other.minY);
+		this.setMaxY(other.maxY);
+		this.setSliderPos(new Point(other.sliderPos.x, this.minY));
 		this.setPressed(false);
 		this.setFreeMove(other.freeMove);
 		this.setPage(other.page);
 	}
 
-	private void changeValue(int inputX) {
+	private void changeValue(int inputY) {
 
 		// Pour que la souris soit au centre du widget
-		inputX -= this.slider.getSize().ix() / 2;
+		inputY -= this.slider.getSize().iy() / 2;
 
-		int xposScope = this.maxX - this.minX;
+		int yposScope = this.maxY - this.minY;
 
 		// Clamp the value between [minX ; maxX]
-		double inputXClamped = Util.clamp(inputX, this.minX, this.maxX);
+		double inputYClamped = Util.clamp(inputY, this.minY, this.maxY);
 
 		// Pourcentage de remplissage
-		double fillup = (inputXClamped - this.minX) / xposScope;
+		double fillup = (inputYClamped - this.minY) / yposScope;
 
 		// Valeur entiere uncluse dans [0 ; scope]
 		int tmpValue = (int) Math.round(fillup * this.scope);
 
 		// Changement de la position du slider
 		if (this.freeMove) {
-			this.sliderPos.x = inputXClamped;
+			this.sliderPos.y = inputYClamped;
 		} else if (tmpValue != this.value) {
-			this.sliderPos.x = this.minX + Math.round(tmpValue * xposScope / (double) this.scope);
+			this.sliderPos.y = this.minY + Math.round(tmpValue * yposScope / (double) this.scope);
 		}
 
 		if (tmpValue != this.value) {
@@ -180,11 +180,13 @@ public abstract class WSlider implements Widget {
 		if (this.bar == null || this.slider == null)
 			return;
 
-		this.minX = this.pos.ix() + this.bar.getPos().ix();
-		this.maxX = this.pos.ix() + this.bar.getPos().ix() + this.bar.getSize().ix() - this.slider.getSize().ix();
+		this.minY = this.pos.iy() + this.bar.getPos().iy();
+		this.maxY = this.pos.iy() + this.bar.getPos().iy() + this.bar.getSize().iy() - this.slider.getSize().iy();
 
-		this.sliderPos = new Point(this.minX,
-				this.pos.iy() + this.bar.getPos().iy() - (this.slider.getSize().iy() - this.bar.getSize().iy()) / 2);
+		this.sliderPos = new Point(
+				this.pos.ix() + this.bar.getPos().ix() - (this.slider.getSize().ix() - this.bar.getSize().ix()) / 2,
+				this.minY);
+
 	}
 
 	/**
@@ -235,30 +237,30 @@ public abstract class WSlider implements Widget {
 	}
 
 	public void setHitboxFromDrawElement() {
-		int minBY = 0, minSY = 0, maxBY = 0, maxSY = 0;
+		int minBX = 0, minSX = 0, maxBX = 0, maxSX = 0;
 
 		Point min = null, max = null;
 
-		minBY = this.pos.iy() + this.bar.getPos().iy();
-		minSY = this.sliderPos.iy() + this.slider.getPos().iy();
+		minBX = this.pos.ix() + this.bar.getPos().ix();
+		minSX = this.sliderPos.ix() + this.slider.getPos().ix();
 
-		min = new Point(this.minX, minBY <= minSY ? minBY : minSY);
+		min = new Point(minBX <= minSX ? minBX : minSX, this.minY);
 
-		maxBY = minBY + this.bar.getSize().iy();
-		maxSY = minSY + this.slider.getSize().iy();
+		maxBX = minBX + this.bar.getSize().ix();
+		maxSX = minSX + this.slider.getSize().ix();
 
-		max = new Point(this.maxX + this.slider.getSize().ix(), maxBY >= maxSY ? maxBY : maxSY);
+		max = new Point(maxBX >= maxSX ? maxBX : maxSX, this.maxY + this.slider.getSize().iy());
 
 		this.hitbox.min(min);
 		this.hitbox.max(max);
 	}
 
-	private void setMaxX(int maxX) {
-		this.maxX = maxX;
+	private void setMaxY(int maxX) {
+		this.maxY = maxX;
 	}
 
-	private void setMinX(int minX) {
-		this.minX = minX;
+	private void setMinY(int minX) {
+		this.minY = minX;
 	}
 
 	/**
@@ -313,8 +315,8 @@ public abstract class WSlider implements Widget {
 
 			if (this.slider != null) {
 				// moveSlider
-				int xposScope = this.maxX - this.minX;
-				this.sliderPos.x = this.minX + Math.round(value * xposScope / (double) this.scope);
+				int yposScope = this.maxY - this.minY;
+				this.sliderPos.y = this.minY + Math.round(value * yposScope / (double) this.scope);
 			}
 		}
 	}
@@ -339,13 +341,13 @@ public abstract class WSlider implements Widget {
 				continue;
 			case MouseEvent.MOVE:
 				if (this.pressed) {
-					this.changeValue(e.pos.ix());
+					this.changeValue(e.pos.iy());
 				}
 				continue;
 			case MouseEvent.LEFT_PRESSED:
 				if (Collider.AABBvsPoint(this.hitbox, e.pos)) {
 					this.setPressed(true);
-					this.changeValue(e.pos.ix());
+					this.changeValue(e.pos.iy());
 				}
 				continue;
 			default:
