@@ -273,7 +273,7 @@ public class MenuControls implements MenuPage {
 		title.setPos(new Point(550, 76));
 
 		DEImage i = new DEImage();
-		i.setImage(ImageManager.getInstance().get("menuSettings/title"));
+		i.setImage(ImageManager.getInstance().get("menuControls/title"));
 
 		title.setDrawElement(i);
 
