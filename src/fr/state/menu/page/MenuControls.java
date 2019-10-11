@@ -255,10 +255,11 @@ public class MenuControls implements MenuPage {
 		sc.setPaddingBottom(0);
 		sc.setPaddingTop(0);
 		sc.setPaddingSide(0);
-		sc.setSliderLeftSide(false);
-		sc.setScrollBarColor(null);
+		sc.setDisplayScrollBar(true);
+		sc.setSliderLeftSide(true);
+		sc.setScrollBarColor(new Color(150, 150, 150));
 		DERectangle rect = sc.getDefaultSlider();
-		rect.setColor(Color.gray);
+		rect.setColor(new Color(130, 130, 130));
 		sc.setSlider(rect);
 
 		this.widgets.add(sc);

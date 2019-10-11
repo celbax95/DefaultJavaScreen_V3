@@ -118,6 +118,8 @@ public class WScroller implements Widget {
 
 	private boolean drawAdvanced;
 
+	private boolean displayScrollBar;
+
 	public WScroller(MenuPage page) {
 		this.pos = new Point();
 		this.size = new Point();
@@ -130,6 +132,7 @@ public class WScroller implements Widget {
 		this.leftSide = false;
 		this.scrollBarColor = null;
 		this.roundedBorder = 0;
+		this.displayScrollBar = true;
 		this.page = page;
 
 		this.hitbox = new AABB(this.pos, new Point(), new Point());
@@ -185,7 +188,9 @@ public class WScroller implements Widget {
 	}
 
 	private void drawBar(Graphics2D g) {
-		this.scrollBar.draw(g);
+		if (this.displayScrollBar) {
+			this.scrollBar.draw(g);
+		}
 	}
 
 	public DERectangle getDefaultSlider() {
@@ -265,8 +270,13 @@ public class WScroller implements Widget {
 		this.scrollBar.setSlider(this.slider);
 
 		if (!this.leftSide) {
-			this.scrollBar.setPos(new Point(this.pos.x + this.size.x - this.slider.getSize().x - this.paddingSide
-					- (this.scrollBarColor == null ? 0 : PADDING_SLIDER), this.pos.y + this.paddingTop - 1));
+			this.scrollBar
+					.setPos(new Point(
+							this.pos.x + this.size.x
+									- (this.scrollBarColor == null ? this.slider.getSize().x / 2
+											: this.slider.getSize().x)
+									- this.paddingSide - (this.scrollBarColor == null ? 0 : PADDING_SLIDER),
+							this.pos.y + this.paddingTop - 1));
 		} else {
 			this.scrollBar.setPos(new Point(this.pos.x + this.paddingSide, this.pos.y + this.paddingTop - 1));
 		}
@@ -275,6 +285,13 @@ public class WScroller implements Widget {
 
 		this.scrollBar.setVisible(this.scrollBarVisible);
 		this.scrollChanged();
+	}
+
+	/**
+	 * @return the displayScrollBar
+	 */
+	public boolean isDisplayScrollBar() {
+		return this.displayScrollBar;
 	}
 
 	public boolean isDrawAdvanced() {
@@ -306,6 +323,13 @@ public class WScroller implements Widget {
 		for (ScrollWidget widget : this.widgets) {
 			widget.setScrollPoint(new Point(0, this.scrollPoint));
 		}
+	}
+
+	/**
+	 * @param displayScrollBar the displayScrollBar to set
+	 */
+	public void setDisplayScrollBar(boolean displayScrollBar) {
+		this.displayScrollBar = displayScrollBar;
 	}
 
 	public void setDrawAdvanced(boolean drawAdvanced) {
