@@ -16,16 +16,32 @@ import fr.state.menu.MenuPage;
 import fr.state.menu.Widget;
 import fr.state.menu.widget.WButton;
 import fr.state.menu.widget.WElement;
+import fr.state.menu.widget.WScroller;
 import fr.state.menu.widget.WUserKeyInput;
 import fr.state.menu.widget.data.TextData;
 import fr.state.menu.widget.drawelements.DEImage;
+import fr.state.menu.widget.drawelements.DERectangle;
 import fr.util.point.Point;
 
 public class MenuControls implements MenuPage {
 
-	private static final String[] RES_NAMES = { "title", "backStd", "backPressed", "frame", "inputStd", "inputSel", };
+	private static final String[] RES_NAMES = {
+			"title",
+			"backStd",
+			"backPressed",
+			"border",
+			"controlsList",
+			"inputStd",
+			"inputSel", };
 
-	private static final String[] RES_PATHS = { "title", "backStd", "backPressed", "frame", "inputStd", "inputSel", };
+	private static final String[] RES_PATHS = {
+			"title",
+			"backStd",
+			"backPressed",
+			"border",
+			"controlsList",
+			"inputStd",
+			"inputSel", };
 
 	private static final String RES_FOLDER = "/resources/menu/menuControls/";
 	private static final String RES_EXTENSION = ".png";
@@ -37,6 +53,19 @@ public class MenuControls implements MenuPage {
 	private static final String PARAM_NAME_JUMP = "jump";
 	private static final String PARAM_NAME_SHOOT = "shoot";
 	private static final String PARAM_NAME_USE = "use";
+	private static final String PARAM_NAME_LEAVE = "leave";
+
+	private static final String[] PARAM_NAMES = {
+			PARAM_NAME_LEFT,
+			PARAM_NAME_RIGHT,
+			PARAM_NAME_JUMP,
+			PARAM_NAME_SHOOT,
+			PARAM_NAME_USE,
+			PARAM_NAME_LEAVE, };
+
+	private static final int SPACE_BETWEEN_INPUTS = 128;
+	private static final int INPUT_POS_X = 874;
+	private static final int INPUT_START_POS_Y = 9;
 
 	static {
 		for (int i = 0; i < RES_NAMES.length; i++) {
@@ -74,35 +103,22 @@ public class MenuControls implements MenuPage {
 		this.controlsConf = dfm.getFile("controls");
 		this.manager = dfm.getXmlManager();
 
-		int leftMouvementKey = (int) this.manager.getParam(this.controlsConf, PARAM_NAME_LEFT, 0);
-		int rightMouvementKey = (int) this.manager.getParam(this.controlsConf, PARAM_NAME_RIGHT, 0);
-		int jumpKey = (int) this.manager.getParam(this.controlsConf, PARAM_NAME_JUMP, 0);
-		int shootKey = (int) this.manager.getParam(this.controlsConf, PARAM_NAME_SHOOT, 0);
-		int useKey = (int) this.manager.getParam(this.controlsConf, PARAM_NAME_USE, 0);
-
 		this.wTitle();
 		this.wBack();
 
-		this.wframe();
+		WScroller scroller = this.wScroller();
 
-		this.controls = new WUserKeyInput[5];
+		scroller.add(this.getWControlsList());
 
-		int i = 0;
+		this.wBorder();
 
-		this.controls[i] = this.wLeftMouvementInput();
-		this.controls[i++].setData(leftMouvementKey);
+		this.controls = new WUserKeyInput[PARAM_NAMES.length];
 
-		this.controls[i] = this.wRightMouvementInput();
-		this.controls[i++].setData(rightMouvementKey);
-
-		this.controls[i] = this.wShootInput();
-		this.controls[i++].setData(shootKey);
-
-		this.controls[i] = this.wJumpInput();
-		this.controls[i++].setData(jumpKey);
-
-		this.controls[i] = this.wUseInput();
-		this.controls[i++].setData(useKey);
+		for (int i = 0; i < PARAM_NAMES.length; i++) {
+			this.controls[i] = this.getWUserKeyInput(i, PARAM_NAMES[i]);
+			this.controls[i].setData((int) this.manager.getParam(this.controlsConf, PARAM_NAMES[i], 0));
+			scroller.add(this.controls[i]);
+		}
 
 		this.changeColorOnSame();
 	}
@@ -129,6 +145,52 @@ public class MenuControls implements MenuPage {
 		for (Widget w : this.widgets) {
 			w.draw(g);
 		}
+	}
+
+	private WElement getWControlsList() {
+		WElement w = new WElement(this);
+
+		DEImage img = new DEImage();
+
+		img.setImage(ImageManager.getInstance().get("menuControls/controlsList"));
+
+		w.setDrawElement(img);
+
+		w.setPos(new Point(0, 0));
+
+		return w;
+	}
+
+	private WUserKeyInput getWUserKeyInput(int index, String paramName) {
+		WUserKeyInput u = new WUserKeyInput(this) {
+			@Override
+			public void dataChanged(int data) {
+				MenuControls.this.changeColorOnSame();
+				MenuControls.this.manager.setParam(MenuControls.this.controlsConf, paramName, data);
+				MenuControls.this.manager.saveFile(MenuControls.this.controlsConf);
+			}
+		};
+
+		ImageManager im = ImageManager.getInstance();
+
+		DEImage std = new DEImage();
+		std.setImage(im.get("menuControls/inputStd"));
+		DEImage sel = new DEImage();
+		sel.setImage(im.get("menuControls/inputSel"));
+
+		u.setStdDrawElement(std);
+
+		u.setSelectedDrawElement(sel);
+
+		u.setPos(new Point(INPUT_POS_X, INPUT_START_POS_Y + SPACE_BETWEEN_INPUTS * index));
+
+		TextData td = new TextData(new Point(), new Font("Copperplate Gothic Bold", Font.PLAIN, 45), "", COLOR, 3);
+
+		u.setTextData(td);
+
+		u.setHitboxFromDrawElement();
+
+		return u;
 	}
 
 	private void loadResources() {
@@ -168,12 +230,12 @@ public class MenuControls implements MenuPage {
 		this.widgets.add(btn);
 	}
 
-	private void wframe() {
+	private void wBorder() {
 		WElement w = new WElement(this);
 
 		DEImage img = new DEImage();
 
-		img.setImage(ImageManager.getInstance().get("menuControls/frame"));
+		img.setImage(ImageManager.getInstance().get("menuControls/border"));
 
 		w.setDrawElement(img);
 
@@ -182,141 +244,26 @@ public class MenuControls implements MenuPage {
 		this.widgets.add(w);
 	}
 
-	private WUserKeyInput wJumpInput() {
-		WUserKeyInput u = new WUserKeyInput(this) {
-			@Override
-			public void dataChanged(int data) {
-				MenuControls.this.changeColorOnSame();
-				MenuControls.this.manager.setParam(MenuControls.this.controlsConf, PARAM_NAME_JUMP, data);
-				MenuControls.this.manager.saveFile(MenuControls.this.controlsConf);
-			}
-		};
+	private WScroller wScroller() {
+		WScroller sc = new WScroller(this);
 
-		ImageManager im = ImageManager.getInstance();
+		sc.setPos(new Point(339, 343));
+		sc.setSize(new Point(1242, 637));
+		sc.setMaxScroll(128);
+		sc.setScrollStep(30);
+		sc.setDrawAdvanced(true);
+		sc.setPaddingBottom(0);
+		sc.setPaddingTop(0);
+		sc.setPaddingSide(0);
+		sc.setSliderLeftSide(false);
+		sc.setScrollBarColor(null);
+		DERectangle rect = sc.getDefaultSlider();
+		rect.setColor(Color.gray);
+		sc.setSlider(rect);
 
-		DEImage std = new DEImage();
-		std.setImage(im.get("menuControls/inputStd"));
-		DEImage sel = new DEImage();
-		sel.setImage(im.get("menuControls/inputSel"));
+		this.widgets.add(sc);
 
-		u.setStdDrawElement(std);
-
-		u.setSelectedDrawElement(sel);
-
-		u.setPos(new Point(1213, 609));
-
-		TextData td = new TextData(new Point(), new Font("Copperplate Gothic Bold", Font.PLAIN, 45), "", COLOR, 3);
-
-		u.setTextData(td);
-
-		u.setHitboxFromDrawElement();
-
-		this.widgets.add(u);
-
-		return u;
-	}
-
-	private WUserKeyInput wLeftMouvementInput() {
-		WUserKeyInput u = new WUserKeyInput(this) {
-			@Override
-			public void dataChanged(int data) {
-				MenuControls.this.changeColorOnSame();
-				MenuControls.this.manager.setParam(MenuControls.this.controlsConf, PARAM_NAME_LEFT, data);
-				MenuControls.this.manager.saveFile(MenuControls.this.controlsConf);
-			}
-		};
-
-		ImageManager im = ImageManager.getInstance();
-
-		DEImage std = new DEImage();
-		std.setImage(im.get("menuControls/inputStd"));
-
-		DEImage sel = new DEImage();
-		sel.setImage(im.get("menuControls/inputSel"));
-
-		u.setStdDrawElement(std);
-
-		u.setSelectedDrawElement(sel);
-
-		u.setPos(new Point(1213, 352));
-
-		TextData td = new TextData(new Point(), new Font("Copperplate Gothic Bold", Font.PLAIN, 45), "", COLOR, 3);
-
-		u.setTextData(td);
-
-		u.setHitboxFromDrawElement();
-
-		this.widgets.add(u);
-
-		return u;
-	}
-
-	private WUserKeyInput wRightMouvementInput() {
-		WUserKeyInput u = new WUserKeyInput(this) {
-			@Override
-			public void dataChanged(int data) {
-				MenuControls.this.changeColorOnSame();
-				MenuControls.this.manager.setParam(MenuControls.this.controlsConf, PARAM_NAME_RIGHT, data);
-				MenuControls.this.manager.saveFile(MenuControls.this.controlsConf);
-			}
-		};
-
-		ImageManager im = ImageManager.getInstance();
-
-		DEImage std = new DEImage();
-		std.setImage(im.get("menuControls/inputStd"));
-		DEImage sel = new DEImage();
-		sel.setImage(im.get("menuControls/inputSel"));
-
-		u.setStdDrawElement(std);
-
-		u.setSelectedDrawElement(sel);
-
-		u.setPos(new Point(1213, 481));
-
-		TextData td = new TextData(new Point(), new Font("Copperplate Gothic Bold", Font.PLAIN, 45), "", COLOR, 3);
-
-		u.setTextData(td);
-
-		u.setHitboxFromDrawElement();
-
-		this.widgets.add(u);
-
-		return u;
-	}
-
-	private WUserKeyInput wShootInput() {
-		WUserKeyInput u = new WUserKeyInput(this) {
-			@Override
-			public void dataChanged(int data) {
-				MenuControls.this.changeColorOnSame();
-				MenuControls.this.manager.setParam(MenuControls.this.controlsConf, PARAM_NAME_SHOOT, data);
-				MenuControls.this.manager.saveFile(MenuControls.this.controlsConf);
-			}
-		};
-
-		ImageManager im = ImageManager.getInstance();
-
-		DEImage std = new DEImage();
-		std.setImage(im.get("menuControls/inputStd"));
-		DEImage sel = new DEImage();
-		sel.setImage(im.get("menuControls/inputSel"));
-
-		u.setStdDrawElement(std);
-
-		u.setSelectedDrawElement(sel);
-
-		u.setPos(new Point(1213, 737));
-
-		TextData td = new TextData(new Point(), new Font("Copperplate Gothic Bold", Font.PLAIN, 45), "", COLOR, 3);
-
-		u.setTextData(td);
-
-		u.setHitboxFromDrawElement();
-
-		this.widgets.add(u);
-
-		return u;
+		return sc;
 	}
 
 	private void wTitle() {
@@ -330,39 +277,5 @@ public class MenuControls implements MenuPage {
 		title.setDrawElement(i);
 
 		this.widgets.add(title);
-	}
-
-	private WUserKeyInput wUseInput() {
-		WUserKeyInput u = new WUserKeyInput(this) {
-			@Override
-			public void dataChanged(int data) {
-				MenuControls.this.changeColorOnSame();
-				MenuControls.this.manager.setParam(MenuControls.this.controlsConf, PARAM_NAME_USE, data);
-				MenuControls.this.manager.saveFile(MenuControls.this.controlsConf);
-			}
-		};
-
-		ImageManager im = ImageManager.getInstance();
-
-		DEImage std = new DEImage();
-		std.setImage(im.get("menuControls/inputStd"));
-		DEImage sel = new DEImage();
-		sel.setImage(im.get("menuControls/inputSel"));
-
-		u.setStdDrawElement(std);
-
-		u.setSelectedDrawElement(sel);
-
-		u.setPos(new Point(1213, 865));
-
-		TextData td = new TextData(new Point(), new Font("Copperplate Gothic Bold", Font.PLAIN, 45), "", COLOR, 3);
-
-		u.setTextData(td);
-
-		u.setHitboxFromDrawElement();
-
-		this.widgets.add(u);
-
-		return u;
 	}
 }
