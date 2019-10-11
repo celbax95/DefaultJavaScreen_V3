@@ -2,8 +2,8 @@ package fr.state.menu.widget;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.Rectangle;
 import java.awt.Shape;
+import java.awt.geom.RoundRectangle2D;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -82,6 +82,10 @@ public class WScroller implements Widget {
 	private final static int PADDING_SLIDER = 4;
 	private final static Color TRANSLUCENT = new Color(0, 0, 0, 0);
 
+	public static int getBarWidth() {
+		return BAR_WIDTH;
+	}
+
 	private Point pos, size;
 
 	private int paddingTop, paddingBottom, paddingSide;
@@ -106,6 +110,8 @@ public class WScroller implements Widget {
 
 	private boolean leftSide;
 
+	private int roundedBorder;
+
 	private MenuPage page;
 
 	private DrawElement slider;
@@ -123,6 +129,7 @@ public class WScroller implements Widget {
 		this.scrollBarVisible = true;
 		this.leftSide = false;
 		this.scrollBarColor = null;
+		this.roundedBorder = 0;
 		this.page = page;
 
 		this.hitbox = new AABB(this.pos, new Point(), new Point());
@@ -166,7 +173,8 @@ public class WScroller implements Widget {
 
 		Shape oldClip = g.getClip();
 
-		g.clip(new Rectangle(this.pos.ix(), this.pos.iy(), this.size.ix(), this.size.iy()));
+		g.clip(new RoundRectangle2D.Double(this.pos.x, this.pos.y, this.size.x, this.size.y, this.roundedBorder,
+				this.roundedBorder));
 
 		for (Widget widget : this.widgets) {
 			widget.draw(g);
@@ -212,6 +220,13 @@ public class WScroller implements Widget {
 	@Override
 	public Point getPos() {
 		return this.pos;
+	}
+
+	/**
+	 * @return the roundedBorder
+	 */
+	public int getRoundedBorder() {
+		return this.roundedBorder;
 	}
 
 	public Color getScrollBarColor() {
@@ -337,6 +352,14 @@ public class WScroller implements Widget {
 	}
 
 	/**
+	 * @param roundedBorder the roundedBorder to set
+	 */
+	public void setRoundedBorder(int roundedBorder) {
+		assert roundedBorder >= 0;
+		this.roundedBorder = roundedBorder;
+	}
+
+	/**
 	 * Mettre a null pour desafficher
 	 */
 	public void setScrollBarColor(Color scrollBarColor) {
@@ -431,9 +454,5 @@ public class WScroller implements Widget {
 				}
 			}
 		}
-	}
-
-	public static int getBarWidth() {
-		return BAR_WIDTH;
 	}
 }
