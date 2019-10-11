@@ -6,6 +6,5 @@
 	<param name="jump" type="integer" value="0"/>
 	<param name="shoot" type="integer" value="-1"/>
 	<param name="use" type="integer" value="-3"/>
-	<param name="leave" type="integer" value="72"/>
-	
+		
 </conf>
