@@ -152,7 +152,7 @@ public class MenuControls implements MenuPage {
 
 		DEImage img = new DEImage();
 
-		img.setImage(ImageManager.getInstance().get("menuControls/controlsList"));
+		img.setImage(ImageManager.getInstance().get(PAGE_NAME + "/controlsList"));
 
 		w.setDrawElement(img);
 
@@ -174,9 +174,9 @@ public class MenuControls implements MenuPage {
 		ImageManager im = ImageManager.getInstance();
 
 		DEImage std = new DEImage();
-		std.setImage(im.get("menuControls/inputStd"));
+		std.setImage(im.get(PAGE_NAME + "/inputStd"));
 		DEImage sel = new DEImage();
-		sel.setImage(im.get("menuControls/inputSel"));
+		sel.setImage(im.get(PAGE_NAME + "/inputSel"));
 
 		u.setStdDrawElement(std);
 
@@ -215,12 +215,12 @@ public class MenuControls implements MenuPage {
 		};
 
 		DEImage i = new DEImage();
-		i.setImage(ImageManager.getInstance().get("menuSettings/backStd"));
+		i.setImage(ImageManager.getInstance().get(PAGE_NAME + "/backStd"));
 
 		btn.setStdDrawElement(i);
 
 		i = new DEImage();
-		i.setImage(ImageManager.getInstance().get("menuSettings/backPressed"));
+		i.setImage(ImageManager.getInstance().get(PAGE_NAME + "/backPressed"));
 
 		btn.setPressedDrawElement(i);
 
@@ -235,7 +235,7 @@ public class MenuControls implements MenuPage {
 
 		DEImage img = new DEImage();
 
-		img.setImage(ImageManager.getInstance().get("menuControls/border"));
+		img.setImage(ImageManager.getInstance().get(PAGE_NAME + "/border"));
 
 		w.setDrawElement(img);
 
@@ -273,7 +273,7 @@ public class MenuControls implements MenuPage {
 		title.setPos(new Point(550, 76));
 
 		DEImage i = new DEImage();
-		i.setImage(ImageManager.getInstance().get("menuControls/title"));
+		i.setImage(ImageManager.getInstance().get(PAGE_NAME + "/title"));
 
 		title.setDrawElement(i);
 

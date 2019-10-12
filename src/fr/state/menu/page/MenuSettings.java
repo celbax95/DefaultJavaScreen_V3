@@ -109,12 +109,12 @@ public class MenuSettings implements MenuPage {
 		btn.setPos(new Point(42, 42));
 
 		DEImage i = new DEImage();
-		i.setImage(ImageManager.getInstance().get("menuSettings/backStd"));
+		i.setImage(ImageManager.getInstance().get(PAGE_NAME + "/backStd"));
 
 		btn.setStdDrawElement(i);
 
 		i = new DEImage();
-		i.setImage(ImageManager.getInstance().get("menuSettings/backPressed"));
+		i.setImage(ImageManager.getInstance().get(PAGE_NAME + "/backPressed"));
 
 		btn.setPressedDrawElement(i);
 
@@ -134,12 +134,12 @@ public class MenuSettings implements MenuPage {
 		btn.setPos(new Point(554, 451));
 
 		DEImage i = new DEImage();
-		i.setImage(ImageManager.getInstance().get("menuSettings/controlsStd"));
+		i.setImage(ImageManager.getInstance().get(PAGE_NAME + "/controlsStd"));
 
 		btn.setStdDrawElement(i);
 
 		i = new DEImage();
-		i.setImage(ImageManager.getInstance().get("menuSettings/controlsPressed"));
+		i.setImage(ImageManager.getInstance().get(PAGE_NAME + "/controlsPressed"));
 
 		btn.setPressedDrawElement(i);
 
@@ -159,12 +159,12 @@ public class MenuSettings implements MenuPage {
 		btn.setPos(new Point(1465, 451));
 
 		DEImage i = new DEImage();
-		i.setImage(ImageManager.getInstance().get("menuSettings/gameSettingsStd"));
+		i.setImage(ImageManager.getInstance().get(PAGE_NAME + "/gameSettingsStd"));
 
 		btn.setStdDrawElement(i);
 
 		i = new DEImage();
-		i.setImage(ImageManager.getInstance().get("menuSettings/gameSettingsPressed"));
+		i.setImage(ImageManager.getInstance().get(PAGE_NAME + "/gameSettingsPressed"));
 
 		btn.setPressedDrawElement(i);
 
@@ -184,12 +184,12 @@ public class MenuSettings implements MenuPage {
 		btn.setPos(new Point(98, 451));
 
 		DEImage i = new DEImage();
-		i.setImage(ImageManager.getInstance().get("menuSettings/graphStd"));
+		i.setImage(ImageManager.getInstance().get(PAGE_NAME + "/graphStd"));
 
 		btn.setStdDrawElement(i);
 
 		i = new DEImage();
-		i.setImage(ImageManager.getInstance().get("menuSettings/graphPressed"));
+		i.setImage(ImageManager.getInstance().get(PAGE_NAME + "/graphPressed"));
 
 		btn.setPressedDrawElement(i);
 
@@ -209,12 +209,12 @@ public class MenuSettings implements MenuPage {
 		btn.setPos(new Point(1009, 451));
 
 		DEImage i = new DEImage();
-		i.setImage(ImageManager.getInstance().get("menuSettings/profileStd"));
+		i.setImage(ImageManager.getInstance().get(PAGE_NAME + "/profileStd"));
 
 		btn.setStdDrawElement(i);
 
 		i = new DEImage();
-		i.setImage(ImageManager.getInstance().get("menuSettings/profilePressed"));
+		i.setImage(ImageManager.getInstance().get(PAGE_NAME + "/profilePressed"));
 
 		btn.setPressedDrawElement(i);
 
@@ -229,7 +229,7 @@ public class MenuSettings implements MenuPage {
 		title.setPos(new Point(550, 76));
 
 		DEImage i = new DEImage();
-		i.setImage(ImageManager.getInstance().get("menuSettings/title"));
+		i.setImage(ImageManager.getInstance().get(PAGE_NAME + "/title"));
 
 		title.setDrawElement(i);
 

@@ -104,12 +104,12 @@ public class MenuGameSettings implements MenuPage {
 		btn.setPos(new Point(42, 42));
 
 		DEImage i = new DEImage();
-		i.setImage(ImageManager.getInstance().get("menuGameSettings/backStd"));
+		i.setImage(ImageManager.getInstance().get(PAGE_NAME + "/backStd"));
 
 		btn.setStdDrawElement(i);
 
 		i = new DEImage();
-		i.setImage(ImageManager.getInstance().get("menuGameSettings/backPressed"));
+		i.setImage(ImageManager.getInstance().get(PAGE_NAME + "/backPressed"));
 
 		btn.setPressedDrawElement(i);
 
@@ -123,7 +123,7 @@ public class MenuGameSettings implements MenuPage {
 
 		DEImage img = new DEImage();
 
-		img.setImage(ImageManager.getInstance().get("menuGameSettings/frame"));
+		img.setImage(ImageManager.getInstance().get(PAGE_NAME + "/frame"));
 
 		w.setDrawElement(img);
 		w.setPos(new Point(333, 337));
@@ -136,7 +136,7 @@ public class MenuGameSettings implements MenuPage {
 
 		DEImage img = new DEImage();
 
-		img.setImage(ImageManager.getInstance().get("menuGameSettings/itemFreq"));
+		img.setImage(ImageManager.getInstance().get(PAGE_NAME + "/itemFreq"));
 
 		w.setDrawElement(img);
 		w.setPos(new Point(738, 400));
@@ -186,7 +186,7 @@ public class MenuGameSettings implements MenuPage {
 		title.setPos(new Point(550, 76));
 
 		DEImage i = new DEImage();
-		i.setImage(ImageManager.getInstance().get("menuGameSettings/title"));
+		i.setImage(ImageManager.getInstance().get(PAGE_NAME + "/title"));
 
 		title.setDrawElement(i);
 

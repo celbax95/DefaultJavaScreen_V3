@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?><conf>
 	<!-- Window parameters -->
 
-	<param name="width" type="integer" value="1920"/>
-	<param name="height" type="integer" value="1080"/>
+	<param name="width" type="integer" value="1280"/>
+	<param name="height" type="integer" value="720"/>
 
 	<param name="marginTop" type="integer" value="0"/>
 	<param name="marginBottom" type="integer" value="0"/>
