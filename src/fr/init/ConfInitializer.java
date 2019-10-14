@@ -2,7 +2,7 @@ package fr.init;
 
 import fr.datafilesmanager.DatafilesManager;
 import fr.datafilesmanager.XMLManager;
-import fr.state.menu.MenuState;
+import fr.state.game.GameState;
 import fr.statepanel.AppStateManager;
 import fr.statepanel.StatePanel;
 import fr.util.point.Point;
@@ -94,9 +94,9 @@ public class ConfInitializer {
 		mainPanel.init(winData);
 
 		final AppStateManager stator = new AppStateManager();
-		stator.addState(new MenuState());
+		stator.addState(new GameState());
 		stator.setStatable(mainPanel);
-		stator.applyState("menu");
+		stator.applyState("game");
 
 		screen.init(mainPanel, winData);
 

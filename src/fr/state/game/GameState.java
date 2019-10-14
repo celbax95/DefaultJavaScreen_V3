@@ -30,7 +30,7 @@ public class GameState implements IAppState {
 
 	@Override
 	public String getName() {
-		return "menu";
+		return "game";
 	}
 
 	public StatePanel getStatePanel() {
