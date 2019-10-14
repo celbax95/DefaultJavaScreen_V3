@@ -10,16 +10,35 @@ public class Player {
 
 	private static final Color COLOR = Color.RED;
 
+	private static final int ACCEL = 10, MAX_SPEED = 300;
+
 	private Point pos, size;
+
+	private Point forces;
 
 	private Color color;
 
 	public Player() {
-
 		this.pos = new Point();
 		this.size = new Point();
+		this.forces = new Point();
 
 		this.color = COLOR;
+	}
+
+	private void applyForces() {
+
+		// speed
+		int tmpSpeed = (int) Math.round(this.forces.length());
+		if (tmpSpeed > MAX_SPEED) {
+			this.forces.mult((double) MAX_SPEED / tmpSpeed);
+		}
+
+		// move
+		this.pos.add(this.forces);
+
+		// reset
+		this.forces.set(0, 0);
 	}
 
 	public void draw(Graphics2D g) {
@@ -32,6 +51,20 @@ public class Player {
 	 */
 	public Color getColor() {
 		return this.color;
+	}
+
+	private Point getMoveFromInput(boolean up, boolean down, boolean left, boolean right) {
+		Point move = new Point(0, 0);
+
+		if (up ^ down) {
+			move.y(up ? -ACCEL : ACCEL);
+		}
+
+		if (left ^ right) {
+			move.x(left ? -ACCEL : ACCEL);
+		}
+
+		return move;
 	}
 
 	/**
@@ -70,6 +103,13 @@ public class Player {
 	}
 
 	public void update(Input input) {
-		System.out.println(input.keyboardEvents.get(0));
+		Point move = this.getMoveFromInput(input.keyboardKeys.get(90), input.keyboardKeys.get(83),
+				input.keyboardKeys.get(81), input.keyboardKeys.get(68));
+
+		move.mult(ACCEL);
+
+		this.forces.add(move);
+
+		this.applyForces();
 	}
 }

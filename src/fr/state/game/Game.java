@@ -15,6 +15,7 @@ public class Game {
 		this.gameState = gameState;
 		this.player = new Player();
 		this.player.setPos(new Point(200, 200));
+		this.player.setSize(new Point(200, 200));
 	}
 
 	public void draw(Graphics2D g) {
