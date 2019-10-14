@@ -15,6 +15,8 @@ public class GameState implements IAppState {
 
 	private Input input;
 
+	private GameLoop loop;
+
 	private final int GRAY = 40;
 
 	private final Color BACKGROUND = new Color(this.GRAY, this.GRAY, this.GRAY);
@@ -53,6 +55,9 @@ public class GameState implements IAppState {
 		this.sp.addKeyboardListener(this.input.getKeyboardMirrorListener());
 		this.sp.addMouseListener(this.input.getMouseEventListener());
 		this.sp.addMouseListener(this.input.getMouseMirrorListener());
+
+		this.loop = new GameLoop(this);
+		this.loop.start();
 	}
 
 	@Override
@@ -64,6 +69,8 @@ public class GameState implements IAppState {
 		this.game = null;
 		this.sp = null;
 		this.input = null;
+		this.loop.stop();
+		this.loop = null;
 	}
 
 	public void update() {
