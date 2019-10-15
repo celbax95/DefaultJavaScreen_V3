@@ -18,19 +18,23 @@ public class Game {
 		this.player.setSize(new Point(200, 200));
 	}
 
-	public void draw(Graphics2D g) {
-		this.player.draw(g);
+	public void draw(Graphics2D g, double dt) {
+		this.player.draw(g, dt);
 	}
 
 	public GameState getGameState() {
 		return this.gameState;
 	}
 
+	public void resetForces() {
+		this.player.resetForces();
+	}
+
 	public void setMenuState(GameState gameState) {
 		this.gameState = gameState;
 	}
 
-	public void update(Input input) {
-		this.player.update(input);
+	public void update(Input input, double dt) {
+		this.player.update(input, dt);
 	}
 }

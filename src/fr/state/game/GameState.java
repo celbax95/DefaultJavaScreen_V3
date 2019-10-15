@@ -22,8 +22,8 @@ public class GameState implements IAppState {
 	private final Color BACKGROUND = new Color(this.GRAY, this.GRAY, this.GRAY);
 
 	@Override
-	public void draw(Graphics2D g) {
-		this.game.draw(g);
+	public void draw(Graphics2D g, double dt) {
+		this.game.draw(g, dt);
 	}
 
 	public void getInput() {
@@ -73,7 +73,8 @@ public class GameState implements IAppState {
 		this.loop = null;
 	}
 
-	public void update() {
-		this.game.update(this.input);
+	public void update(double dt) {
+		this.game.resetForces();
+		this.game.update(this.input, dt);
 	}
 }

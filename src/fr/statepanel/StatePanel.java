@@ -29,11 +29,15 @@ public class StatePanel extends JPanel implements Statable {
 	// Etat
 	private IAppState state;
 
+	private double repaintDt;
+
 	public StatePanel(Window w) {
 		super();
 		assert w != null;
 		this.window = w;
 		this.winData = w.getWinData();
+
+		this.repaintDt = 0;
 
 		this.setSize(this.winData.getScreenSize().ix(), this.winData.getScreenSize().iy());
 		this.setBackground(Color.black);
@@ -101,7 +105,7 @@ public class StatePanel extends JPanel implements Statable {
 		g.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING, this.winData.getColorRendering());
 		g.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, this.winData.getAlphaInterpolation());
 
-		this.state.draw(g);
+		this.state.draw(g, this.repaintDt);
 	}
 
 	public void removeKeyboardListener(Keyboard listner) {
@@ -112,6 +116,10 @@ public class StatePanel extends JPanel implements Statable {
 		super.removeMouseListener(listner);
 		this.removeMouseMotionListener(listner);
 		this.removeMouseWheelListener(listner);
+	}
+
+	public void setDt(double dt) {
+		this.repaintDt = dt;
 	}
 
 	@Override

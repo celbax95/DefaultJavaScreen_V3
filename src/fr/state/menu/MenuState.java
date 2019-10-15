@@ -23,7 +23,7 @@ public class MenuState implements IAppState {
 	private final Color BACKGROUND = new Color(this.GRAY, this.GRAY, this.GRAY);
 
 	@Override
-	public void draw(Graphics2D g) {
+	public void draw(Graphics2D g, double dt) {
 		this.m.draw(g);
 	}
 

@@ -12,9 +12,10 @@ public interface IAppState {
 	/**
 	 * Methode appelee lors d'un repaint
 	 *
-	 * @param g : Objet servant a afficher
+	 * @param g         : Objet servant a afficher
+	 * @param repaintDt
 	 */
-	void draw(Graphics2D g);
+	void draw(Graphics2D g, double repaintDt);
 
 	/**
 	 * Recupere le nom de l'etat
