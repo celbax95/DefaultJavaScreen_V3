@@ -46,7 +46,7 @@ public class GameState implements IAppState {
 	public void start(StatePanel panel) {
 		this.sp = panel;
 
-		int[] playersID = new int[] { 0, };
+		int[] playersID = new int[] { 0, 1 };
 
 		InetAddress groupIP = null;
 		try {
@@ -69,6 +69,8 @@ public class GameState implements IAppState {
 		this.sp.addKeyboardListener(this.input.getKeyboardMirrorListener());
 		this.sp.addMouseListener(this.input.getMouseEventListener());
 		this.sp.addMouseListener(this.input.getMouseMirrorListener());
+
+		multiplayer.receive();
 
 		this.loop = new GameLoop(this);
 		this.loop.start();
