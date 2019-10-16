@@ -9,15 +9,15 @@ public class GameLoop implements Runnable {
 	}
 
 	private double fps;
+	private double updates;
 
 	private double dtFps;
-	private double accuFps;
-
-	private double accuUpdate;
-	private double updates;
-	private double lastUpdate;
-
 	private double dtUpdates;
+
+	private double accuFps;
+	private double accuUpdate;
+
+	private double lastUpdate;
 
 	double lastFrame;
 
@@ -26,8 +26,8 @@ public class GameLoop implements Runnable {
 	private GameState state;
 
 	public GameLoop(GameState state) {
-		this.fps = 120;
-		this.updates = 100;
+		this.fps = 60;
+		this.updates = 30;
 		this.dtFps = getDt(this.fps);
 		this.accuFps = 0;
 		this.dtUpdates = getDt(this.updates);
@@ -79,7 +79,7 @@ public class GameLoop implements Runnable {
 					}
 
 					if (this.accuFps > this.dtFps) {
-						this.state.getStatePanel().setDt(this.accuUpdate / this.dtFps);
+						this.state.getStatePanel().setDt(this.accuUpdate / this.dtUpdates);
 						this.state.getStatePanel().repaint();
 						this.accuFps -= this.dtFps;
 					}
