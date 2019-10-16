@@ -35,8 +35,6 @@ public class Server {
 
 	private Input input;
 
-	private Object syncInput;
-
 	public Server() {
 		this.player = new Player();
 
@@ -61,8 +59,6 @@ public class Server {
 		} catch (SocketException e) {
 		}
 
-		this.syncInput = new Object();
-
 		this.listen();
 		this.send();
 		this.gameLoop();
@@ -76,7 +72,7 @@ public class Server {
 				double elapsed = 0;
 				double lastFrame = System.currentTimeMillis();
 				double currentTime = System.currentTimeMillis();
-				double updates = 30;
+				double updates = 40;
 				double lastUpdate = System.currentTimeMillis();
 				double dtUpdates = 1000 / updates;
 
@@ -103,9 +99,7 @@ public class Server {
 						lastFrame = currentTime;
 
 						while (accuUpdate > dtUpdates) {
-							synchronized (Server.this.syncInput) {
-								Server.this.updateGame(Server.this.input, (currentTime - lastUpdate) / 1000);
-							}
+							Server.this.updateGame(Server.this.input, (currentTime - lastUpdate) / 1000);
 							accuUpdate -= dtUpdates;
 							lastUpdate = currentTime;
 						}
@@ -146,9 +140,7 @@ public class Server {
 	}
 
 	public void received(Object o) {
-		synchronized (this.syncInput) {
-			this.input = (Input) o;
-		}
+		this.input = (Input) o;
 	}
 
 	private void send() {
@@ -157,7 +149,7 @@ public class Server {
 			public void run() {
 				try {
 					while (!Thread.currentThread().isInterrupted()) {
-						Thread.sleep(1000);
+						Thread.sleep(1);
 
 						ByteArrayOutputStream bs = new ByteArrayOutputStream(8192);
 						ObjectOutputStream os = new ObjectOutputStream(bs);
@@ -170,9 +162,7 @@ public class Server {
 						DatagramPacket packet = new DatagramPacket(buffer, buffer.length, Server.this.ip,
 								Server.this.portS);
 
-						synchronized (Server.this.player) {
-							Server.this.dsS.send(packet);
-						}
+						Server.this.dsS.send(packet);
 
 						os.close();
 					}
@@ -193,8 +183,7 @@ public class Server {
 	private void updateGame(Input input, double dt) {
 		if (input == null)
 			return;
-		synchronized (this.player) {
-			this.player.update(input, dt);
-		}
+
+		this.player.update(input, dt);
 	}
 }

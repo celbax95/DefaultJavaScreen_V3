@@ -106,9 +106,7 @@ public class Game {
 
 	public void received(Object o) {
 		Player sPlayer = (Player) o;
-		synchronized (this.syncPlayer) {
-			this.player = sPlayer;
-		}
+		this.player = sPlayer;
 	}
 
 	public void resetForces() {
@@ -121,15 +119,13 @@ public class Game {
 			public void run() {
 				try {
 					while (true) {
-						Thread.sleep(1000 / 60);
+						Thread.sleep(1);
 
 						ByteArrayOutputStream bs = new ByteArrayOutputStream(16384);
 						ObjectOutputStream os = new ObjectOutputStream(bs);
 
 						os.flush();
-						synchronized (Game.this.syncLastInput) {
-							os.writeObject(Game.this.lastInput);
-						}
+						os.writeObject(Game.this.lastInput);
 						os.flush();
 
 						byte[] buffer = bs.toByteArray();
@@ -157,12 +153,8 @@ public class Game {
 	}
 
 	public void update(Input input, double dt) {
-		synchronized (this.syncLastInput) {
-			this.lastInput = input;
-		}
-		synchronized (this.syncPlayer) {
-			this.player.update(input, dt);
-		}
+		this.lastInput = input;
+		// this.player.update(input, dt);
 	}
 
 }

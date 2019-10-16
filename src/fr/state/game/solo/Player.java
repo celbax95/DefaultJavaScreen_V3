@@ -21,10 +21,13 @@ public class Player implements Serializable {
 
 	private Color color;
 
+	private Point lastForces;
+
 	public Player() {
 		this.pos = new Point();
 		this.size = new Point();
 		this.forces = new Point();
+		this.lastForces = new Point();
 
 		this.color = COLOR;
 	}
@@ -57,6 +60,10 @@ public class Player implements Serializable {
 		return this.color;
 	}
 
+	private Point getLastForces() {
+		return this.lastForces;
+	}
+
 	private Point getMoveFromInput(boolean up, boolean down, boolean left, boolean right) {
 		Point move = new Point(0, 0);
 
@@ -86,6 +93,7 @@ public class Player implements Serializable {
 	}
 
 	public void resetForces() {
+		this.lastForces = this.forces.clone();
 		this.forces.set(0, 0);
 	}
 
@@ -94,6 +102,10 @@ public class Player implements Serializable {
 	 */
 	public void setColor(Color color) {
 		this.color = color;
+	}
+
+	private void setLastForces(Point lastForces) {
+		this.lastForces = lastForces;
 	}
 
 	/**
