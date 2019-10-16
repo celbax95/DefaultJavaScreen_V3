@@ -1,12 +1,15 @@
-package fr.state.game;
+package fr.state.game.solo;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.io.Serializable;
 
 import fr.inputs.Input;
 import fr.util.point.Point;
 
-public class Player {
+public class Player implements Serializable {
+
+	private static final long serialVersionUID = 1L;
 
 	private static final Color COLOR = Color.RED;
 
@@ -35,7 +38,7 @@ public class Player {
 		}
 
 		// move
-		this.pos.add(this.forces.clone().mult(dt));
+		this.pos.add(this.forces.mult(dt));
 
 		// reset
 		// this.forces.set(0, 0);

@@ -1,6 +1,5 @@
-package fr.state.game;
+package fr.state.game.server;
 
-import java.awt.Graphics2D;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
@@ -11,15 +10,10 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 
-import fr.inputs.Input;
 import fr.state.game.solo.Player;
 import fr.util.point.Point;
 
-public class Game {
-
-	private GameState gameState;
-
-	private Player player;
+public class Server {
 
 	private InetAddress ip;
 	private int portR;
@@ -34,19 +28,21 @@ public class Game {
 
 	private Thread ts;
 
-	public Game(GameState gameState) {
-		this.gameState = gameState;
+	private Player player;
+
+	public Server() {
 		this.player = new Player();
+
 		this.player.setPos(new Point(200, 200));
 		this.player.setSize(new Point(200, 200));
 
 		try {
 			this.ip = InetAddress.getLocalHost();
-		} catch (UnknownHostException e1) {
+		} catch (UnknownHostException e) {
 		}
 
-		this.portR = 10001;
-		this.portS = 10000;
+		this.portR = 10000;
+		this.portS = 10001;
 
 		this.tr = null;
 		this.ts = null;
@@ -55,19 +51,10 @@ public class Game {
 			this.dsR = new DatagramSocket(this.portR);
 			this.dsS = new DatagramSocket();
 		} catch (SocketException e) {
-			e.printStackTrace();
 		}
 
 		this.listen();
 		this.send();
-	}
-
-	public void draw(Graphics2D g, double dt) {
-		this.player.draw(g, dt);
-	}
-
-	public GameState getGameState() {
-		return this.gameState;
 	}
 
 	private void listen() {
@@ -80,7 +67,7 @@ public class Game {
 						byte[] buffer = new byte[8192];
 						DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
 
-						Game.this.dsR.receive(packet);
+						Server.this.dsR.receive(packet);
 
 						ByteArrayInputStream bs = new ByteArrayInputStream(buffer);
 						ObjectInputStream is = new ObjectInputStream(bs);
@@ -88,7 +75,7 @@ public class Game {
 						Object object = is.readObject();
 						is.close();
 
-						Game.this.received(object);
+						Server.this.received(object);
 					}
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -98,11 +85,7 @@ public class Game {
 	}
 
 	public void received(Object o) {
-		System.out.println("Objet Recu game");
-	}
-
-	public void resetForces() {
-		this.player.resetForces();
+		System.out.println("Objet Recu server");
 	}
 
 	private void send() {
@@ -115,14 +98,14 @@ public class Game {
 						ObjectOutputStream os = new ObjectOutputStream(bs);
 
 						os.flush();
-						os.writeObject(Game.this.player);
+						os.writeObject(Server.this.player);
 						os.flush();
 
 						byte[] buffer = bs.toByteArray();
-						DatagramPacket packet = new DatagramPacket(buffer, buffer.length, Game.this.ip,
-								Game.this.portS);
+						DatagramPacket packet = new DatagramPacket(buffer, buffer.length, Server.this.ip,
+								Server.this.portS);
 
-						Game.this.dsS.send(packet);
+						Server.this.dsS.send(packet);
 						os.close();
 					}
 
@@ -133,17 +116,8 @@ public class Game {
 		});
 	}
 
-	public void setMenuState(GameState gameState) {
-		this.gameState = gameState;
-	}
-
 	public void start() {
 		this.tr.start();
 		this.ts.start();
 	}
-
-	public void update(Input input, double dt) {
-		this.player.update(input, dt);
-	}
-
 }

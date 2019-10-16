@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 
 import fr.inputs.Input;
+import fr.state.game.server.Server;
 import fr.statepanel.IAppState;
 import fr.statepanel.StatePanel;
 
@@ -43,6 +44,16 @@ public class GameState implements IAppState {
 	public void start(StatePanel panel) {
 		this.sp = panel;
 
+		int which = 0;
+
+		Server s = null;
+
+		// server
+		if (which == 0) {
+			s = new Server();
+			s.start();
+		}
+
 		this.game = new Game(this);
 
 		// ImageManager.getInstance().removeAll();
@@ -58,6 +69,8 @@ public class GameState implements IAppState {
 
 		this.loop = new GameLoop(this);
 		this.loop.start();
+
+		this.game.start();
 	}
 
 	@Override
