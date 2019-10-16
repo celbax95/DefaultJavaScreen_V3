@@ -3,23 +3,33 @@ package fr.window;
 import java.awt.Dimension;
 import java.awt.RenderingHints;
 import java.awt.Toolkit;
+import java.io.Serializable;
 
 import fr.util.point.Point;
 
-public class WinData {
+public class WinData implements Serializable {
 
-	private static final Object[] antialiasingValues = { RenderingHints.VALUE_ANTIALIAS_OFF,
-			RenderingHints.VALUE_INTERPOLATION_BICUBIC, RenderingHints.VALUE_INTERPOLATION_BILINEAR,
+	private static final long serialVersionUID = 1L;
+
+	private static final Object[] antialiasingValues = {
+			RenderingHints.VALUE_ANTIALIAS_OFF,
+			RenderingHints.VALUE_INTERPOLATION_BICUBIC,
+			RenderingHints.VALUE_INTERPOLATION_BILINEAR,
 			RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR };
 
-	private static final Object[] renderingValues = { RenderingHints.VALUE_RENDER_DEFAULT,
-			RenderingHints.VALUE_RENDER_SPEED, RenderingHints.VALUE_RENDER_QUALITY };
+	private static final Object[] renderingValues = {
+			RenderingHints.VALUE_RENDER_DEFAULT,
+			RenderingHints.VALUE_RENDER_SPEED,
+			RenderingHints.VALUE_RENDER_QUALITY };
 
-	private static final Object[] colorRenderingValues = { RenderingHints.VALUE_COLOR_RENDER_DEFAULT,
-			RenderingHints.VALUE_COLOR_RENDER_SPEED, RenderingHints.VALUE_COLOR_RENDER_QUALITY };
+	private static final Object[] colorRenderingValues = {
+			RenderingHints.VALUE_COLOR_RENDER_DEFAULT,
+			RenderingHints.VALUE_COLOR_RENDER_SPEED,
+			RenderingHints.VALUE_COLOR_RENDER_QUALITY };
 
 	private static final Object[] alphaInterpolationValues = {
-			RenderingHints.VALUE_ALPHA_INTERPOLATION_DEFAULT, RenderingHints.VALUE_ALPHA_INTERPOLATION_SPEED,
+			RenderingHints.VALUE_ALPHA_INTERPOLATION_DEFAULT,
+			RenderingHints.VALUE_ALPHA_INTERPOLATION_SPEED,
 			RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY };
 
 	private static final Point defaultWindowSize = new Point(1920, 1080);

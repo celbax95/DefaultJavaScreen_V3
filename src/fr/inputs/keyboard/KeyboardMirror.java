@@ -1,13 +1,16 @@
 package fr.inputs.keyboard;
 
 import java.awt.event.KeyEvent;
+import java.io.Serializable;
 import java.util.List;
 import java.util.Vector;
 
 /**
  * Clavier
  */
-public class KeyboardMirror implements Keyboard {
+public class KeyboardMirror implements Keyboard, Serializable {
+
+	private static final long serialVersionUID = 1L;
 
 	public static final int KEYCODE_AMOUNT = 525;
 

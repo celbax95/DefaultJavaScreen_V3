@@ -1,13 +1,16 @@
 package fr.inputs.keyboard;
 
 import java.awt.event.KeyEvent;
+import java.io.Serializable;
 import java.util.List;
 import java.util.Vector;
 
 /**
  * Clavier
  */
-public class KeyboardEventList implements Keyboard {
+public class KeyboardEventList implements Keyboard, Serializable {
+
+	private static final long serialVersionUID = 1L;
 
 	private List<KeyboardEvent> events;
 

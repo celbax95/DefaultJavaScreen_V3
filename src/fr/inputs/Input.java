@@ -1,5 +1,6 @@
 package fr.inputs;
 
+import java.io.Serializable;
 import java.util.List;
 
 import fr.inputs.keyboard.Keyboard;
@@ -13,7 +14,9 @@ import fr.inputs.mouse.MouseMirror;
 import fr.util.point.Point;
 import fr.window.WinData;
 
-public class Input {
+public class Input implements Serializable {
+
+	private static final long serialVersionUID = 1L;
 
 	public static final int MOUSE_LEFT = MouseMirror.LEFT;
 	public static final int MOUSE_MIDDLE = MouseMirror.MIDDLE;

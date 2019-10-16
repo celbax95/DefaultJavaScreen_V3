@@ -34,11 +34,18 @@ public class Game {
 
 	private Thread ts;
 
+	private Input lastInput;
+
+	private Object syncLastInput;
+	private Object syncPlayer;
+
 	public Game(GameState gameState) {
 		this.gameState = gameState;
 		this.player = new Player();
 		this.player.setPos(new Point(200, 200));
 		this.player.setSize(new Point(200, 200));
+		this.syncLastInput = new Object();
+		this.syncPlayer = new Object();
 
 		try {
 			this.ip = InetAddress.getLocalHost();
@@ -98,7 +105,10 @@ public class Game {
 	}
 
 	public void received(Object o) {
-		System.out.println("Objet Recu game");
+		Player sPlayer = (Player) o;
+		synchronized (this.syncPlayer) {
+			this.player = sPlayer;
+		}
 	}
 
 	public void resetForces() {
@@ -111,11 +121,15 @@ public class Game {
 			public void run() {
 				try {
 					while (true) {
-						ByteArrayOutputStream bs = new ByteArrayOutputStream(8192);
+						Thread.sleep(1000 / 60);
+
+						ByteArrayOutputStream bs = new ByteArrayOutputStream(16384);
 						ObjectOutputStream os = new ObjectOutputStream(bs);
 
 						os.flush();
-						os.writeObject(Game.this.player);
+						synchronized (Game.this.syncLastInput) {
+							os.writeObject(Game.this.lastInput);
+						}
 						os.flush();
 
 						byte[] buffer = bs.toByteArray();
@@ -143,7 +157,12 @@ public class Game {
 	}
 
 	public void update(Input input, double dt) {
-		this.player.update(input, dt);
+		synchronized (this.syncLastInput) {
+			this.lastInput = input;
+		}
+		synchronized (this.syncPlayer) {
+			this.player.update(input, dt);
+		}
 	}
 
 }

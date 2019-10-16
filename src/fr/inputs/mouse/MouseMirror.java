@@ -1,6 +1,7 @@
 package fr.inputs.mouse;
 
 import java.awt.event.MouseWheelEvent;
+import java.io.Serializable;
 import java.util.List;
 import java.util.Vector;
 
@@ -12,7 +13,9 @@ import fr.window.WinData;
  *
  * @author Loic.MACE
  */
-public class MouseMirror implements Mouse {
+public class MouseMirror implements Mouse, Serializable {
+
+	private static final long serialVersionUID = 1L;
 
 	public static final int BUTTONS_AMOUNT = 3;
 

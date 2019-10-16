@@ -1,6 +1,7 @@
 package fr.inputs.mouse;
 
 import java.awt.event.MouseWheelEvent;
+import java.io.Serializable;
 import java.util.List;
 import java.util.Vector;
 
@@ -12,7 +13,9 @@ import fr.window.WinData;
  *
  * @author Loic.MACE
  */
-public class MouseEventList implements Mouse {
+public class MouseEventList implements Mouse, Serializable {
+
+	private static final long serialVersionUID = 1L;
 
 	private Point pos;
 

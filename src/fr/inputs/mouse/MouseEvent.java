@@ -1,8 +1,13 @@
 package fr.inputs.mouse;
 
+import java.io.Serializable;
+
 import fr.util.point.Point;
 
-public class MouseEvent {
+public class MouseEvent implements Serializable {
+
+	private static final long serialVersionUID = 1L;
+
 	public static final int LEFT_PRESSED = 0;
 	public static final int LEFT_RELEASED = 1;
 	public static final int MIDDLE_PRESSED = 2;

@@ -10,6 +10,7 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 
+import fr.inputs.Input;
 import fr.state.game.solo.Player;
 import fr.util.point.Point;
 
@@ -28,7 +29,13 @@ public class Server {
 
 	private Thread ts;
 
+	private Thread tl;
+
 	private Player player;
+
+	private Input input;
+
+	private Object syncInput;
 
 	public Server() {
 		this.player = new Player();
@@ -46,6 +53,7 @@ public class Server {
 
 		this.tr = null;
 		this.ts = null;
+		this.tl = null;
 
 		try {
 			this.dsR = new DatagramSocket(this.portR);
@@ -53,8 +61,61 @@ public class Server {
 		} catch (SocketException e) {
 		}
 
+		this.syncInput = new Object();
+
 		this.listen();
 		this.send();
+		this.gameLoop();
+	}
+
+	public void gameLoop() {
+		this.tl = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				final double MS_TO_SLEEP = 2;
+				double elapsed = 0;
+				double lastFrame = System.currentTimeMillis();
+				double currentTime = System.currentTimeMillis();
+				double updates = 30;
+				double lastUpdate = System.currentTimeMillis();
+				double dtUpdates = 1000 / updates;
+
+				double accuUpdate = 0;
+
+				while (!Thread.currentThread().isInterrupted()) {
+					try {
+						// init
+						currentTime = System.currentTimeMillis();
+
+						elapsed = currentTime - lastFrame;
+
+						accuUpdate += elapsed;
+
+						if (accuUpdate < dtUpdates) {
+							long sleepTime = (long) Math.floor(dtUpdates - accuUpdate);
+
+							if (sleepTime > MS_TO_SLEEP) {
+								Thread.sleep(sleepTime);
+								continue;
+							}
+						}
+
+						lastFrame = currentTime;
+
+						while (accuUpdate > dtUpdates) {
+							synchronized (Server.this.syncInput) {
+								Server.this.updateGame(Server.this.input, (currentTime - lastUpdate) / 1000);
+							}
+							accuUpdate -= dtUpdates;
+							lastUpdate = currentTime;
+						}
+
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		});
 	}
 
 	private void listen() {
@@ -62,9 +123,9 @@ public class Server {
 			@Override
 			public void run() {
 				try {
-					while (true) {
+					while (!Thread.currentThread().isInterrupted()) {
 
-						byte[] buffer = new byte[8192];
+						byte[] buffer = new byte[16384];
 						DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
 
 						Server.this.dsR.receive(packet);
@@ -85,7 +146,9 @@ public class Server {
 	}
 
 	public void received(Object o) {
-		System.out.println("Objet Recu server");
+		synchronized (this.syncInput) {
+			this.input = (Input) o;
+		}
 	}
 
 	private void send() {
@@ -93,7 +156,9 @@ public class Server {
 			@Override
 			public void run() {
 				try {
-					while (true) {
+					while (!Thread.currentThread().isInterrupted()) {
+						Thread.sleep(1000);
+
 						ByteArrayOutputStream bs = new ByteArrayOutputStream(8192);
 						ObjectOutputStream os = new ObjectOutputStream(bs);
 
@@ -105,7 +170,10 @@ public class Server {
 						DatagramPacket packet = new DatagramPacket(buffer, buffer.length, Server.this.ip,
 								Server.this.portS);
 
-						Server.this.dsS.send(packet);
+						synchronized (Server.this.player) {
+							Server.this.dsS.send(packet);
+						}
+
 						os.close();
 					}
 
@@ -119,5 +187,14 @@ public class Server {
 	public void start() {
 		this.tr.start();
 		this.ts.start();
+		this.tl.start();
+	}
+
+	private void updateGame(Input input, double dt) {
+		if (input == null)
+			return;
+		synchronized (this.player) {
+			this.player.update(input, dt);
+		}
 	}
 }
