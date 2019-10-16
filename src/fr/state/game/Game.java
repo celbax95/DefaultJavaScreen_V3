@@ -48,7 +48,7 @@ public class Game {
 		this.syncPlayer = new Object();
 
 		try {
-			this.ip = InetAddress.getLocalHost();
+			this.ip = InetAddress.getByName("192.168.43.220");
 		} catch (UnknownHostException e1) {
 		}
 

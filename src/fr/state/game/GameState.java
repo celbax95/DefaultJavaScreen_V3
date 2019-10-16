@@ -44,12 +44,12 @@ public class GameState implements IAppState {
 	public void start(StatePanel panel) {
 		this.sp = panel;
 
-		int which = 0;
+		int which = 1;
 
 		Server s = null;
 
 		// server
-		if (which == 0) {
+		if (which == 0 || which == 1) {
 			s = new Server();
 			s.start();
 		}
@@ -70,7 +70,9 @@ public class GameState implements IAppState {
 		this.loop = new GameLoop(this);
 		this.loop.start();
 
-		this.game.start();
+		if (which == 0 || which == 2) {
+			this.game.start();
+		}
 	}
 
 	@Override
