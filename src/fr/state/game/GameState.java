@@ -2,9 +2,11 @@ package fr.state.game;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 import fr.inputs.Input;
-import fr.state.game.server.Server;
+import fr.state.game.server.Multiplayer;
 import fr.statepanel.IAppState;
 import fr.statepanel.StatePanel;
 
@@ -44,17 +46,18 @@ public class GameState implements IAppState {
 	public void start(StatePanel panel) {
 		this.sp = panel;
 
-		int which = 1;
+		int[] playersID = new int[] { 0, };
 
-		Server s = null;
-
-		// server
-		if (which == 0 || which == 1) {
-			s = new Server();
-			s.start();
+		InetAddress groupIP = null;
+		try {
+			groupIP = InetAddress.getByName("230.0.0.0");
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
 		}
+		Multiplayer multiplayer = new Multiplayer(groupIP, 10000, playersID);
 
-		this.game = new Game(this);
+		this.game = new Game(this, multiplayer, 0, playersID);
+		multiplayer.setPDataProcessor(this.game);
 
 		// ImageManager.getInstance().removeAll();
 
@@ -69,10 +72,6 @@ public class GameState implements IAppState {
 
 		this.loop = new GameLoop(this);
 		this.loop.start();
-
-		if (which == 0 || which == 2) {
-			this.game.start();
-		}
 	}
 
 	@Override

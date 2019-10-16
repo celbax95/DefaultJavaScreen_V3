@@ -2,134 +2,44 @@ package fr.state.game.solo;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.io.Serializable;
 
 import fr.inputs.Input;
 import fr.util.point.Point;
 
-public class Player implements Serializable {
+public interface Player {
 
-	private static final long serialVersionUID = 1L;
-
-	private static final Color COLOR = Color.RED;
-
-	private static final int ACCEL = 100, MAX_SPEED = 1000;
-
-	private Point pos, size;
-
-	private Point forces;
-
-	private Color color;
-
-	private Point lastForces;
-
-	public Player() {
-		this.pos = new Point();
-		this.size = new Point();
-		this.forces = new Point();
-		this.lastForces = new Point();
-
-		this.color = COLOR;
-	}
-
-	private void applyForces(double dt) {
-
-		// speed
-		int tmpSpeed = (int) Math.round(this.forces.length());
-		if (tmpSpeed > MAX_SPEED) {
-			this.forces.mult((double) MAX_SPEED / tmpSpeed);
-		}
-
-		// move
-		this.pos.add(this.forces.mult(dt));
-
-		// reset
-		// this.forces.set(0, 0);
-	}
-
-	public void draw(Graphics2D g, double dt) {
-		g.setColor(this.color);
-		Point dtPos = this.forces.clone().mult(dt).add(this.pos);
-		g.fillRect(dtPos.ix(), dtPos.iy(), this.size.ix(), this.size.iy());
-	}
+	void draw(Graphics2D g, double dt);
 
 	/**
 	 * @return the color
 	 */
-	public Color getColor() {
-		return this.color;
-	}
-
-	private Point getLastForces() {
-		return this.lastForces;
-	}
-
-	private Point getMoveFromInput(boolean up, boolean down, boolean left, boolean right) {
-		Point move = new Point(0, 0);
-
-		if (up ^ down) {
-			move.y(up ? -ACCEL : ACCEL);
-		}
-
-		if (left ^ right) {
-			move.x(left ? -ACCEL : ACCEL);
-		}
-
-		return move;
-	}
+	Color getColor();
 
 	/**
 	 * @return the pos
 	 */
-	public Point getPos() {
-		return this.pos;
-	}
+	Point getPos();
 
 	/**
 	 * @return the size
 	 */
-	public Point getSize() {
-		return this.size;
-	}
-
-	public void resetForces() {
-		this.lastForces = this.forces.clone();
-		this.forces.set(0, 0);
-	}
+	Point getSize();
 
 	/**
 	 * @param color the color to set
 	 */
-	public void setColor(Color color) {
-		this.color = color;
-	}
-
-	private void setLastForces(Point lastForces) {
-		this.lastForces = lastForces;
-	}
+	void setColor(Color color);
 
 	/**
 	 * @param pos the pos to set
 	 */
-	public void setPos(Point pos) {
-		this.pos = pos;
-	}
+	void setPos(Point pos);
 
 	/**
 	 * @param size the size to set
 	 */
-	public void setSize(Point size) {
-		this.size = size;
-	}
+	void setSize(Point size);
 
-	public void update(Input input, double dt) {
-		Point move = this.getMoveFromInput(input.keyboardKeys.get(90), input.keyboardKeys.get(83),
-				input.keyboardKeys.get(81), input.keyboardKeys.get(68));
+	void update(Input input, double dt);
 
-		move.mult(ACCEL);
-
-		this.forces.add(move);
-
-		this.applyForces(dt);
-	}
 }
