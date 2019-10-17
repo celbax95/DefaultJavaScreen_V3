@@ -14,7 +14,7 @@ public class PData implements Serializable {
 
 	private OP opId;
 
-	private int playerId;
+	private char playerId;
 
 	private boolean needConfirm;
 
@@ -24,7 +24,7 @@ public class PData implements Serializable {
 		super();
 		this.id = id;
 		this.opId = opId;
-		this.playerId = playerId;
+		this.playerId = (char) playerId;
 		this.needConfirm = needConfirm;
 		this.data = data;
 	}
@@ -65,7 +65,7 @@ public class PData implements Serializable {
 		this.opId = opId;
 	}
 
-	public void setPlayerId(int playerId) {
+	public void setPlayerId(char playerId) {
 		this.playerId = playerId;
 	}
 }

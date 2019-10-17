@@ -25,6 +25,8 @@ public interface Player {
 	 */
 	Point getSize();
 
+	void resetForces();
+
 	/**
 	 * @param color the color to set
 	 */

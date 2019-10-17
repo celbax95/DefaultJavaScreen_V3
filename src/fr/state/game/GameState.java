@@ -46,6 +46,8 @@ public class GameState implements IAppState {
 	public void start(StatePanel panel) {
 		this.sp = panel;
 
+		int myID = 1;
+
 		int[] playersID = new int[] { 0, 1 };
 
 		InetAddress groupIP = null;
@@ -56,7 +58,7 @@ public class GameState implements IAppState {
 		}
 		Multiplayer multiplayer = new Multiplayer(groupIP, 10000, playersID);
 
-		this.game = new Game(this, multiplayer, 0, playersID);
+		this.game = new Game(this, multiplayer, myID, playersID);
 		multiplayer.setPDataProcessor(this.game);
 
 		// ImageManager.getInstance().removeAll();

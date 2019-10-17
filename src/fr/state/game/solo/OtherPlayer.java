@@ -92,6 +92,11 @@ public class OtherPlayer implements Serializable, Player {
 		return this.size;
 	}
 
+	@Override
+	public void resetForces() {
+		this.forces.set(0, 0);
+	}
+
 	/*
 	 * (non-Javadoc)
 	 *

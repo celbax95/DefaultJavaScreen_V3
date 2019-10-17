@@ -40,6 +40,9 @@ public class MyPlayer implements Serializable, Player {
 
 	private void applyForces(double dt) {
 
+		if (this.forces.x == 0 && this.forces.y == 0)
+			return;
+
 		// speed
 		int tmpSpeed = (int) Math.round(this.forces.length());
 		if (tmpSpeed > MAX_SPEED) {
@@ -47,7 +50,7 @@ public class MyPlayer implements Serializable, Player {
 		}
 
 		// move
-		this.pos.add(this.forces.mult(dt));
+		this.setPos(this.pos.add(this.forces.mult(dt)));
 
 		// reset
 		// this.forces.set(0, 0);
@@ -109,6 +112,7 @@ public class MyPlayer implements Serializable, Player {
 		return this.size;
 	}
 
+	@Override
 	public void resetForces() {
 		this.forces.set(0, 0);
 	}

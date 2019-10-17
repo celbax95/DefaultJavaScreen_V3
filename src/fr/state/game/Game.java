@@ -34,6 +34,8 @@ public class Game implements PDataProcessor {
 
 	private int playerID;
 
+	private Player myPlayer;
+
 	public Game(GameState gameState, Multiplayer multiplayer, int playerID, int[] playerIDs) {
 		this.gameState = gameState;
 
@@ -45,9 +47,9 @@ public class Game implements PDataProcessor {
 
 		this.players = new HashMap<>();
 
-		MyPlayer player = new MyPlayer(playerID, this.multiplayer);
-		player.setPos(new Point(200, 200));
-		player.setSize(new Point(200, 200));
+		this.myPlayer = new MyPlayer(playerID, this.multiplayer);
+		this.myPlayer.setPos(new Point(200, 200));
+		this.myPlayer.setSize(new Point(200, 200));
 
 		for (int id : playerIDs) {
 			if (id == playerID) {
@@ -58,7 +60,7 @@ public class Game implements PDataProcessor {
 			this.players.put(id, p);
 		}
 
-		this.players.put(playerID, player);
+		this.players.put(playerID, this.myPlayer);
 
 		this.players.get(playerID).setPos(new Point(200, 200));
 		this.players.get(playerID).setSize(new Point(200, 200));
@@ -140,7 +142,7 @@ public class Game implements PDataProcessor {
 	}
 
 	public void resetForces() {
-
+		this.myPlayer.resetForces();
 	}
 
 	public void setMenuState(GameState gameState) {
@@ -161,6 +163,6 @@ public class Game implements PDataProcessor {
 			this.processPData(data);
 		}
 
-		this.players.get(this.playerID).update(input, dt);
+		this.myPlayer.update(input, dt);
 	}
 }

@@ -13,7 +13,7 @@ public class PDataFactory {
 	}
 
 	public PData createMove(int playerId, Point pos) {
-		return new PData(this.getPDataId(), PData.OP.MOVE, playerId, false, null);
+		return new PData(this.getPDataId(), PData.OP.MOVE, playerId, false, new Object[] { pos.ix(), pos.iy() });
 	}
 
 	private int getPDataId() {

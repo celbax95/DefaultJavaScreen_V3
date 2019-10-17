@@ -12,7 +12,7 @@ import java.util.Map;
 
 public class Multiplayer {
 
-	private static final int BYTE_AMOUNT = (int) Math.pow(2, 8);
+	private static final int BYTE_AMOUNT = (int) Math.pow(2, 10);
 
 	private MulticastSocket socket;
 
@@ -130,6 +130,8 @@ public class Multiplayer {
 			if (data.isNeedConfirm()) {
 				this.needConfirm.put(data.getId(), new Confirmer(data.getId(), this, packet, this.receivers));
 			}
+
+			System.out.println(buffer.length);
 
 			this.socket.send(packet);
 
