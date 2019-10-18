@@ -149,12 +149,12 @@ public class MenuProfile implements MenuPage {
 		btn.setPos(new Point(42, 42));
 
 		DEImage i = new DEImage();
-		i.setImage(ImageManager.getInstance().get("menuSettings/backStd"));
+		i.setImage(ImageManager.getInstance().get(PAGE_NAME + "/backStd"));
 
 		btn.setStdDrawElement(i);
 
 		i = new DEImage();
-		i.setImage(ImageManager.getInstance().get("menuSettings/backPressed"));
+		i.setImage(ImageManager.getInstance().get(PAGE_NAME + "/backPressed"));
 
 		btn.setPressedDrawElement(i);
 
@@ -289,7 +289,7 @@ public class MenuProfile implements MenuPage {
 		WElement w = new WElement(this);
 
 		DEImage img = new DEImage();
-		img.setImage(ImageManager.getInstance().get("menuProfile/colorSelect"));
+		img.setImage(ImageManager.getInstance().get(PAGE_NAME + "/colorSelect"));
 
 		w.setDrawElement(img);
 
@@ -303,7 +303,7 @@ public class MenuProfile implements MenuPage {
 
 		DEImage img = new DEImage();
 
-		img.setImage(ImageManager.getInstance().get("menuProfile/frame"));
+		img.setImage(ImageManager.getInstance().get(PAGE_NAME + "/frame"));
 
 		w.setDrawElement(img);
 		w.setPos(new Point(333, 337));
@@ -317,7 +317,7 @@ public class MenuProfile implements MenuPage {
 		title.setPos(new Point(550, 76));
 
 		DEImage i = new DEImage();
-		i.setImage(ImageManager.getInstance().get("menuProfile/title"));
+		i.setImage(ImageManager.getInstance().get(PAGE_NAME + "/title"));
 
 		title.setDrawElement(i);
 
@@ -337,9 +337,9 @@ public class MenuProfile implements MenuPage {
 		ImageManager im = ImageManager.getInstance();
 
 		DEImage std = new DEImage();
-		std.setImage(im.get("menuProfile/usernameInputStd"));
+		std.setImage(im.get(PAGE_NAME + "/usernameInputStd"));
 		DEImage sel = new DEImage();
-		sel.setImage(im.get("menuProfile/usernameInputSel"));
+		sel.setImage(im.get(PAGE_NAME + "/usernameInputSel"));
 
 		u.setStdDrawElement(std);
 

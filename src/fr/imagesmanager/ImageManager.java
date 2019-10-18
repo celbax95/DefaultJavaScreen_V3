@@ -2,9 +2,7 @@ package fr.imagesmanager;
 
 import java.awt.Image;
 import java.io.File;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.file.Paths;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -43,20 +41,30 @@ public class ImageManager {
 	}
 
 	public void add(String name, String path) {
-		URL url = this.getClass().getResource(path);
+		File file = new File(path.substring(1));
 
-		File file = null;
-		try {
-			file = Paths.get(url.toURI()).toFile();
-		} catch (URISyntaxException e) {
-		}
-
+		// On regarde si un fichier d'image externe existe
 		if (file != null && file.exists()) {
-			// Ajout
-			this.images.put(name, new ImageIcon(url).getImage());
+			// Si il existe on prend l'image depuis celui-ci
+			this.images.put(name, new ImageIcon(file.getAbsolutePath()).getImage());
 		} else {
-			System.err.println("Ajout de l'image impossible :\n\tL'image \"" + url
-					+ "\" n'existe pas ou n'est pas un fichier .xml");
+			// Si il n'existe pas on prend l'image par defaut
+			InputStream is = this.getClass().getResourceAsStream(path);
+
+			byte[] img = null;
+			try {
+				img = is.readAllBytes();
+			} catch (Exception e) {
+				// e.printStackTrace();
+			}
+
+			if (img != null) {
+				// Ajout
+				this.images.put(name, new ImageIcon(img).getImage());
+			} else {
+				System.err.println("Ajout de l'image impossible :\n\tL'image \"" + path
+						+ "\" n'existe pas ou n'est pas un fichier .xml");
+			}
 		}
 	}
 

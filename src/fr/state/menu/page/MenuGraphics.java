@@ -189,9 +189,9 @@ public class MenuGraphics implements MenuPage {
 		ImageManager im = ImageManager.getInstance();
 
 		DEImage std = new DEImage();
-		std.setImage(im.get("menuGraphics/1280Std"));
+		std.setImage(im.get(PAGE_NAME + "/1280Std"));
 		DEImage sel = new DEImage();
-		sel.setImage(im.get("menuGraphics/1280Sel"));
+		sel.setImage(im.get(PAGE_NAME + "/1280Sel"));
 
 		b.setStdDrawElement(std);
 		b.setPressedDrawElement(sel);
@@ -251,9 +251,9 @@ public class MenuGraphics implements MenuPage {
 		ImageManager im = ImageManager.getInstance();
 
 		DEImage std = new DEImage();
-		std.setImage(im.get("menuGraphics/1600Std"));
+		std.setImage(im.get(PAGE_NAME + "/1600Std"));
 		DEImage sel = new DEImage();
-		sel.setImage(im.get("menuGraphics/1600Sel"));
+		sel.setImage(im.get(PAGE_NAME + "/1600Sel"));
 
 		b.setStdDrawElement(std);
 		b.setPressedDrawElement(sel);
@@ -309,12 +309,12 @@ public class MenuGraphics implements MenuPage {
 		ImageManager im = ImageManager.getInstance();
 
 		DEImage i = new DEImage();
-		i.setImage(im.get("menuGraphics/backStd"));
+		i.setImage(im.get(PAGE_NAME + "/backStd"));
 
 		btn.setStdDrawElement(i);
 
 		i = new DEImage();
-		i.setImage(im.get("menuGraphics/backPressed"));
+		i.setImage(im.get(PAGE_NAME + "/backPressed"));
 
 		btn.setPressedDrawElement(i);
 
@@ -329,7 +329,7 @@ public class MenuGraphics implements MenuPage {
 
 		DEImage img = new DEImage();
 
-		img.setImage(ImageManager.getInstance().get("menuGraphics/frame"));
+		img.setImage(ImageManager.getInstance().get(PAGE_NAME + "/frame"));
 
 		w.setDrawElement(img);
 		w.setPos(new Point(333, 337));
@@ -350,9 +350,9 @@ public class MenuGraphics implements MenuPage {
 		ImageManager im = ImageManager.getInstance();
 
 		DEImage std = new DEImage();
-		std.setImage(im.get("menuGraphics/fullscreenStd"));
+		std.setImage(im.get(PAGE_NAME + "/fullscreenStd"));
 		DEImage sel = new DEImage();
-		sel.setImage(im.get("menuGraphics/fullscreenSel"));
+		sel.setImage(im.get(PAGE_NAME + "/fullscreenSel"));
 
 		b.setStdDrawElement(std);
 		b.setPressedDrawElement(sel);
@@ -370,7 +370,7 @@ public class MenuGraphics implements MenuPage {
 		WElement e = new WElement(this);
 
 		DEImage img = new DEImage();
-		img.setImage(ImageManager.getInstance().get("menuGraphics/warning"));
+		img.setImage(ImageManager.getInstance().get(PAGE_NAME + "/warning"));
 
 		e.setDrawElement(img);
 
@@ -389,7 +389,7 @@ public class MenuGraphics implements MenuPage {
 		title.setPos(new Point(550, 76));
 
 		DEImage img = new DEImage();
-		img.setImage(ImageManager.getInstance().get("menuGraphics/title"));
+		img.setImage(ImageManager.getInstance().get(PAGE_NAME + "/title"));
 
 		title.setDrawElement(img);
 
