@@ -46,7 +46,7 @@ public class GameState implements IAppState {
 	public void start(StatePanel panel) {
 		this.sp = panel;
 
-		int myID = 1;
+		int myID = 0;
 
 		int[] playersID = new int[] { 0, 1 };
 

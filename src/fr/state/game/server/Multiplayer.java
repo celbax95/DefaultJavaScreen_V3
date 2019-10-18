@@ -131,8 +131,6 @@ public class Multiplayer {
 				this.needConfirm.put(data.getId(), new Confirmer(data.getId(), this, packet, this.receivers));
 			}
 
-			System.out.println(buffer.length);
-
 			this.socket.send(packet);
 
 		} catch (Exception e) {
