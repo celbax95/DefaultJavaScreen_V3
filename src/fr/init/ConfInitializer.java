@@ -62,11 +62,11 @@ public class ConfInitializer {
 	 * Ajout des fichiers de configuration
 	 */
 	private void initConfFiles() {
+		this.dfm = DatafilesManager.getInstance();
 		this.dfm.init(new XMLManagerDOM());
-		this.dfm.addFile("winConf", "conf/winConf.xml");
-		this.dfm.addFile("controls", "conf/controls.xml");
-		this.dfm.addFile("profile", "conf/profile.xml");
-		this.dfm.addFile("gameSettings", "conf/gameSettings.xml");
+
+		ConfFiles.initConfFiles(this.dfm);
+
 	}
 
 	/**
