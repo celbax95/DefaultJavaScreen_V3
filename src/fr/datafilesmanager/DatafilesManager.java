@@ -1,9 +1,6 @@
 package fr.datafilesmanager;
 
 import java.io.File;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -58,18 +55,12 @@ public class DatafilesManager {
 	 */
 	public void addFile(String name, String path) {
 
-		URL url = this.getClass().getResource(path);
-
-		File file = null;
-		try {
-			file = Paths.get(url.toURI()).toFile();
-		} catch (URISyntaxException e) {
-		}
+		File file = new File(path);
 
 		if (file != null && file.exists() && this.getExtension(file).equals(".xml")) {
 			this.files.put(name, file.getPath());
 		} else {
-			System.err.println("Ajout du fichier impossible :\n\tLe fichier \"" + url
+			System.err.println("Ajout du fichier impossible :\n\tLe fichier \"" + path
 					+ "\" n'existe pas ou n'est pas un fichier .xml");
 		}
 
