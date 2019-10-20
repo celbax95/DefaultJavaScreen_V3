@@ -7,7 +7,7 @@ import java.net.MulticastSocket;
 
 public class Searcher {
 
-	private static final int SEND_RATE = 500;
+	private static final int SEND_RATE = 1000;
 
 	private MulticastSocket reqSender;
 
@@ -58,6 +58,7 @@ public class Searcher {
 
 		if (this.myID != -1) {
 			// TODO pass to hoster;
+			System.out.println("c tout bon : " + this.myID);
 			this.stop();
 		}
 	}
@@ -76,7 +77,6 @@ public class Searcher {
 
 						Searcher.this.processResponse(new String(packet.getData()));
 					} catch (Exception e) {
-						e.printStackTrace();
 						Thread.currentThread().interrupt();
 						return;
 					}
@@ -99,7 +99,6 @@ public class Searcher {
 						Thread.sleep(Searcher.SEND_RATE);
 
 					} catch (Exception e) {
-						e.printStackTrace();
 						Thread.currentThread().interrupt();
 						return;
 					}

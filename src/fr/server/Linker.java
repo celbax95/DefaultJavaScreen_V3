@@ -12,22 +12,24 @@ public class Linker {
 
 	InetAddress groupIP;
 
-	int portReq;
+	int portLinker;
 
 	MulticastSocket reqListener;
 	DatagramSocket responseSender;
 
 	List<InetAddress> connections;
-	int maxConnections;
 
 	Thread listener;
 
-	public Linker(String groupLinker, int portLinker, int maxConnections) {
+	public Linker(String groupLinker, int portLinker) {
+
+		this.connections = new ArrayList<>();
+		this.portLinker = portLinker;
 
 		try {
 			this.groupIP = InetAddress.getByName(groupLinker);
 
-			this.reqListener = new MulticastSocket(this.portReq);
+			this.reqListener = new MulticastSocket(this.portLinker);
 			this.reqListener.setInterface(InetAddress.getLocalHost());
 			this.reqListener.joinGroup(this.groupIP);
 
@@ -38,9 +40,6 @@ public class Linker {
 		}
 
 		this.setListener();
-		this.maxConnections = maxConnections;
-		this.connections = new ArrayList<>();
-		this.portReq = portLinker;
 	}
 
 	private void processPacket(InetAddress inetAddress, String data) {
@@ -85,8 +84,7 @@ public class Linker {
 
 			@Override
 			public void run() {
-				while (Thread.currentThread().isInterrupted() == false
-						|| Linker.this.connections.size() == Linker.this.maxConnections) {
+				while (Thread.currentThread().isInterrupted() == false) {
 
 					byte[] buffer = new byte[1000];
 
