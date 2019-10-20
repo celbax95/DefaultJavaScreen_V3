@@ -5,7 +5,6 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,23 +43,11 @@ public class Linker {
 		this.portReq = portLinker;
 	}
 
-	private void processPacket(String data) {
+	private void processPacket(InetAddress inetAddress, String data) {
 
 		String[] splited = data.split("/");
-		InetAddress askerIP = null;
-		try {
-			askerIP = InetAddress.getByName(splited[0]);
-		} catch (UnknownHostException e) {
-			System.err.println("IP recu invalide : " + splited[0]);
-			e.printStackTrace();
-		}
 
-		if (askerIP.isLinkLocalAddress() == false) {
-			System.err.println("IP recu invalide : " + splited[0]);
-			return;
-		}
-
-		int askerPort = Integer.valueOf(splited[1]);
+		int askerPort = Integer.valueOf(splited[0]);
 
 		if (askerPort < 0 || askerPort > 65000) {
 			System.err.println("Le port reçu est invalide");
@@ -68,23 +55,23 @@ public class Linker {
 		}
 
 		int id;
-		if (this.connections.contains(askerIP)) {
-			id = this.connections.indexOf(askerIP);
+		if (this.connections.contains(inetAddress)) {
+			id = this.connections.indexOf(inetAddress);
 		} else {
 			// id client
 			id = this.connections.size();
 
-			this.connections.add(askerIP);
+			this.connections.add(inetAddress);
 		}
 
-		this.sendResponse(askerIP, askerPort, id);
+		this.sendResponse(inetAddress, askerPort, id);
 	}
 
 	private void sendResponse(InetAddress askerIP, int askerPort, int id) {
 
 		byte[] buffer = (askerIP + "/" + String.valueOf(id) + "/").getBytes();
 
-		DatagramPacket packet = new DatagramPacket(buffer, buffer.length, askerIP, askerPort - 1);
+		DatagramPacket packet = new DatagramPacket(buffer, buffer.length, askerIP, askerPort);
 
 		try {
 			this.responseSender.send(packet);
@@ -111,7 +98,7 @@ public class Linker {
 						e.printStackTrace();
 					}
 
-					Linker.this.processPacket(new String(packet.getData()));
+					Linker.this.processPacket(packet.getAddress(), new String(packet.getData()));
 				}
 
 				try {
