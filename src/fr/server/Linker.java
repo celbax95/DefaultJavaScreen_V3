@@ -2,6 +2,7 @@ package fr.server;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
+import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
 import java.net.UnknownHostException;
@@ -15,7 +16,7 @@ public class Linker {
 	int portReq;
 
 	MulticastSocket reqListener;
-	MulticastSocket responseSender;
+	DatagramSocket responseSender;
 
 	List<InetAddress> connections;
 	int maxConnections;
@@ -31,9 +32,7 @@ public class Linker {
 			this.reqListener.setInterface(InetAddress.getLocalHost());
 			this.reqListener.joinGroup(this.groupIP);
 
-			this.responseSender = new MulticastSocket();
-			this.responseSender.setInterface(InetAddress.getLocalHost());
-
+			this.responseSender = new DatagramSocket();
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.exit(0);
