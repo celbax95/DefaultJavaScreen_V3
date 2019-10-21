@@ -36,11 +36,14 @@ public class ConfFiles {// String name, String path
 
 					InputStream is = ConfFiles.class.getResourceAsStream("/" + path);
 
-					byte[] content = is.readAllBytes();
+					int read;
+					byte[] buffer = new byte[1024];
 
 					FileOutputStream fo = new FileOutputStream(path);
 
-					fo.write(content);
+					while ((read = is.read(buffer)) != -1) {
+						fo.write(buffer, 0, read);
+					}
 					fo.close();
 				}
 			} catch (Exception e) {
