@@ -23,7 +23,13 @@ public class Searcher {
 
 	private int myID;
 
-	public Searcher(String groupIP, int linkerPort, int receivePort) {
+	private IdSetter idSetter;
+
+	public Searcher(IdSetter idSetter, String groupIP, int linkerPort, int receivePort) {
+
+		this.myID = -1;
+
+		this.idSetter = idSetter;
 
 		this.linkerPort = linkerPort;
 		try {
@@ -57,8 +63,7 @@ public class Searcher {
 		}
 
 		if (this.myID != -1) {
-			// TODO pass to hoster;
-			System.out.println("c tout bon : " + this.myID);
+			this.idSetter.setId(this.myID);
 			this.stop();
 		}
 	}

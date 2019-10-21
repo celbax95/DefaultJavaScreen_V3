@@ -21,10 +21,18 @@ public class Linker {
 
 	Thread listener;
 
-	public Linker(String groupLinker, int portLinker) {
+	int myID = 0;
+
+	int curID;
+
+	public Linker(int myID, String groupLinker, int portLinker) {
 
 		this.connections = new ArrayList<>();
 		this.portLinker = portLinker;
+
+		this.myID = myID;
+
+		this.curID = 0;
 
 		try {
 			this.groupIP = InetAddress.getByName(groupLinker);
@@ -58,7 +66,8 @@ public class Linker {
 			id = this.connections.indexOf(inetAddress);
 		} else {
 			// id client
-			id = this.connections.size();
+			id = this.curID == this.myID ? ++this.curID : this.curID;
+			this.curID++;
 
 			this.connections.add(inetAddress);
 		}
@@ -68,7 +77,7 @@ public class Linker {
 
 	private void sendResponse(InetAddress askerIP, int askerPort, int id) {
 
-		byte[] buffer = (askerIP + "/" + String.valueOf(id) + "/").getBytes();
+		byte[] buffer = (askerIP.getHostAddress() + "/" + String.valueOf(id) + "/").getBytes();
 
 		DatagramPacket packet = new DatagramPacket(buffer, buffer.length, askerIP, askerPort);
 
