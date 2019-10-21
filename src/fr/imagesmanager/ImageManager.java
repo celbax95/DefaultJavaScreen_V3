@@ -2,10 +2,12 @@ package fr.imagesmanager;
 
 import java.awt.Image;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
 import fr.logger.Logger;
@@ -15,21 +17,6 @@ public class ImageManager {
 	 * static Singleton instance.
 	 */
 	private static volatile ImageManager instance;
-
-	/**
-	 * Return a singleton instance of ImageManager.
-	 */
-	public static ImageManager getInstance() {
-		// Double lock for thread safety.
-		if (instance == null) {
-			synchronized (ImageManager.class) {
-				if (instance == null) {
-					instance = new ImageManager();
-				}
-			}
-		}
-		return instance;
-	}
 
 	private Map<String, Image> images;
 
@@ -51,16 +38,16 @@ public class ImageManager {
 			// Si il n'existe pas on prend l'image par defaut
 			InputStream is = this.getClass().getResourceAsStream(path);
 
-			byte[] img = null;
+			Image img = null;
 			try {
-				img = is.readAllBytes();
-			} catch (Exception e) {
-				// e.printStackTrace();
+				img = ImageIO.read(is);
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
 
 			if (img != null) {
 				// Ajout
-				this.images.put(name, new ImageIcon(img).getImage());
+				this.images.put(name, img);
 			} else {
 				System.err.println("Ajout de l'image impossible :\n\tL'image \"" + path
 						+ "\" n'existe pas ou n'est pas un fichier .xml");
@@ -92,5 +79,20 @@ public class ImageManager {
 	public void removeAll() {
 		Logger.inf("Toutes les images ont été déchargées.");
 		this.images.clear();
+	}
+
+	/**
+	 * Return a singleton instance of ImageManager.
+	 */
+	public static ImageManager getInstance() {
+		// Double lock for thread safety.
+		if (instance == null) {
+			synchronized (ImageManager.class) {
+				if (instance == null) {
+					instance = new ImageManager();
+				}
+			}
+		}
+		return instance;
 	}
 }
