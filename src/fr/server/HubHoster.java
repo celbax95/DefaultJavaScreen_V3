@@ -5,7 +5,9 @@ import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 
 public class HubHoster {
 
@@ -19,7 +21,7 @@ public class HubHoster {
 
 	private InetAddress groupIP;
 
-	private int portSend, portReceive;
+	private int portReceive;
 
 	private Thread dataUpdater, dataReceiver;
 
@@ -29,9 +31,12 @@ public class HubHoster {
 
 	private int maxPlayer;
 
-	public HubHoster(int id, String username, Color color, int maxPlayer, String groupIP, int portReceive,
-			int portSend) {
+	private List<Integer> listeningPorts;
+
+	public HubHoster(int id, String username, Color color, int maxPlayer, String groupIP, int portReceive) {
 		this.myID = id;
+
+		this.listeningPorts = new Vector<>();
 
 		this.playersData = new HashMap<>();
 
@@ -40,7 +45,6 @@ public class HubHoster {
 		this.maxPlayer = maxPlayer;
 
 		this.portReceive = portReceive;
-		this.portSend = portSend;
 
 		try {
 			this.groupIP = InetAddress.getByName(groupIP);
@@ -66,21 +70,29 @@ public class HubHoster {
 		if (this.playersData.size() < this.maxPlayer) {
 			PlayerData pd = this.playerDataReceived(splited);
 			if (pd != null) {
-				this.playersData.put(Integer.valueOf(splited[1]), pd);
+				this.playersData.put(Integer.valueOf(splited[2]), pd);
+
+				int port = Integer.valueOf(splited[1]);
+
+				if (!this.listeningPorts.contains(port)) {
+					this.listeningPorts.add(port);
+				}
 			}
 		}
 	}
 
 	private PlayerData playerDataReceived(String[] splited) {
 
-		if (splited.length != 5)
+		if (splited.length != 6)
 			return null;
 
-		int id = Integer.valueOf(splited[1]);
+		int i = 2;
 
-		String username = splited[2];
+		int id = Integer.valueOf(splited[i++]);
 
-		String colorTxt = splited[3];
+		String username = splited[i++];
+
+		String colorTxt = splited[i++];
 
 		Color color = Color.BLACK;
 
@@ -105,10 +117,11 @@ public class HubHoster {
 		try {
 			byte[] buffer = message.getBytes();
 
-			DatagramPacket packet = new DatagramPacket(buffer, buffer.length, HubHoster.this.groupIP,
-					HubHoster.this.portSend);
+			for (int port : this.listeningPorts) {
+				DatagramPacket packet = new DatagramPacket(buffer, buffer.length, HubHoster.this.groupIP, port);
 
-			HubHoster.this.dataShare.send(packet);
+				HubHoster.this.dataShare.send(packet);
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

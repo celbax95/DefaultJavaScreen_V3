@@ -15,18 +15,18 @@ public class Main {
 //		Searcher s = new Searcher("230.0.0.0", 10000, 10001);
 //		s.start();
 
-		HubHoster hh = new HubHoster(0, "playerhpost", Color.green, 3, "230.0.0.0", 10000, 10001);
-		Linker l = new Linker(0, "230.0.0.1", 10002);
+		HubHoster hh = new HubHoster(0, "playerhpost", Color.green, 3, "230.0.0.0", 10000);
+		Linker l = new Linker(0, "230.0.0.1", 10001);
 		l.start();
 		hh.start();
 
-		HubJoiner hj = new HubJoiner("red", Color.red, "230.0.0.0", 10001, 10000);
-		Searcher s = new Searcher(hj, "230.0.0.1", 10002, 10003);
+		HubJoiner hj = new HubJoiner("red", Color.red, "230.0.0.0", 10002, 10000);
+		Searcher s = new Searcher(hj, "230.0.0.1", 10003, 10001);
 		s.start();
 		hj.start();
 
-		HubJoiner hj2 = new HubJoiner("blue", Color.blue, "230.0.0.0", 10001, 10000);
-		Searcher s2 = new Searcher(hj, "230.0.0.1", 10002, 10003);
+		HubJoiner hj2 = new HubJoiner("blue", Color.blue, "230.0.0.0", 10004, 10000);
+		Searcher s2 = new Searcher(hj, "230.0.0.1", 10005, 10001);
 		s2.start();
 		hj2.start();
 

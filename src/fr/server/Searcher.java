@@ -25,7 +25,7 @@ public class Searcher {
 
 	private IdSetter idSetter;
 
-	public Searcher(IdSetter idSetter, String groupIP, int linkerPort, int receivePort) {
+	public Searcher(IdSetter idSetter, String groupIP, int receivePort, int linkerPort) {
 
 		this.myID = -1;
 

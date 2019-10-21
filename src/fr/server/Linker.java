@@ -17,7 +17,7 @@ public class Linker {
 	MulticastSocket reqListener;
 	DatagramSocket responseSender;
 
-	List<InetAddress> connections;
+	List<String> connections;
 
 	Thread listener;
 
@@ -62,14 +62,17 @@ public class Linker {
 		}
 
 		int id;
-		if (this.connections.contains(inetAddress)) {
-			id = this.connections.indexOf(inetAddress);
+
+		String key = inetAddress.getHostAddress() + ":" + askerPort;
+
+		if (this.connections.contains(key)) {
+			id = this.connections.indexOf(key);
 		} else {
 			// id client
 			id = this.curID == this.myID ? ++this.curID : this.curID;
 			this.curID++;
 
-			this.connections.add(inetAddress);
+			this.connections.add(key);
 		}
 
 		this.sendResponse(inetAddress, askerPort, id);

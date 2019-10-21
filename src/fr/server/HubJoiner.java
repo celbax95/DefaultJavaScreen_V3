@@ -123,8 +123,8 @@ public class HubJoiner implements IdSetter {
 						return;
 					}
 
-					HubJoiner.this.send(HubJoiner.ADD + "/" + HubJoiner.this.myPlayer.getId() + "/"
-							+ HubJoiner.this.myPlayer.getUsername() + "/" + "#"
+					HubJoiner.this.send(HubJoiner.ADD + "/" + HubJoiner.this.portReceive + "/"
+							+ HubJoiner.this.myPlayer.getId() + "/" + HubJoiner.this.myPlayer.getUsername() + "/" + "#"
 							+ Integer.toHexString(HubJoiner.this.myPlayer.getColor().getRGB()).substring(2) + "/");
 
 					try {
