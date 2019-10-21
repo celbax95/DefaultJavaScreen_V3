@@ -30,8 +30,6 @@ public class HubJoiner implements IdSetter {
 
 	private int myID;
 
-	private boolean addedByHost;
-
 	public HubJoiner(String playerUsername, Color playerColor, String groupIP, int portReceive, int portSend) {
 		this.myID = -1;
 		this.myPlayer = new PlayerData(-1, playerUsername, playerColor);
@@ -40,8 +38,6 @@ public class HubJoiner implements IdSetter {
 		this.portSend = portSend;
 
 		this.playersData = new HashMap<>();
-
-		this.addedByHost = false;
 
 		try {
 			this.groupIP = InetAddress.getByName(groupIP);
@@ -65,7 +61,10 @@ public class HubJoiner implements IdSetter {
 	private void playerDataReceived(String[] data) {
 		int id = Integer.valueOf(data[1]);
 
-		System.out.println("FINISH");
+		if (id == this.myID) {
+			this.addRequestor.interrupt();
+		}
+		System.out.println(this.playersData);
 
 		// le player id est inconnu
 		if (!this.playersData.containsKey(id)) {
@@ -117,7 +116,7 @@ public class HubJoiner implements IdSetter {
 		this.addRequestor = new Thread(new Runnable() {
 			@Override
 			public void run() {
-				while (Thread.currentThread().isInterrupted() == false && HubJoiner.this.addedByHost == false) {
+				while (Thread.currentThread().isInterrupted() == false) {
 
 					if (HubJoiner.this.myID == -1) {
 						Thread.currentThread().interrupt();
@@ -131,7 +130,8 @@ public class HubJoiner implements IdSetter {
 					try {
 						Thread.sleep(HubJoiner.REQUEST_RATE);
 					} catch (InterruptedException e) {
-						e.printStackTrace();
+						Thread.currentThread().interrupt();
+						return;
 					}
 				}
 			}
@@ -164,6 +164,7 @@ public class HubJoiner implements IdSetter {
 	public void setId(int id) {
 		this.myPlayer.setId(id);
 		this.myID = id;
+		this.playersData.put(id, this.myPlayer);
 		this.addRequestor.start();
 	}
 

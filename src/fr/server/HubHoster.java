@@ -29,15 +29,18 @@ public class HubHoster {
 
 	private int maxPlayer;
 
-	public HubHoster(int id, int maxPlayer, String groupIP, int portReceive, int portSend) {
+	public HubHoster(int id, String username, Color color, int maxPlayer, String groupIP, int portReceive,
+			int portSend) {
 		this.myID = id;
+
+		this.playersData = new HashMap<>();
+
+		this.playersData.put(id, new PlayerData(id, username, color));
 
 		this.maxPlayer = maxPlayer;
 
 		this.portReceive = portReceive;
 		this.portSend = portSend;
-
-		this.playersData = new HashMap<>();
 
 		try {
 			this.groupIP = InetAddress.getByName(groupIP);
@@ -58,22 +61,12 @@ public class HubHoster {
 		this.setDataUpdater();
 	}
 
-	public void addPlayer(int id, PlayerData pd) {
-
-		boolean startThread = this.playersData.size() == 0;
-
-		this.playersData.put(id, pd);
-		if (startThread) {
-			this.dataUpdater.start();
-		}
-	}
-
 	private void addPlayer(String[] splited) {
 
 		if (this.playersData.size() < this.maxPlayer) {
 			PlayerData pd = this.playerDataReceived(splited);
 			if (pd != null) {
-				this.addPlayer(Integer.valueOf(splited[1]), pd);
+				this.playersData.put(Integer.valueOf(splited[1]), pd);
 			}
 		}
 	}
@@ -173,6 +166,7 @@ public class HubHoster {
 
 	public void start() {
 		this.dataReceiver.start();
+		this.dataUpdater.start();
 	}
 
 	public void stop() {
