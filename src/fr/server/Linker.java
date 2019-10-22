@@ -5,29 +5,29 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Linker {
 
-	InetAddress groupIP;
+	private InetAddress groupIP;
 
-	int portLinker;
+	private int portLinker;
 
-	MulticastSocket reqListener;
-	DatagramSocket responseSender;
+	private MulticastSocket reqListener;
+	private DatagramSocket responseSender;
 
-	List<String> connections;
+	private Map<String, Integer> connections;
 
-	Thread listener;
+	private Thread listener;
 
-	int myID = 0;
+	private int myID;
 
-	int curID;
+	private int curID;
 
 	public Linker(int myID, String groupLinker, int portLinker) {
 
-		this.connections = new ArrayList<>();
+		this.connections = new HashMap<>();
 		this.portLinker = portLinker;
 
 		this.myID = myID;
@@ -44,7 +44,6 @@ public class Linker {
 			this.responseSender = new DatagramSocket();
 		} catch (Exception e) {
 			e.printStackTrace();
-			System.exit(0);
 		}
 
 		this.setListener();
@@ -54,7 +53,10 @@ public class Linker {
 
 		String[] splited = data.split("/");
 
-		int askerPort = Integer.valueOf(splited[0]);
+		if (Request.valueOf(splited[0]) != Request.REQID)
+			return;
+
+		int askerPort = Integer.valueOf(splited[1]);
 
 		if (askerPort < 0 || askerPort > 65000) {
 			System.err.println("Le port reçu est invalide");
@@ -65,14 +67,19 @@ public class Linker {
 
 		String key = inetAddress.getHostAddress() + ":" + askerPort;
 
-		if (this.connections.contains(key)) {
-			id = this.connections.indexOf(key);
+		if (this.connections.containsKey(key)) {
+			id = this.connections.get(key);
 		} else {
 			// id client
-			id = this.curID == this.myID ? ++this.curID : this.curID;
+			if (this.curID == this.myID) {
+				this.curID++;
+				id = this.curID;
+			} else {
+				id = this.curID;
+			}
 			this.curID++;
 
-			this.connections.add(key);
+			this.connections.put(key, id);
 		}
 
 		this.sendResponse(inetAddress, askerPort, id);
@@ -80,7 +87,7 @@ public class Linker {
 
 	private void sendResponse(InetAddress askerIP, int askerPort, int id) {
 
-		byte[] buffer = (askerIP.getHostAddress() + "/" + String.valueOf(id) + "/").getBytes();
+		byte[] buffer = (Request.REQID + "/" + askerIP.getHostAddress() + "/" + String.valueOf(id) + "/").getBytes();
 
 		DatagramPacket packet = new DatagramPacket(buffer, buffer.length, askerIP, askerPort);
 

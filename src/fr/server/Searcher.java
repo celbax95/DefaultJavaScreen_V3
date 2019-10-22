@@ -7,7 +7,7 @@ import java.net.MulticastSocket;
 
 public class Searcher {
 
-	private static final int SEND_RATE = 1000;
+	private static final int SEND_RATE = 1500;
 
 	private MulticastSocket reqSender;
 
@@ -25,7 +25,7 @@ public class Searcher {
 
 	private IdSetter idSetter;
 
-	public Searcher(IdSetter idSetter, String groupIP, int receivePort, int linkerPort) {
+	public Searcher(IdSetter idSetter, String groupIP, int linkerPort) {
 
 		this.myID = -1;
 
@@ -39,12 +39,12 @@ public class Searcher {
 			this.reqSender.setInterface(InetAddress.getLocalHost());
 			this.reqSender.joinGroup(this.groupIP);
 
-			this.responseReceiver = new DatagramSocket(receivePort);
+			this.responseReceiver = new DatagramSocket();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
-		this.message = (receivePort + "/").getBytes();
+		this.message = (Request.REQID + "/" + this.responseReceiver.getLocalPort() + "/").getBytes();
 
 		this.setReceiver();
 		this.setSender();
@@ -54,8 +54,8 @@ public class Searcher {
 		String[] splited = data.split("/");
 
 		try {
-			if (splited[0].equals(InetAddress.getLocalHost().getHostAddress())) {
-				this.myID = Integer.valueOf(splited[1]);
+			if (splited[1].equals(InetAddress.getLocalHost().getHostAddress())) {
+				this.myID = Integer.valueOf(splited[2]);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

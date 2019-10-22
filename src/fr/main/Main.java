@@ -7,28 +7,36 @@ import fr.server.HubHoster;
 import fr.server.HubJoiner;
 import fr.server.Linker;
 import fr.server.Searcher;
+import fr.server.ServerData;
 
 public class Main {
 	public static void main(String[] args) {
-//		Linker l = new Linker("230.0.0.0", 10000);
-//		l.start();
-//		Searcher s = new Searcher("230.0.0.0", 10000, 10001);
-//		s.start();
 
-		HubHoster hh = new HubHoster(0, "playerhpost", Color.green, 3, "230.0.0.0", 10000);
-		Linker l = new Linker(0, "230.0.0.1", 10001);
+		int serverIndex = 0;
+
+		HubHoster hh = new HubHoster(0, "playerhpost", Color.green, 4, ServerData.getGroup(serverIndex),
+				ServerData.getPort(serverIndex));
+		Linker l = new Linker(0, ServerData.getGroup(serverIndex), ServerData.getPort(serverIndex));
 		l.start();
 		hh.start();
 
-		HubJoiner hj = new HubJoiner("red", Color.red, "230.0.0.0", 10002, 10000);
-		Searcher s = new Searcher(hj, "230.0.0.1", 10003, 10001);
+		HubJoiner hj = new HubJoiner("red", Color.red, ServerData.getGroup(serverIndex),
+				ServerData.getPort(serverIndex));
+		Searcher s = new Searcher(hj, ServerData.getGroup(serverIndex), ServerData.getPort(serverIndex));
 		s.start();
 		hj.start();
 
-		HubJoiner hj2 = new HubJoiner("blue", Color.blue, "230.0.0.0", 10004, 10000);
-		Searcher s2 = new Searcher(hj, "230.0.0.1", 10005, 10001);
+		HubJoiner hj2 = new HubJoiner("blue", Color.blue, ServerData.getGroup(serverIndex),
+				ServerData.getPort(serverIndex));
+		Searcher s2 = new Searcher(hj2, ServerData.getGroup(serverIndex), ServerData.getPort(serverIndex));
 		s2.start();
 		hj2.start();
+
+		HubJoiner hj3 = new HubJoiner("pink", Color.blue, ServerData.getGroup(serverIndex),
+				ServerData.getPort(serverIndex));
+		Searcher s3 = new Searcher(hj3, ServerData.getGroup(serverIndex), ServerData.getPort(serverIndex));
+		s3.start();
+		hj3.start();
 
 		Locale.setDefault(Locale.ENGLISH);
 		// new ConfInitializer().start();

@@ -11,9 +11,7 @@ import java.util.Vector;
 
 public class HubHoster {
 
-	private int UPDATE_RATE = 1000;
-
-	private final int UPDATE = 1, ADD = 2;
+	private int UPDATE_RATE = 1500;
 
 	private MulticastSocket dataShare;
 
@@ -69,7 +67,7 @@ public class HubHoster {
 
 		if (this.playersData.size() < this.maxPlayer) {
 			PlayerData pd = this.playerDataReceived(splited);
-			if (pd != null) {
+			if (pd != null && !this.playersData.containsKey(pd.getId())) {
 				this.playersData.put(Integer.valueOf(splited[2]), pd);
 
 				int port = Integer.valueOf(splited[1]);
@@ -106,9 +104,11 @@ public class HubHoster {
 	private void processData(String data) {
 		String[] splited = data.split("/");
 
-		switch (Integer.valueOf(splited[0])) {
+		switch (Request.valueOf(splited[0])) {
 		case ADD:
 			this.addPlayer(splited);
+			break;
+		default:
 			break;
 		}
 	}
@@ -163,7 +163,7 @@ public class HubHoster {
 
 						PlayerData pd = HubHoster.this.playersData.get(id);
 
-						HubHoster.this.send(HubHoster.this.UPDATE + "/" + id + "/" + pd.getUsername() + "/" + "#"
+						HubHoster.this.send(Request.UPDATE + "/" + id + "/" + pd.getUsername() + "/" + "#"
 								+ Integer.toHexString(pd.getColor().getRGB()).substring(2) + "/");
 					}
 

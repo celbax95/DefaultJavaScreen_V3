@@ -9,9 +9,9 @@ import java.util.Map;
 
 public class HubJoiner implements IdSetter {
 
-	private static final int REQUEST = 0, UPDATE = 1, ADD = 2;
-
 	private static final int UPDATE_RATE = 1000, REQUEST_RATE = 500;
+
+	private int REMOVE_FLOOD_AMOUNT = 20;
 
 	private MulticastSocket dataSend;
 
@@ -30,11 +30,10 @@ public class HubJoiner implements IdSetter {
 
 	private int myID;
 
-	public HubJoiner(String playerUsername, Color playerColor, String groupIP, int portReceive, int portSend) {
+	public HubJoiner(String playerUsername, Color playerColor, String groupIP, int portSend) {
 		this.myID = -1;
 		this.myPlayer = new PlayerData(-1, playerUsername, playerColor);
 
-		this.portReceive = portReceive;
 		this.portSend = portSend;
 
 		this.playersData = new HashMap<>();
@@ -46,13 +45,15 @@ public class HubJoiner implements IdSetter {
 			this.dataSend.setInterface(InetAddress.getLocalHost());
 			this.dataSend.joinGroup(this.groupIP);
 
-			this.dataReceive = new MulticastSocket(portReceive);
+			this.dataReceive = new MulticastSocket();
 			this.dataReceive.setInterface(InetAddress.getLocalHost());
 			this.dataReceive.joinGroup(this.groupIP);
 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+
+		this.portReceive = this.dataReceive.getLocalPort();
 
 		this.setDataReceiver();
 		this.setAddRequestor();
@@ -93,9 +94,11 @@ public class HubJoiner implements IdSetter {
 	private void processData(String data) {
 		String[] splited = data.split("/");
 
-		switch (Integer.valueOf(splited[0])) {
+		switch (Request.valueOf(splited[0])) {
 		case UPDATE:
 			this.playerDataReceived(splited);
+			break;
+		default:
 			break;
 		}
 	}
@@ -112,6 +115,13 @@ public class HubJoiner implements IdSetter {
 		}
 	}
 
+	private void sendStop() {
+		for (int i = 0; i < this.REMOVE_FLOOD_AMOUNT; i++) {
+			HubJoiner.this.send(
+					Request.REMOVE + "/" + HubJoiner.this.portReceive + "/" + HubJoiner.this.myPlayer.getId() + "/");
+		}
+	}
+
 	public void setAddRequestor() {
 		this.addRequestor = new Thread(new Runnable() {
 			@Override
@@ -123,7 +133,7 @@ public class HubJoiner implements IdSetter {
 						return;
 					}
 
-					HubJoiner.this.send(HubJoiner.ADD + "/" + HubJoiner.this.portReceive + "/"
+					HubJoiner.this.send(Request.ADD + "/" + HubJoiner.this.portReceive + "/"
 							+ HubJoiner.this.myPlayer.getId() + "/" + HubJoiner.this.myPlayer.getUsername() + "/" + "#"
 							+ Integer.toHexString(HubJoiner.this.myPlayer.getColor().getRGB()).substring(2) + "/");
 
