@@ -9,10 +9,6 @@ import java.util.Map;
 
 public class HubJoiner implements IdSetter {
 
-	private static final int UPDATE_RATE = 1000, REQUEST_RATE = 500;
-
-	private int REMOVE_FLOOD_AMOUNT = 20;
-
 	private MulticastSocket dataSend;
 
 	private MulticastSocket dataReceive;
@@ -22,9 +18,11 @@ public class HubJoiner implements IdSetter {
 	private int portSend;
 	private int portReceive;
 
-	private Thread dataReceiver, addRequestor;
+	private Thread dataReceiver, addRequestor, pinger, updateTester;
 
 	private Map<Integer, PlayerData> playersData;
+
+	Map<Integer, Long> updates;
 
 	private PlayerData myPlayer;
 
@@ -35,6 +33,8 @@ public class HubJoiner implements IdSetter {
 		this.myPlayer = new PlayerData(-1, playerUsername, playerColor);
 
 		this.portSend = portSend;
+
+		this.updates = new HashMap<>();
 
 		this.playersData = new HashMap<>();
 
@@ -80,6 +80,7 @@ public class HubJoiner implements IdSetter {
 			}
 
 			this.playersData.put(id, new PlayerData(id, username, color));
+
 		} else {
 			PlayerData pd = this.playersData.get(id);
 			pd.setUsername(data[2]);
@@ -89,6 +90,8 @@ public class HubJoiner implements IdSetter {
 				pd.setColor(Color.decode(colorTxt));
 			}
 		}
+
+		this.updates.put(id, System.currentTimeMillis());
 	}
 
 	private void processData(String data) {
@@ -115,13 +118,6 @@ public class HubJoiner implements IdSetter {
 		}
 	}
 
-	private void sendStop() {
-		for (int i = 0; i < this.REMOVE_FLOOD_AMOUNT; i++) {
-			HubJoiner.this.send(
-					Request.REMOVE + "/" + HubJoiner.this.portReceive + "/" + HubJoiner.this.myPlayer.getId() + "/");
-		}
-	}
-
 	public void setAddRequestor() {
 		this.addRequestor = new Thread(new Runnable() {
 			@Override
@@ -138,7 +134,7 @@ public class HubJoiner implements IdSetter {
 							+ Integer.toHexString(HubJoiner.this.myPlayer.getColor().getRGB()).substring(2) + "/");
 
 					try {
-						Thread.sleep(HubJoiner.REQUEST_RATE);
+						Thread.sleep(ServerDelays.REQUEST_RATE);
 					} catch (InterruptedException e) {
 						Thread.currentThread().interrupt();
 						return;
@@ -176,6 +172,55 @@ public class HubJoiner implements IdSetter {
 		this.myID = id;
 		this.playersData.put(id, this.myPlayer);
 		this.addRequestor.start();
+		this.pinger.start();
+	}
+
+	private void setPinger() {
+		this.pinger = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				while (Thread.currentThread().isInterrupted() == false) {
+
+					if (HubJoiner.this.myID == -1) {
+						Thread.currentThread().interrupt();
+						return;
+					}
+
+					HubJoiner.this.send(Request.PING + "/" + HubJoiner.this.portReceive + "/"
+							+ HubJoiner.this.myPlayer.getId() + "/");
+
+					try {
+						Thread.sleep(ServerDelays.PING_RATE);
+					} catch (InterruptedException e) {
+						Thread.currentThread().interrupt();
+						return;
+					}
+				}
+			}
+		});
+	}
+
+	public void setUpdateTester() {
+		this.updateTester = new Thread(new Runnable() {
+			@Override
+			public void run() {
+
+				while (Thread.currentThread().isInterrupted() == false) {
+					try {
+						Thread.sleep(ServerDelays.UPDATE_TEST_RATE);
+					} catch (InterruptedException e) {
+					}
+
+					long time = System.currentTimeMillis();
+
+					for (Integer id : HubJoiner.this.updates.keySet()) {
+						if (updates.get(id) > ) {
+
+						}
+					}
+				}
+			}
+		});
 	}
 
 	public void start() {
@@ -184,5 +229,7 @@ public class HubJoiner implements IdSetter {
 
 	public void stop() {
 		this.dataReceiver.interrupt();
+		this.addRequestor.interrupt();
+		this.pinger.interrupt();
 	}
 }

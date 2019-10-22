@@ -11,8 +11,6 @@ import java.util.Vector;
 
 public class HubHoster {
 
-	private int UPDATE_RATE = 1500;
-
 	private MulticastSocket dataShare;
 
 	private MulticastSocket dataReceive;
@@ -21,7 +19,7 @@ public class HubHoster {
 
 	private int portReceive;
 
-	private Thread dataUpdater, dataReceiver;
+	private Thread dataUpdater, dataReceiver, pingTester;
 
 	private Map<Integer, PlayerData> playersData;
 
@@ -29,10 +27,18 @@ public class HubHoster {
 
 	private int maxPlayer;
 
+	private Map<Integer, Long> pings;
+
 	private List<Integer> listeningPorts;
+
+	private List<Integer> toRemove;
 
 	public HubHoster(int id, String username, Color color, int maxPlayer, String groupIP, int portReceive) {
 		this.myID = id;
+
+		this.pings = new HashMap<>();
+
+		this.toRemove = new Vector<>();
 
 		this.listeningPorts = new Vector<>();
 
@@ -79,6 +85,14 @@ public class HubHoster {
 		}
 	}
 
+	private void ping(String[] splited) {
+		int i = 2;
+
+		Integer id = Integer.valueOf(splited[i++]);
+
+		this.pings.put(id, System.currentTimeMillis());
+	}
+
 	private PlayerData playerDataReceived(String[] splited) {
 
 		if (splited.length != 6)
@@ -106,6 +120,9 @@ public class HubHoster {
 
 		switch (Request.valueOf(splited[0])) {
 		case ADD:
+			this.addPlayer(splited);
+			break;
+		case PING:
 			this.addPlayer(splited);
 			break;
 		default:
@@ -168,10 +185,37 @@ public class HubHoster {
 					}
 
 					try {
-						Thread.sleep(HubHoster.this.UPDATE_RATE);
+						Thread.sleep(ServerDelays.UPDATE_RATE);
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
+				}
+			}
+		});
+	}
+
+	public void setPingTester() {
+		this.pingTester = new Thread(new Runnable() {
+			@Override
+			public void run() {
+
+				long last = System.currentTimeMillis();
+
+				while (Thread.currentThread().isInterrupted() == false) {
+					try {
+						Thread.sleep(ServerDelays.PING_TEST_RATE);
+					} catch (InterruptedException e) {
+					}
+
+					last = System.currentTimeMillis();
+
+					for (Integer id : HubHoster.this.pings.keySet()) {
+						if (HubHoster.this.pings.get(id) < last) {
+							HubHoster.this.pings.remove(id);
+							HubHoster.this.toRemove.add(id);
+						}
+					}
+
 				}
 			}
 		});
