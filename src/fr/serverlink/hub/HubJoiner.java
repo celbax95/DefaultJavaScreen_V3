@@ -1,4 +1,4 @@
-package fr.server;
+package fr.serverlink.hub;
 
 import java.awt.Color;
 import java.net.DatagramPacket;
@@ -8,6 +8,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import fr.serverlink.data.PlayerData;
+import fr.serverlink.data.Request;
+import fr.serverlink.data.ServerDelays;
+import fr.serverlink.link.IdSetter;
 
 public abstract class HubJoiner implements IdSetter {
 
@@ -88,7 +93,8 @@ public abstract class HubJoiner implements IdSetter {
 
 			this.playersData.put(id, new PlayerData(id, username, color));
 
-			System.out.println(this.playersData);
+			this.playerAdded(id, username, color);
+
 		} else {
 			PlayerData pd = this.playersData.get(id);
 			pd.setUsername(data[2]);
@@ -219,6 +225,8 @@ public abstract class HubJoiner implements IdSetter {
 					try {
 						Thread.sleep(ServerDelays.UPDATE_TEST_RATE);
 					} catch (InterruptedException e) {
+						Thread.currentThread().interrupt();
+						return;
 					}
 
 					long testTime = System.currentTimeMillis() - ServerDelays.UPDATE_TEST_RATE;
@@ -235,10 +243,11 @@ public abstract class HubJoiner implements IdSetter {
 					for (Integer id : idsToRemove) {
 						HubJoiner.this.updates.remove(id);
 						HubJoiner.this.playersData.remove(id);
+						HubJoiner.this.playerRemoved(id);
 					}
 
-					if (idsToRemove.size() != 0) {
-						System.out.println(HubJoiner.this.playersData);
+					if (HubJoiner.this.playersData.size() == 1) {
+						HubJoiner.this.noMorePlayer();
 					}
 				}
 			}

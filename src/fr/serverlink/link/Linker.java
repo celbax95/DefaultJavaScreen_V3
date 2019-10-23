@@ -1,4 +1,4 @@
-package fr.server;
+package fr.serverlink.link;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -7,6 +7,8 @@ import java.net.InetAddress;
 import java.net.MulticastSocket;
 import java.util.HashMap;
 import java.util.Map;
+
+import fr.serverlink.data.Request;
 
 public class Linker {
 

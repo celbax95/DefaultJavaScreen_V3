@@ -1,4 +1,4 @@
-package fr.server;
+package fr.serverlink.hub;
 
 import java.awt.Color;
 import java.net.DatagramPacket;
@@ -9,6 +9,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
+
+import fr.serverlink.data.PlayerData;
+import fr.serverlink.data.Request;
+import fr.serverlink.data.ServerDelays;
 
 public abstract class HubHoster {
 
@@ -71,7 +75,6 @@ public abstract class HubHoster {
 	}
 
 	private void addPlayer(String[] splited) {
-
 		if (this.playersData.size() < this.maxPlayer) {
 			PlayerData pd = this.playerDataReceived(splited);
 			if (pd != null && !this.playersData.containsKey(pd.getId())) {
@@ -84,6 +87,8 @@ public abstract class HubHoster {
 				if (!this.listeningPorts.contains(port)) {
 					this.listeningPorts.add(port);
 				}
+
+				this.playerAdded(pd.getId(), pd.getUsername(), pd.getColor());
 			}
 		}
 	}
@@ -196,7 +201,8 @@ public abstract class HubHoster {
 					try {
 						Thread.sleep(ServerDelays.UPDATE_RATE);
 					} catch (InterruptedException e) {
-						e.printStackTrace();
+						Thread.currentThread().interrupt();
+						return;
 					}
 				}
 			}
@@ -214,6 +220,8 @@ public abstract class HubHoster {
 					try {
 						Thread.sleep(ServerDelays.PING_TEST_RATE);
 					} catch (InterruptedException e) {
+						Thread.currentThread().interrupt();
+						return;
 					}
 
 					testTime = System.currentTimeMillis() - ServerDelays.PING_TEST_RATE;
@@ -222,7 +230,6 @@ public abstract class HubHoster {
 
 					for (Integer id : HubHoster.this.pings.keySet()) {
 						if (HubHoster.this.pings.get(id) < testTime) {
-							System.out.println("delete : " + id);
 							idsToRemove.add(id);
 						}
 					}
@@ -231,10 +238,15 @@ public abstract class HubHoster {
 						HubHoster.this.pings.remove(id);
 						HubHoster.this.playersData.remove(id);
 						HubHoster.this.linkIDPorts.remove(id);
+						HubHoster.this.playerRemoved(id);
 					}
 
 					if (idsToRemove.size() > 0) {
 						HubHoster.this.updatePorts();
+					}
+
+					if (HubHoster.this.playersData.size() == 1) {
+						HubHoster.this.noMorePlayer();
 					}
 				}
 			}

@@ -1,4 +1,4 @@
-package fr.server;
+package fr.serverlink.data;
 
 public class ServerDelays {
 
