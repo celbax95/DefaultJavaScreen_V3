@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
-public class HubHoster {
+public abstract class HubHoster {
 
 	private MulticastSocket dataShare;
 
@@ -88,6 +88,8 @@ public class HubHoster {
 		}
 	}
 
+	public abstract void noMorePlayer();
+
 	private void ping(String[] splited) {
 		int i = 2;
 
@@ -95,6 +97,8 @@ public class HubHoster {
 
 		this.pings.put(id, System.currentTimeMillis());
 	}
+
+	public abstract void playerAdded(int id, String username, Color color);
 
 	private PlayerData playerDataReceived(String[] splited) {
 
@@ -118,6 +122,8 @@ public class HubHoster {
 		return new PlayerData(id, username, color);
 	}
 
+	public abstract void playerRemoved(int id);
+
 	private void processData(String data) {
 		String[] splited = data.split("/");
 
@@ -133,7 +139,7 @@ public class HubHoster {
 		}
 	}
 
-	public void send(String message) {
+	private void send(String message) {
 		try {
 			byte[] buffer = message.getBytes();
 
@@ -147,7 +153,7 @@ public class HubHoster {
 		}
 	}
 
-	public void setDataReceiver() {
+	private void setDataReceiver() {
 		this.dataReceiver = new Thread(new Runnable() {
 			@Override
 			public void run() {
@@ -169,7 +175,7 @@ public class HubHoster {
 		});
 	}
 
-	public void setDataUpdater() {
+	private void setDataUpdater() {
 		this.dataUpdater = new Thread(new Runnable() {
 			@Override
 			public void run() {
@@ -197,7 +203,7 @@ public class HubHoster {
 		});
 	}
 
-	public void setPingTester() {
+	private void setPingTester() {
 		this.pingTester = new Thread(new Runnable() {
 			@Override
 			public void run() {

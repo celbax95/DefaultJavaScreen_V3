@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class HubJoiner implements IdSetter {
+public abstract class HubJoiner implements IdSetter {
 
 	private MulticastSocket dataSend;
 
@@ -24,7 +24,7 @@ public class HubJoiner implements IdSetter {
 
 	private Map<Integer, PlayerData> playersData;
 
-	Map<Integer, Long> updates;
+	private Map<Integer, Long> updates;
 
 	private PlayerData myPlayer;
 
@@ -63,6 +63,10 @@ public class HubJoiner implements IdSetter {
 		this.setAddRequestor();
 	}
 
+	public abstract void noMorePlayer();
+
+	public abstract void playerAdded(int id, String username, Color color);
+
 	private void playerDataReceived(String[] data) {
 		int id = Integer.valueOf(data[1]);
 
@@ -98,6 +102,8 @@ public class HubJoiner implements IdSetter {
 		this.updates.put(id, System.currentTimeMillis());
 	}
 
+	public abstract void playerRemoved(int id);
+
 	private void processData(String data) {
 		String[] splited = data.split("/");
 
@@ -110,7 +116,7 @@ public class HubJoiner implements IdSetter {
 		}
 	}
 
-	public void send(String message) {
+	private void send(String message) {
 		try {
 			byte[] buffer = message.getBytes();
 
@@ -122,7 +128,7 @@ public class HubJoiner implements IdSetter {
 		}
 	}
 
-	public void setAddRequestor() {
+	private void setAddRequestor() {
 		this.addRequestor = new Thread(new Runnable() {
 			@Override
 			public void run() {
@@ -148,7 +154,7 @@ public class HubJoiner implements IdSetter {
 		});
 	}
 
-	public void setDataReceiver() {
+	private void setDataReceiver() {
 		this.dataReceiver = new Thread(new Runnable() {
 			@Override
 			public void run() {
@@ -204,7 +210,7 @@ public class HubJoiner implements IdSetter {
 		});
 	}
 
-	public void setUpdateTester() {
+	private void setUpdateTester() {
 		this.updateTester = new Thread(new Runnable() {
 			@Override
 			public void run() {
