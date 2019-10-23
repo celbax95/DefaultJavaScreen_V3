@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,17 +30,16 @@ public class HubHoster {
 
 	private Map<Integer, Long> pings;
 
-	private List<Integer> listeningPorts;
+	private Map<Integer, Integer> linkIDPorts;
 
-	private List<Integer> toRemove;
+	private List<Integer> listeningPorts;
 
 	public HubHoster(int id, String username, Color color, int maxPlayer, String groupIP, int portReceive) {
 		this.myID = id;
 
 		this.pings = new HashMap<>();
 
-		this.toRemove = new Vector<>();
-
+		this.linkIDPorts = new HashMap<>();
 		this.listeningPorts = new Vector<>();
 
 		this.playersData = new HashMap<>();
@@ -67,6 +67,7 @@ public class HubHoster {
 
 		this.setDataReceiver();
 		this.setDataUpdater();
+		this.setPingTester();
 	}
 
 	private void addPlayer(String[] splited) {
@@ -77,6 +78,8 @@ public class HubHoster {
 				this.playersData.put(Integer.valueOf(splited[2]), pd);
 
 				int port = Integer.valueOf(splited[1]);
+
+				this.linkIDPorts.put(pd.getId(), port);
 
 				if (!this.listeningPorts.contains(port)) {
 					this.listeningPorts.add(port);
@@ -123,7 +126,7 @@ public class HubHoster {
 			this.addPlayer(splited);
 			break;
 		case PING:
-			this.addPlayer(splited);
+			this.ping(splited);
 			break;
 		default:
 			break;
@@ -199,7 +202,7 @@ public class HubHoster {
 			@Override
 			public void run() {
 
-				long last = System.currentTimeMillis();
+				long testTime = System.currentTimeMillis() - ServerDelays.PING_TEST_RATE;
 
 				while (Thread.currentThread().isInterrupted() == false) {
 					try {
@@ -207,15 +210,26 @@ public class HubHoster {
 					} catch (InterruptedException e) {
 					}
 
-					last = System.currentTimeMillis();
+					testTime = System.currentTimeMillis() - ServerDelays.PING_TEST_RATE;
+
+					List<Integer> idsToRemove = new ArrayList<>();
 
 					for (Integer id : HubHoster.this.pings.keySet()) {
-						if (HubHoster.this.pings.get(id) < last) {
-							HubHoster.this.pings.remove(id);
-							HubHoster.this.toRemove.add(id);
+						if (HubHoster.this.pings.get(id) < testTime) {
+							System.out.println("delete : " + id);
+							idsToRemove.add(id);
 						}
 					}
 
+					for (Integer id : idsToRemove) {
+						HubHoster.this.pings.remove(id);
+						HubHoster.this.playersData.remove(id);
+						HubHoster.this.linkIDPorts.remove(id);
+					}
+
+					if (idsToRemove.size() > 0) {
+						HubHoster.this.updatePorts();
+					}
 				}
 			}
 		});
@@ -224,10 +238,27 @@ public class HubHoster {
 	public void start() {
 		this.dataReceiver.start();
 		this.dataUpdater.start();
+		this.pingTester.start();
 	}
 
 	public void stop() {
 		this.dataReceiver.interrupt();
 		this.dataUpdater.interrupt();
+		this.pingTester.interrupt();
+	}
+
+	private void updatePorts() {
+		List<Integer> ports = new ArrayList<>();
+
+		for (Integer id : this.linkIDPorts.keySet()) {
+
+			int port = this.linkIDPorts.get(id);
+
+			if (!ports.contains(port)) {
+				ports.add(port);
+			}
+		}
+
+		this.listeningPorts = new ArrayList<>(ports);
 	}
 }

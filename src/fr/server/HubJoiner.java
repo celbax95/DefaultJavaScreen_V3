@@ -4,7 +4,9 @@ import java.awt.Color;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class HubJoiner implements IdSetter {
@@ -55,6 +57,8 @@ public class HubJoiner implements IdSetter {
 
 		this.portReceive = this.dataReceive.getLocalPort();
 
+		this.setPinger();
+		this.setUpdateTester();
 		this.setDataReceiver();
 		this.setAddRequestor();
 	}
@@ -65,7 +69,6 @@ public class HubJoiner implements IdSetter {
 		if (id == this.myID) {
 			this.addRequestor.interrupt();
 		}
-		System.out.println(this.playersData);
 
 		// le player id est inconnu
 		if (!this.playersData.containsKey(id)) {
@@ -81,6 +84,7 @@ public class HubJoiner implements IdSetter {
 
 			this.playersData.put(id, new PlayerData(id, username, color));
 
+			System.out.println(this.playersData);
 		} else {
 			PlayerData pd = this.playersData.get(id);
 			pd.setUsername(data[2]);
@@ -211,12 +215,24 @@ public class HubJoiner implements IdSetter {
 					} catch (InterruptedException e) {
 					}
 
-					long time = System.currentTimeMillis();
+					long testTime = System.currentTimeMillis() - ServerDelays.UPDATE_TEST_RATE;
+
+					List<Integer> idsToRemove = new ArrayList<>();
 
 					for (Integer id : HubJoiner.this.updates.keySet()) {
-						if (updates.get(id) > ) {
 
+						if (HubJoiner.this.updates.get(id) < testTime) {
+							idsToRemove.add(id);
 						}
+					}
+
+					for (Integer id : idsToRemove) {
+						HubJoiner.this.updates.remove(id);
+						HubJoiner.this.playersData.remove(id);
+					}
+
+					if (idsToRemove.size() != 0) {
+						System.out.println(HubJoiner.this.playersData);
 					}
 				}
 			}
@@ -225,11 +241,13 @@ public class HubJoiner implements IdSetter {
 
 	public void start() {
 		this.dataReceiver.start();
+		this.updateTester.start();
 	}
 
 	public void stop() {
 		this.dataReceiver.interrupt();
 		this.addRequestor.interrupt();
 		this.pinger.interrupt();
+		this.updateTester.interrupt();
 	}
 }
