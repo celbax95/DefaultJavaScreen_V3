@@ -6,7 +6,7 @@
 
     <param name="rightMovement" type="integer" value="68"/>
 
-    <param name="jump" type="integer" value="0"/>
+    <param name="jump" type="integer" value="32"/>
 
     <param name="shoot" type="integer" value="-1"/>
 
