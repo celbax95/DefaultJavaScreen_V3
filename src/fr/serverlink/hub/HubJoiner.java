@@ -79,15 +79,17 @@ public abstract class HubJoiner implements IdSetter {
 			this.addRequestor.interrupt();
 		}
 
+		int i = 2;
+
 		// le player id est inconnu
 		if (!this.playersData.containsKey(id)) {
-			String username = data[2];
+			String username = data[i++];
 
-			String colorTxt = data[3];
+			String colorTxt = data[i++];
 
 			Color color = Color.BLACK;
 
-			if (colorTxt.substring(1, 1).equals("#") && colorTxt.length() == 7) {
+			if (colorTxt.substring(0, 1).equals("#") && colorTxt.length() == 7) {
 				color = Color.decode(colorTxt);
 			}
 
@@ -97,10 +99,10 @@ public abstract class HubJoiner implements IdSetter {
 
 		} else {
 			PlayerData pd = this.playersData.get(id);
-			pd.setUsername(data[2]);
+			pd.setUsername(data[i++]);
 
-			String colorTxt = data[3];
-			if (colorTxt.substring(1, 1).equals("#") && colorTxt.length() == 7) {
+			String colorTxt = data[i++];
+			if (colorTxt.substring(0, 1).equals("#") && colorTxt.length() == 7) {
 				pd.setColor(Color.decode(colorTxt));
 			}
 		}

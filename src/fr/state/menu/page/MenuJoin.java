@@ -1,25 +1,44 @@
 package fr.state.menu.page;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics2D;
 import java.util.List;
 import java.util.Vector;
 
+import fr.datafilesmanager.DatafilesManager;
 import fr.datafilesmanager.XMLManager;
 import fr.imagesmanager.ImageLoader;
 import fr.imagesmanager.ImageManager;
 import fr.inputs.Input;
+import fr.serverlink.data.ServerData;
+import fr.serverlink.hub.HubJoiner;
+import fr.serverlink.link.Searcher;
 import fr.state.menu.Menu;
 import fr.state.menu.MenuPage;
 import fr.state.menu.Widget;
 import fr.state.menu.widget.WButton;
 import fr.state.menu.widget.WElement;
 import fr.state.menu.widget.data.BorderData;
+import fr.state.menu.widget.data.TextData;
 import fr.state.menu.widget.drawelements.DEImage;
 import fr.state.menu.widget.drawelements.DERectangle;
 import fr.util.point.Point;
 
 public class MenuJoin implements MenuPage {
+
+	private class PlayerData {
+		public int id;
+		public String username;
+		public Color color;
+
+		public PlayerData(int id, String username, Color color) {
+			super();
+			this.id = id;
+			this.username = username;
+			this.color = color;
+		}
+	}
 
 	private static final String[] RES_NAMES = { "title", "backStd", "backPressed" };
 
@@ -29,6 +48,9 @@ public class MenuJoin implements MenuPage {
 	private static final String RES_EXTENSION = ".png";
 
 	private static final String PAGE_NAME = "menuJoin";
+
+	private static final String PARAM_NAME_USERNAME = "username";
+	private static final String PARAM_NAME_COLOR = "color";
 
 	static {
 		for (int i = 0; i < RES_NAMES.length; i++) {
@@ -44,9 +66,25 @@ public class MenuJoin implements MenuPage {
 
 	private Menu m;
 
-	private Object serverConf;
+	private Object profileConf;
 
 	private XMLManager manager;
+
+	private WElement pad1, pad2;
+
+	private WElement[] pads;
+
+	private PlayerData[] players;
+
+	private int maxPlayer = 4;
+
+	private int idServer;
+
+	private HubJoiner hub;
+
+	private Searcher searcher;
+
+	private Color defaultPadColor = new Color(0, 0, 0, 0);
 
 	public MenuJoin(Menu m) {
 
@@ -56,14 +94,63 @@ public class MenuJoin implements MenuPage {
 
 		this.loadResources();
 
-//		DatafilesManager dfm = DatafilesManager.getInstance();
-//		this.serverConf = dfm.getFile("profile");
-//		this.manager = dfm.getXmlManager();
-//
-//		String colorHex = (String) this.manager.getParam(this.profileConf, PARAM_NAME_COLOR, 0);
+		DatafilesManager dfm = DatafilesManager.getInstance();
+		this.profileConf = dfm.getFile("profile");
+		this.manager = dfm.getXmlManager();
+
+		String myUsername = (String) this.manager.getParam(this.profileConf, PARAM_NAME_USERNAME, "user");
+		Color myColor = Color.decode((String) this.manager.getParam(this.profileConf, PARAM_NAME_COLOR, "#000000"));
 
 		this.wTitle();
 		this.wBack();
+
+		this.pads = new WElement[this.maxPlayer];
+		this.players = new PlayerData[this.maxPlayer];
+
+		int size = 300;
+
+		for (int i = 0; i < this.maxPlayer; i++) {
+			this.pads[i] = this.wPad(new Point(300 + size * i, 450));
+		}
+
+		for (int i = 0; i < this.maxPlayer; i++) {
+			this.players[0] = null;
+		}
+
+		this.putPlayerOnPad(new PlayerData(-1, myUsername, myColor), 0);
+
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				MenuJoin.this.hub = new HubJoiner(myUsername, myColor, ServerData.getGroup(MenuJoin.this.idServer),
+						ServerData.getPort(MenuJoin.this.idServer)) {
+
+					@Override
+					public void noMorePlayer() {
+					}
+
+					@Override
+					public void playerAdded(int id, String username, Color color) {
+						int i = MenuJoin.this.getEmptyPad();
+
+						if (i == -1)
+							return;
+
+						MenuJoin.this.putPlayerOnPad(new PlayerData(id, username, color), i);
+					}
+
+					@Override
+					public void playerRemoved(int id) {
+						MenuJoin.this.removePlayerFromPad(MenuJoin.this.getPlayerPad(id));
+					}
+				};
+				MenuJoin.this.searcher = new Searcher(MenuJoin.this.hub, ServerData.getGroup(MenuJoin.this.idServer),
+						ServerData.getPort(MenuJoin.this.idServer));
+
+				MenuJoin.this.hub.start();
+				MenuJoin.this.searcher.start();
+			}
+		}).start();
 	}
 
 	@Override
@@ -73,10 +160,56 @@ public class MenuJoin implements MenuPage {
 		}
 	}
 
+	public int getEmptyPad() {
+		for (int i = 0; i < this.players.length; i++) {
+			if (this.players[i] == null)
+				return i;
+		}
+		return -1;
+	}
+
+	public int getPlayerPad(int playerId) {
+		for (int i = 0; i < this.players.length; i++) {
+			if (this.players[i] != null && this.players[i].id == playerId)
+				return i;
+		}
+		return -1;
+	}
+
 	private void loadResources() {
 		ImageLoader il = new ImageLoader();
 
 		il.load(RES_NAMES, RES_PATHS);
+	}
+
+	public void putPlayerOnPad(PlayerData p, int padId) {
+		DERectangle r = (DERectangle) this.pads[padId].getDrawElement();
+
+		r.setColor(p.color);
+
+		TextData td = r.getLabel().clone();
+		td.setText(p.username);
+
+		r.setLabel(td);
+
+		this.players[padId] = p;
+	}
+
+	public void removePlayerFromPad(int padId) {
+		if (padId < 0)
+			return;
+
+		DERectangle r = (DERectangle) this.pads[padId].getDrawElement();
+
+		r.setColor(this.defaultPadColor);
+
+		TextData td = r.getLabel().clone();
+		td.setText("");
+
+		r.setLabel(td);
+
+		this.players[padId] = null;
+
 	}
 
 	@Override
@@ -122,6 +255,25 @@ public class MenuJoin implements MenuPage {
 		WElement w = new WElement(this);
 		w.setDrawElement(rect);
 		w.setPos(new Point(1014, 528));
+
+		this.widgets.add(w);
+
+		return w;
+	}
+
+	private WElement wPad(Point pos) {
+
+		WElement w = new WElement(this);
+
+		DERectangle de = new DERectangle();
+
+		de.setBorder(new BorderData(5, Color.BLACK, 1));
+		de.setLabel(new TextData(new Point(), new Font("Copperplate Gothic Bold", Font.PLAIN, 30), "", Color.black, 3));
+		de.setColor(this.defaultPadColor);
+		de.setSize(new Point(250, 250));
+
+		w.setDrawElement(de);
+		w.setPos(pos.clone());
 
 		this.widgets.add(w);
 

@@ -120,7 +120,7 @@ public abstract class HubHoster {
 
 		Color color = Color.BLACK;
 
-		if (colorTxt.substring(1, 1).equals("#") && colorTxt.length() == 7) {
+		if (colorTxt.substring(0, 1).equals("#") && colorTxt.length() == 7) {
 			color = Color.decode(colorTxt);
 		}
 
