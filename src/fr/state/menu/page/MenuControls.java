@@ -127,7 +127,7 @@ public class MenuControls implements MenuPage {
 		}
 		for (int i = 0; i < this.controls.length; i++) {
 			for (int j = 0; j < this.controls.length; j++) {
-				if (i >= j) {
+				if (i >= j || this.controls[j].getData() == 0) {
 					continue;
 				}
 				if (this.controls[i].getData() == this.controls[j].getData()) {
