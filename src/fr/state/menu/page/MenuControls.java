@@ -53,15 +53,13 @@ public class MenuControls implements MenuPage {
 	private static final String PARAM_NAME_JUMP = "jump";
 	private static final String PARAM_NAME_SHOOT = "shoot";
 	private static final String PARAM_NAME_USE = "use";
-	private static final String PARAM_NAME_LEAVE = "leave";
 
 	private static final String[] PARAM_NAMES = {
 			PARAM_NAME_LEFT,
 			PARAM_NAME_RIGHT,
 			PARAM_NAME_JUMP,
 			PARAM_NAME_SHOOT,
-			PARAM_NAME_USE,
-			PARAM_NAME_LEAVE, };
+			PARAM_NAME_USE, };
 
 	private static final int SPACE_BETWEEN_INPUTS = 128;
 	private static final int INPUT_POS_X = 874;
@@ -249,13 +247,13 @@ public class MenuControls implements MenuPage {
 
 		sc.setPos(new Point(339, 343));
 		sc.setSize(new Point(1242, 637));
-		sc.setMaxScroll(128);
+		sc.setMaxScroll(0);
 		sc.setScrollStep(30);
 		sc.setDrawAdvanced(true);
 		sc.setPaddingBottom(0);
 		sc.setPaddingTop(0);
 		sc.setPaddingSide(0);
-		sc.setDisplayScrollBar(true);
+		sc.setDisplayScrollBar(false);
 		sc.setSliderLeftSide(true);
 		sc.setScrollBarColor(new Color(150, 150, 150));
 		DERectangle rect = sc.getDefaultSlider();
