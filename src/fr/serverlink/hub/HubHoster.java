@@ -210,7 +210,7 @@ public abstract class HubHoster {
 						PlayerData pd = HubHoster.this.playersData.get(id);
 
 						HubHoster.this.send(Request.UPDATE + "/" + id + "/" + pd.getUsername() + "/" + "#"
-								+ Integer.toHexString(pd.getColor().getRGB()).substring(2) + "/" + pd.isReady());
+								+ Integer.toHexString(pd.getColor().getRGB()).substring(2) + "/" + pd.isReady() + "/");
 					}
 
 					try {

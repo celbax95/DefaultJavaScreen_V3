@@ -19,6 +19,7 @@ import fr.state.menu.MenuPage;
 import fr.state.menu.Widget;
 import fr.state.menu.widget.WButton;
 import fr.state.menu.widget.WElement;
+import fr.state.menu.widget.WSwitch;
 import fr.state.menu.widget.data.BorderData;
 import fr.state.menu.widget.data.TextData;
 import fr.state.menu.widget.drawelements.DEImage;
@@ -49,6 +50,9 @@ public class MenuJoin implements MenuPage {
 
 	private static final String PAGE_NAME = "menuJoin";
 
+	private static final Color READY = Color.GREEN;
+	private static final Color NOT_READY = Color.RED;
+
 	private static final String PARAM_NAME_USERNAME = "username";
 	private static final String PARAM_NAME_COLOR = "color";
 
@@ -73,6 +77,8 @@ public class MenuJoin implements MenuPage {
 	private WElement pad1, pad2;
 
 	private WElement[] pads;
+
+	private WElement[] ready;
 
 	private PlayerData[] players;
 
@@ -101,16 +107,19 @@ public class MenuJoin implements MenuPage {
 		String myUsername = (String) this.manager.getParam(this.profileConf, PARAM_NAME_USERNAME, "user");
 		Color myColor = Color.decode((String) this.manager.getParam(this.profileConf, PARAM_NAME_COLOR, "#000000"));
 
+		this.wReady();
 		this.wTitle();
 		this.wBack();
 
 		this.pads = new WElement[this.maxPlayer];
+		this.ready = new WElement[this.maxPlayer];
 		this.players = new PlayerData[this.maxPlayer];
 
 		int size = 300;
 
 		for (int i = 0; i < this.maxPlayer; i++) {
 			this.pads[i] = this.wPad(new Point(300 + size * i, 450));
+			this.ready[i] = this.wReady(new Point(410 + size * i, 720));
 		}
 
 		for (int i = 0; i < this.maxPlayer; i++) {
@@ -124,6 +133,11 @@ public class MenuJoin implements MenuPage {
 			public void run() {
 				MenuJoin.this.hub = new HubJoiner(myUsername, myColor, ServerData.getGroup(MenuJoin.this.idServer),
 						ServerData.getPort(MenuJoin.this.idServer)) {
+
+					@Override
+					public void idAssigned(int id) {
+						MenuJoin.this.players[0].id = id;
+					}
 
 					@Override
 					public void noMorePlayer() {
@@ -146,8 +160,9 @@ public class MenuJoin implements MenuPage {
 
 					@Override
 					public void readyChanged(int id, boolean ready) {
-						System.out.println(id + "pret");
+						MenuJoin.this.setPlayerReady(MenuJoin.this.getPlayerPad(id), ready);
 					}
+
 				};
 				MenuJoin.this.searcher = new Searcher(MenuJoin.this.hub, ServerData.getGroup(MenuJoin.this.idServer),
 						ServerData.getPort(MenuJoin.this.idServer));
@@ -188,6 +203,9 @@ public class MenuJoin implements MenuPage {
 	}
 
 	public void putPlayerOnPad(PlayerData p, int padId) {
+		if (padId == -1)
+			return;
+
 		DERectangle r = (DERectangle) this.pads[padId].getDrawElement();
 
 		r.setColor(p.color);
@@ -198,6 +216,8 @@ public class MenuJoin implements MenuPage {
 		r.setLabel(td);
 
 		this.players[padId] = p;
+
+		((DERectangle) this.ready[padId].getDrawElement()).setColor(NOT_READY);
 	}
 
 	public void removePlayerFromPad(int padId) {
@@ -215,6 +235,13 @@ public class MenuJoin implements MenuPage {
 
 		this.players[padId] = null;
 
+	}
+
+	private void setPlayerReady(int playerPad, boolean ready) {
+		if (playerPad == -1)
+			return;
+
+		((DERectangle) this.ready[playerPad].getDrawElement()).setColor(ready ? READY : NOT_READY);
 	}
 
 	@Override
@@ -276,6 +303,65 @@ public class MenuJoin implements MenuPage {
 		de.setLabel(new TextData(new Point(), new Font("Copperplate Gothic Bold", Font.PLAIN, 30), "", Color.black, 3));
 		de.setColor(this.defaultPadColor);
 		de.setSize(new Point(250, 250));
+
+		w.setDrawElement(de);
+		w.setPos(pos.clone());
+
+		this.widgets.add(w);
+
+		return w;
+	}
+
+	private void wReady() {
+		WSwitch w = new WSwitch(this) {
+			@Override
+			public void actionOff() {
+				MenuJoin.this.hub.setReady(false);
+			}
+
+			@Override
+			public void actionOn() {
+				MenuJoin.this.hub.setReady(true);
+			}
+		};
+
+		TextData td = new TextData(new Point(), new Font("Copperplate Gothic Bold", Font.PLAIN, 30), "Not ready",
+				Color.black, 3);
+
+		DERectangle r = new DERectangle();
+		r.setSize(new Point(250, 100));
+		r.setColor(new Color(200, 0, 0));
+		r.setLabel(td.clone());
+		r.setBorder(new BorderData(3, Color.black, 1));
+
+		w.setOffDrawElement(r.clone());
+
+		r.setColor(new Color(255, 0, 0));
+		w.setPressedOffDrawElement(r.clone());
+
+		td.setText("Ready");
+		r.setLabel(td.clone());
+		r.setColor(new Color(0, 200, 0));
+		w.setOnDrawElement(r.clone());
+
+		r.setColor(new Color(0, 255, 0));
+		w.setPressedOnDrawElement(r.clone());
+
+		w.setPos(new Point(400, 850));
+		w.setHitboxFromDrawElement();
+
+		this.widgets.add(w);
+	}
+
+	private WElement wReady(Point pos) {
+
+		WElement w = new WElement(this);
+
+		DERectangle de = new DERectangle();
+
+		de.setBorder(new BorderData(3, Color.BLACK, 1));
+		de.setColor(this.defaultPadColor);
+		de.setSize(new Point(30, 30));
 
 		w.setDrawElement(de);
 		w.setPos(pos.clone());
