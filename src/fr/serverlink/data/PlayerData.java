@@ -10,11 +10,20 @@ public class PlayerData {
 
 	private Color color;
 
-	public PlayerData(int id, String username, Color color) {
+	private boolean ready;
+
+	/**
+	 * @param id
+	 * @param username
+	 * @param color
+	 * @param ready
+	 */
+	public PlayerData(int id, String username, Color color, boolean ready) {
 		super();
 		this.id = id;
 		this.username = username;
 		this.color = color;
+		this.ready = ready;
 	}
 
 	public Color getColor() {
@@ -32,6 +41,13 @@ public class PlayerData {
 		return this.username;
 	}
 
+	/**
+	 * @return the ready
+	 */
+	public boolean isReady() {
+		return this.ready;
+	}
+
 	public void setColor(Color color) {
 		this.color = color;
 	}
@@ -41,6 +57,13 @@ public class PlayerData {
 	 */
 	public void setId(int id) {
 		this.id = id;
+	}
+
+	/**
+	 * @param ready the ready to set
+	 */
+	public void setReady(boolean ready) {
+		this.ready = ready;
 	}
 
 	public void setUsername(String username) {

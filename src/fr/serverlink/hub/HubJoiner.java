@@ -37,7 +37,7 @@ public abstract class HubJoiner implements IdSetter {
 
 	public HubJoiner(String playerUsername, Color playerColor, String groupIP, int portSend) {
 		this.myID = -1;
-		this.myPlayer = new PlayerData(-1, playerUsername, playerColor);
+		this.myPlayer = new PlayerData(-1, playerUsername, playerColor, false);
 
 		this.portSend = portSend;
 
@@ -93,9 +93,12 @@ public abstract class HubJoiner implements IdSetter {
 				color = Color.decode(colorTxt);
 			}
 
-			this.playersData.put(id, new PlayerData(id, username, color));
+			boolean ready = Boolean.parseBoolean(data[i++]);
+
+			this.playersData.put(id, new PlayerData(id, username, color, ready));
 
 			this.playerAdded(id, username, color);
+			this.readyChanged(id, ready);
 
 		} else {
 			PlayerData pd = this.playersData.get(id);
@@ -104,6 +107,13 @@ public abstract class HubJoiner implements IdSetter {
 			String colorTxt = data[i++];
 			if (colorTxt.substring(0, 1).equals("#") && colorTxt.length() == 7) {
 				pd.setColor(Color.decode(colorTxt));
+			}
+
+			boolean ready = Boolean.parseBoolean(data[i++]);
+
+			if (ready != pd.isReady()) {
+				pd.setReady(ready);
+				this.readyChanged(id, ready);
 			}
 		}
 
@@ -123,6 +133,8 @@ public abstract class HubJoiner implements IdSetter {
 			break;
 		}
 	}
+
+	public abstract void readyChanged(int id, boolean ready);
 
 	private void send(String message) {
 		try {
@@ -205,7 +217,7 @@ public abstract class HubJoiner implements IdSetter {
 					}
 
 					HubJoiner.this.send(Request.PING + "/" + HubJoiner.this.portReceive + "/"
-							+ HubJoiner.this.myPlayer.getId() + "/");
+							+ HubJoiner.this.myPlayer.getId() + "/" + HubJoiner.this.myPlayer.isReady() + "/");
 
 					try {
 						Thread.sleep(ServerDelays.PING_RATE);
@@ -216,6 +228,10 @@ public abstract class HubJoiner implements IdSetter {
 				}
 			}
 		});
+	}
+
+	public void setReady(boolean ready) {
+		this.myPlayer.setReady(ready);
 	}
 
 	private void setUpdateTester() {

@@ -143,6 +143,11 @@ public class MenuJoin implements MenuPage {
 					public void playerRemoved(int id) {
 						MenuJoin.this.removePlayerFromPad(MenuJoin.this.getPlayerPad(id));
 					}
+
+					@Override
+					public void readyChanged(int id, boolean ready) {
+						System.out.println(id + "pret");
+					}
 				};
 				MenuJoin.this.searcher = new Searcher(MenuJoin.this.hub, ServerData.getGroup(MenuJoin.this.idServer),
 						ServerData.getPort(MenuJoin.this.idServer));

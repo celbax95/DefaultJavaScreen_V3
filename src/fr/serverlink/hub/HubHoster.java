@@ -48,7 +48,7 @@ public abstract class HubHoster {
 
 		this.playersData = new HashMap<>();
 
-		this.playersData.put(id, new PlayerData(id, username, color));
+		this.playersData.put(id, new PlayerData(id, username, color, true));
 
 		this.maxPlayer = maxPlayer;
 
@@ -93,14 +93,27 @@ public abstract class HubHoster {
 		}
 	}
 
+	public abstract void gameStarting(boolean state);
+
 	public abstract void noMorePlayer();
 
-	private void ping(String[] splited) {
+	private void ping(String[] data) {
 		int i = 2;
 
-		Integer id = Integer.valueOf(splited[i++]);
+		Integer id = Integer.valueOf(data[i++]);
 
 		this.pings.put(id, System.currentTimeMillis());
+
+		// Ready
+
+		boolean ready = Boolean.parseBoolean(data[i++]);
+
+		if (this.playersData.containsKey(id)) {
+			if (ready != this.playersData.get(id).isReady()) {
+				this.playersData.get(id).setReady(ready);
+				this.readyChanged(id, ready);
+			}
+		}
 	}
 
 	public abstract void playerAdded(int id, String username, Color color);
@@ -124,7 +137,7 @@ public abstract class HubHoster {
 			color = Color.decode(colorTxt);
 		}
 
-		return new PlayerData(id, username, color);
+		return new PlayerData(id, username, color, false);
 	}
 
 	public abstract void playerRemoved(int id);
@@ -143,6 +156,8 @@ public abstract class HubHoster {
 			break;
 		}
 	}
+
+	public abstract void readyChanged(int id, boolean ready);
 
 	private void send(String message) {
 		try {
@@ -195,7 +210,7 @@ public abstract class HubHoster {
 						PlayerData pd = HubHoster.this.playersData.get(id);
 
 						HubHoster.this.send(Request.UPDATE + "/" + id + "/" + pd.getUsername() + "/" + "#"
-								+ Integer.toHexString(pd.getColor().getRGB()).substring(2) + "/");
+								+ Integer.toHexString(pd.getColor().getRGB()).substring(2) + "/" + pd.isReady());
 					}
 
 					try {
@@ -257,6 +272,14 @@ public abstract class HubHoster {
 		this.dataReceiver.start();
 		this.dataUpdater.start();
 		this.pingTester.start();
+	}
+
+	public void startGame() {
+		for (PlayerData p : this.playersData.values()) {
+			if (p.isReady() == false)
+				return;
+		}
+		this.gameStarting(true);
 	}
 
 	public void stop() {

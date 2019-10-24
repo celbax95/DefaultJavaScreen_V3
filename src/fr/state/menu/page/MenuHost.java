@@ -129,6 +129,10 @@ public class MenuHost implements MenuPage {
 						ServerData.getGroup(MenuHost.this.idServer), ServerData.getPort(MenuHost.this.idServer)) {
 
 					@Override
+					public void gameStarting(boolean state) {
+					}
+
+					@Override
 					public void noMorePlayer() {
 					}
 
@@ -145,6 +149,12 @@ public class MenuHost implements MenuPage {
 					@Override
 					public void playerRemoved(int id) {
 						MenuHost.this.removePlayerFromPad(MenuHost.this.getPlayerPad(id));
+					}
+
+					@Override
+					public void readyChanged(int id, boolean ready) {
+						System.out.println(
+								MenuHost.this.players[MenuHost.this.getPlayerPad(id)].username + " est peut etre pret");
 					}
 				};
 				MenuHost.this.linker = new Linker(0, ServerData.getGroup(MenuHost.this.idServer),
