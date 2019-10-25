@@ -31,6 +31,8 @@ public abstract class WSwitch implements Widget {
 
 	private MenuPage page;
 
+	private boolean enabled;
+
 	public WSwitch(MenuPage p) {
 		this.page = p;
 		this.pos = new Point();
@@ -51,6 +53,8 @@ public abstract class WSwitch implements Widget {
 
 		this.visible = true;
 
+		this.enabled = true;
+
 		this.currentDE = null;
 	}
 
@@ -68,6 +72,8 @@ public abstract class WSwitch implements Widget {
 		AABB hb = new AABB(this.pos, new Point(), new Point());
 		hb.min(new Point(other.hitbox.min()));
 		hb.max(new Point(other.hitbox.max()));
+
+		this.setEnabled(other.enabled);
 
 		this.setActive(other.active);
 		this.setPressed(false);
@@ -156,6 +162,13 @@ public abstract class WSwitch implements Widget {
 	}
 
 	/**
+	 * @return the enabled
+	 */
+	public boolean isEnabled() {
+		return this.enabled;
+	}
+
+	/**
 	 * @return the mouseOn
 	 */
 	public boolean isMouseOn() {
@@ -209,6 +222,14 @@ public abstract class WSwitch implements Widget {
 
 	private void setCurrentDE(DrawElement currentDE) {
 		this.currentDE = currentDE;
+	}
+
+	/**
+	 * @param enabled the enabled to set
+	 */
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
+		this.setPressed(false);
 	}
 
 	/**
@@ -325,12 +346,12 @@ public abstract class WSwitch implements Widget {
 		for (MouseEvent e : input.mouseEvents) {
 			switch (e.id) {
 			case MouseEvent.LEFT_PRESSED:
-				if (Collider.AABBvsPoint(this.hitbox, e.pos)) {
+				if (this.enabled && Collider.AABBvsPoint(this.hitbox, e.pos)) {
 					this.setPressed(true);
 				}
 				continue;
 			case MouseEvent.LEFT_RELEASED:
-				if (Collider.AABBvsPoint(this.hitbox, e.pos) && this.pressed) {
+				if (this.enabled && Collider.AABBvsPoint(this.hitbox, e.pos) && this.pressed) {
 					this.setActive(!this.active);
 				}
 				this.setPressed(false);

@@ -89,6 +89,7 @@ public abstract class HubHoster {
 				}
 
 				this.playerAdded(pd.getId(), pd.getUsername(), pd.getColor());
+				this.readyChanged(pd.getId(), pd.isReady());
 			}
 		}
 	}

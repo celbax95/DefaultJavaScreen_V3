@@ -225,4 +225,9 @@ public class DERectangle implements DrawElement {
 		this.size = size;
 		this.halfSize = size.clone().div(2);
 	}
+
+	public void setText(String text) {
+		TextData td = this.label.clone();
+		td.setText(text);
+	}
 }

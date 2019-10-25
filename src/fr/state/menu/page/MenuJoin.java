@@ -123,7 +123,7 @@ public class MenuJoin implements MenuPage {
 		}
 
 		for (int i = 0; i < this.maxPlayer; i++) {
-			this.players[0] = null;
+			this.players[i] = null;
 		}
 
 		this.putPlayerOnPad(new PlayerData(-1, myUsername, myColor), 0);
