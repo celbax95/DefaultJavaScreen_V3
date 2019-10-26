@@ -279,8 +279,12 @@ public class MenuJoin implements MenuPage {
 		WButton btn = new WButton(this) {
 			@Override
 			public void action() {
-				MenuJoin.this.searcher.stop();
-				MenuJoin.this.hub.stop();
+				if (MenuJoin.this.searcher != null) {
+					MenuJoin.this.searcher.stop();
+				}
+				if (MenuJoin.this.hub != null) {
+					MenuJoin.this.hub.stop();
+				}
 				MenuJoin.this.m.applyPage(new MenuMain(MenuJoin.this.m));
 			}
 		};

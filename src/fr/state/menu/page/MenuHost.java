@@ -311,12 +311,13 @@ public class MenuHost implements MenuPage {
 		WButton btn = new WButton(this) {
 			@Override
 			public void action() {
-				MenuHost.this.hub.stop();
-				MenuHost.this.linker.stop();
 				try {
+					MenuHost.this.hub.stop();
+					MenuHost.this.linker.stop();
 					MenuHost.this.playCountdown.interrupt();
-				} catch (Exception e) {
+				} catch (NullPointerException e) {
 				}
+
 				MenuHost.this.m.applyPage(new MenuMain(MenuHost.this.m));
 			}
 		};

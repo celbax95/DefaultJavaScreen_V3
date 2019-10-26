@@ -203,17 +203,16 @@ public abstract class HubJoiner implements IdSetter {
 		this.playersData.put(id, this.myPlayer);
 		this.idAssigned(id);
 
-		if (this.addRequestor != null) {
+		try {
 			this.addRequestor.interrupt();
-		}
-		this.setAddRequestor();
-		this.addRequestor.start();
+			this.setAddRequestor();
+			this.addRequestor.start();
 
-		if (this.pinger != null) {
 			this.pinger.interrupt();
+			this.setPinger();
+			this.pinger.start();
+		} catch (NullPointerException e) {
 		}
-		this.setPinger();
-		this.pinger.start();
 	}
 
 	private void setPinger() {
@@ -298,10 +297,13 @@ public abstract class HubJoiner implements IdSetter {
 	}
 
 	public void stop() {
-		this.dataReceiver.interrupt();
-		this.addRequestor.interrupt();
-		this.pinger.interrupt();
-		this.updateTester.interrupt();
+		try {
+			this.dataReceiver.interrupt();
+			this.addRequestor.interrupt();
+			this.pinger.interrupt();
+			this.updateTester.interrupt();
+		} catch (NullPointerException e) {
+		}
 
 		this.playersData.clear();
 
