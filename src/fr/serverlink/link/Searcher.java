@@ -47,9 +47,6 @@ public class Searcher {
 		}
 
 		this.message = (Request.REQID + "/" + this.responseReceiver.getLocalPort() + "/").getBytes();
-
-		this.setReceiver();
-		this.setSender();
 	}
 
 	private void processResponse(String data) {
@@ -115,7 +112,18 @@ public class Searcher {
 	}
 
 	public void start() {
+		this.myID = -1;
+
+		if (this.receiver != null) {
+			this.receiver = null;
+		}
+		this.setReceiver();
 		this.receiver.start();
+
+		if (this.sender != null) {
+			this.sender.interrupt();
+		}
+		this.setSender();
 		this.sender.start();
 	}
 

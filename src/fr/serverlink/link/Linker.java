@@ -47,8 +47,6 @@ public class Linker {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
-		this.setListener();
 	}
 
 	private void processPacket(InetAddress inetAddress, String data) {
@@ -59,11 +57,6 @@ public class Linker {
 			return;
 
 		int askerPort = Integer.valueOf(splited[1]);
-
-		if (askerPort < 0 || askerPort > 65000) {
-			System.err.println("Le port reçu est invalide");
-			return;
-		}
 
 		int id;
 
@@ -96,7 +89,8 @@ public class Linker {
 		try {
 			this.responseSender.send(packet);
 		} catch (IOException e) {
-			e.printStackTrace();
+			Thread.currentThread().interrupt();
+			return;
 		}
 	}
 
@@ -114,7 +108,8 @@ public class Linker {
 					try {
 						Linker.this.reqListener.receive(packet);
 					} catch (IOException e) {
-						e.printStackTrace();
+						Thread.currentThread().interrupt();
+						return;
 					}
 
 					Linker.this.processPacket(packet.getAddress(), new String(packet.getData()));
@@ -123,7 +118,8 @@ public class Linker {
 				try {
 					Linker.this.reqListener.leaveGroup(Linker.this.groupIP);
 				} catch (IOException e) {
-					e.printStackTrace();
+					Thread.currentThread().interrupt();
+					return;
 				}
 				Linker.this.reqListener.close();
 			}
@@ -131,6 +127,10 @@ public class Linker {
 	}
 
 	public void start() {
+		if (this.listener != null) {
+			this.listener.interrupt();
+		}
+		this.setListener();
 		this.listener.start();
 	}
 

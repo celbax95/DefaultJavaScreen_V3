@@ -22,13 +22,9 @@ public abstract class HubHoster {
 
 	private InetAddress groupIP;
 
-	private int portReceive;
-
 	private Thread dataUpdater, dataReceiver, pingTester;
 
 	private Map<Integer, PlayerData> playersData;
-
-	private int myID;
 
 	private int maxPlayer;
 
@@ -39,7 +35,6 @@ public abstract class HubHoster {
 	private List<Integer> listeningPorts;
 
 	public HubHoster(int id, String username, Color color, int maxPlayer, String groupIP, int portReceive) {
-		this.myID = id;
 
 		this.pings = new HashMap<>();
 
@@ -51,8 +46,6 @@ public abstract class HubHoster {
 		this.playersData.put(id, new PlayerData(id, username, color, true));
 
 		this.maxPlayer = maxPlayer;
-
-		this.portReceive = portReceive;
 
 		try {
 			this.groupIP = InetAddress.getByName(groupIP);
@@ -189,7 +182,8 @@ public abstract class HubHoster {
 
 						HubHoster.this.processData(new String(packet.getData()));
 					} catch (Exception e) {
-						e.printStackTrace();
+						Thread.currentThread().interrupt();
+						return;
 					}
 				}
 			}
@@ -259,10 +253,9 @@ public abstract class HubHoster {
 
 					if (idsToRemove.size() > 0) {
 						HubHoster.this.updatePorts();
-					}
-
-					if (HubHoster.this.playersData.size() == 1) {
-						HubHoster.this.noMorePlayer();
+						if (HubHoster.this.playersData.size() == 1) {
+							HubHoster.this.noMorePlayer();
+						}
 					}
 				}
 			}
@@ -270,8 +263,22 @@ public abstract class HubHoster {
 	}
 
 	public void start() {
+		if (this.dataReceiver != null) {
+			this.dataReceiver.interrupt();
+		}
+		this.setDataReceiver();
 		this.dataReceiver.start();
+
+		if (this.dataUpdater != null) {
+			this.dataUpdater.interrupt();
+		}
+		this.setDataUpdater();
 		this.dataUpdater.start();
+
+		if (this.pingTester != null) {
+			this.pingTester.interrupt();
+		}
+		this.setPingTester();
 		this.pingTester.start();
 	}
 

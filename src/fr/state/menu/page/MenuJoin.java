@@ -74,8 +74,6 @@ public class MenuJoin implements MenuPage {
 
 	private XMLManager manager;
 
-	private WElement pad1, pad2;
-
 	private WElement[] pads;
 
 	private WElement[] ready;
@@ -85,6 +83,8 @@ public class MenuJoin implements MenuPage {
 	private int maxPlayer = 4;
 
 	private int idServer;
+
+	private WSwitch wReady;
 
 	private HubJoiner hub;
 
@@ -107,7 +107,7 @@ public class MenuJoin implements MenuPage {
 		String myUsername = (String) this.manager.getParam(this.profileConf, PARAM_NAME_USERNAME, "user");
 		Color myColor = Color.decode((String) this.manager.getParam(this.profileConf, PARAM_NAME_COLOR, "#000000"));
 
-		this.wReady();
+		this.wReady = this.wReady();
 		this.wTitle();
 		this.wBack();
 
@@ -136,11 +136,20 @@ public class MenuJoin implements MenuPage {
 
 					@Override
 					public void idAssigned(int id) {
+						MenuJoin.this.searcher.stop();
 						MenuJoin.this.players[0].id = id;
 					}
 
 					@Override
 					public void noMorePlayer() {
+						MenuJoin.this.wReady.setEnabled(false);
+						MenuJoin.this.resetPads();
+						MenuJoin.this.setPlayerReady(0, false);
+						MenuJoin.this.searcher.stop();
+						MenuJoin.this.hub.stop();
+						MenuJoin.this.players[0].id = -1;
+						MenuJoin.this.hub.start();
+						MenuJoin.this.searcher.start();
 					}
 
 					@Override
@@ -206,6 +215,10 @@ public class MenuJoin implements MenuPage {
 		if (padId == -1)
 			return;
 
+		if (this.wReady.isEnabled() == false) {
+			this.wReady.setEnabled(true);
+		}
+
 		DERectangle r = (DERectangle) this.pads[padId].getDrawElement();
 
 		r.setColor(p.color);
@@ -235,6 +248,13 @@ public class MenuJoin implements MenuPage {
 
 		this.players[padId] = null;
 
+		((DERectangle) this.ready[padId].getDrawElement()).setColor(new Color(0, 0, 0, 0));
+	}
+
+	private void resetPads() {
+		for (int i = 1; i < this.maxPlayer; i++) {
+			this.removePlayerFromPad(i);
+		}
 	}
 
 	private void setPlayerReady(int playerPad, boolean ready) {
@@ -242,6 +262,10 @@ public class MenuJoin implements MenuPage {
 			return;
 
 		((DERectangle) this.ready[playerPad].getDrawElement()).setColor(ready ? READY : NOT_READY);
+
+		if (playerPad == 0 && ready == false && this.wReady.isActive()) {
+			this.wReady.setActive(false);
+		}
 	}
 
 	@Override
@@ -255,6 +279,8 @@ public class MenuJoin implements MenuPage {
 		WButton btn = new WButton(this) {
 			@Override
 			public void action() {
+				MenuJoin.this.searcher.stop();
+				MenuJoin.this.hub.stop();
 				MenuJoin.this.m.applyPage(new MenuMain(MenuJoin.this.m));
 			}
 		};
@@ -276,23 +302,6 @@ public class MenuJoin implements MenuPage {
 		this.widgets.add(btn);
 	}
 
-	private WElement wColorBlock() {
-		BorderData border = new BorderData(4, Color.BLACK, 0);
-
-		DERectangle rect = new DERectangle();
-		rect.setColor(Color.BLACK);
-		rect.setSize(new Point(52, 380));
-		rect.setBorder(border);
-
-		WElement w = new WElement(this);
-		w.setDrawElement(rect);
-		w.setPos(new Point(1014, 528));
-
-		this.widgets.add(w);
-
-		return w;
-	}
-
 	private WElement wPad(Point pos) {
 
 		WElement w = new WElement(this);
@@ -312,7 +321,7 @@ public class MenuJoin implements MenuPage {
 		return w;
 	}
 
-	private void wReady() {
+	private WSwitch wReady() {
 		WSwitch w = new WSwitch(this) {
 			@Override
 			public void actionOff() {
@@ -348,9 +357,12 @@ public class MenuJoin implements MenuPage {
 		w.setPressedOnDrawElement(r.clone());
 
 		w.setPos(new Point(400, 850));
+		w.setEnabled(false);
 		w.setHitboxFromDrawElement();
 
 		this.widgets.add(w);
+
+		return w;
 	}
 
 	private WElement wReady(Point pos) {

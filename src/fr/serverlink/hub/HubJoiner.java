@@ -63,11 +63,6 @@ public abstract class HubJoiner implements IdSetter {
 		}
 
 		this.portReceive = this.dataReceive.getLocalPort();
-
-		this.setPinger();
-		this.setUpdateTester();
-		this.setDataReceiver();
-		this.setAddRequestor();
 	}
 
 	public abstract void idAssigned(int id);
@@ -144,7 +139,7 @@ public abstract class HubJoiner implements IdSetter {
 		try {
 			byte[] buffer = message.getBytes();
 
-			DatagramPacket packet = new DatagramPacket(buffer, buffer.length, HubJoiner.this.groupIP, this.portSend);
+			DatagramPacket packet = new DatagramPacket(buffer, buffer.length, this.groupIP, this.portSend);
 
 			HubJoiner.this.dataSend.send(packet);
 		} catch (Exception e) {
@@ -193,7 +188,8 @@ public abstract class HubJoiner implements IdSetter {
 
 						HubJoiner.this.processData(new String(packet.getData()));
 					} catch (Exception e) {
-						e.printStackTrace();
+						Thread.currentThread().interrupt();
+						return;
 					}
 				}
 			}
@@ -206,7 +202,17 @@ public abstract class HubJoiner implements IdSetter {
 		this.myID = id;
 		this.playersData.put(id, this.myPlayer);
 		this.idAssigned(id);
+
+		if (this.addRequestor != null) {
+			this.addRequestor.interrupt();
+		}
+		this.setAddRequestor();
 		this.addRequestor.start();
+
+		if (this.pinger != null) {
+			this.pinger.interrupt();
+		}
+		this.setPinger();
 		this.pinger.start();
 	}
 
@@ -258,7 +264,7 @@ public abstract class HubJoiner implements IdSetter {
 
 					for (Integer id : HubJoiner.this.updates.keySet()) {
 
-						if (HubJoiner.this.updates.get(id) < testTime) {
+						if (id != HubJoiner.this.myID && HubJoiner.this.updates.get(id) < testTime) {
 							idsToRemove.add(id);
 						}
 					}
@@ -269,7 +275,7 @@ public abstract class HubJoiner implements IdSetter {
 						HubJoiner.this.playerRemoved(id);
 					}
 
-					if (HubJoiner.this.playersData.size() == 1) {
+					if (idsToRemove.size() > 0 && HubJoiner.this.playersData.size() == 1) {
 						HubJoiner.this.noMorePlayer();
 					}
 				}
@@ -278,7 +284,16 @@ public abstract class HubJoiner implements IdSetter {
 	}
 
 	public void start() {
+		if (this.dataReceiver != null) {
+			this.dataReceiver.interrupt();
+		}
+		this.setDataReceiver();
 		this.dataReceiver.start();
+
+		if (this.updateTester != null) {
+			this.updateTester.interrupt();
+		}
+		this.setUpdateTester();
 		this.updateTester.start();
 	}
 
@@ -287,5 +302,10 @@ public abstract class HubJoiner implements IdSetter {
 		this.addRequestor.interrupt();
 		this.pinger.interrupt();
 		this.updateTester.interrupt();
+
+		this.playersData.clear();
+
+		this.myPlayer.setId(-1);
+		this.myID = -1;
 	}
 }

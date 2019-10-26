@@ -89,8 +89,6 @@ public class MenuHost implements MenuPage {
 
 	private XMLManager manager;
 
-	private WElement pad1, pad2;
-
 	private WElement[] pads;
 
 	private WElement[] ready;
@@ -104,8 +102,6 @@ public class MenuHost implements MenuPage {
 	private HubHoster hub;
 
 	private Linker linker;
-
-	private boolean playCountdownStarted;
 
 	private Thread playCountdown;
 
@@ -160,10 +156,12 @@ public class MenuHost implements MenuPage {
 
 					@Override
 					public void gameStarting(boolean state) {
+
 					}
 
 					@Override
 					public void noMorePlayer() {
+						MenuHost.this.resetPads();
 					}
 
 					@Override
@@ -240,7 +238,7 @@ public class MenuHost implements MenuPage {
 
 	private int getPlayerPad(int playerId) {
 		for (int i = 0; i < this.players.length; i++) {
-			if (this.players[i].id == playerId)
+			if (this.players[i] != null && this.players[i].id == playerId)
 				return i;
 		}
 		return -1;
@@ -282,6 +280,13 @@ public class MenuHost implements MenuPage {
 
 		this.players[padId] = null;
 
+		((DERectangle) this.ready[padId].getDrawElement()).setColor(new Color(0, 0, 0, 0));
+	}
+
+	private void resetPads() {
+		for (int i = 1; i < this.maxPlayer; i++) {
+			this.removePlayerFromPad(i);
+		}
 	}
 
 	private void setPlayerReady(int playerPad, boolean ready) {
@@ -308,6 +313,10 @@ public class MenuHost implements MenuPage {
 			public void action() {
 				MenuHost.this.hub.stop();
 				MenuHost.this.linker.stop();
+				try {
+					MenuHost.this.playCountdown.interrupt();
+				} catch (Exception e) {
+				}
 				MenuHost.this.m.applyPage(new MenuMain(MenuHost.this.m));
 			}
 		};
