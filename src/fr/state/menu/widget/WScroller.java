@@ -219,6 +219,10 @@ public class WScroller implements Widget {
 		return this.paddingTop;
 	}
 
+	public MenuPage getPage() {
+		return this.page;
+	}
+
 	/**
 	 * @return the pos
 	 */
@@ -357,6 +361,10 @@ public class WScroller implements Widget {
 	public void setPaddingTop(int paddingTop) {
 		this.paddingTop = paddingTop;
 		this.initScrollBar();
+	}
+
+	public void setPage(MenuPage page) {
+		this.page = page;
 	}
 
 	/**

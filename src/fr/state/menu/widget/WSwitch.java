@@ -220,6 +220,7 @@ public abstract class WSwitch implements Widget {
 		}
 	}
 
+	@SuppressWarnings("unused")
 	private void setCurrentDE(DrawElement currentDE) {
 		this.currentDE = currentDE;
 	}
