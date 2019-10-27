@@ -3,22 +3,30 @@ package fr.init;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 import fr.datafilesmanager.DatafilesManager;
 
 public class ConfFiles {// String name, String path
 
-	private static final String DIR_NAME = "conf";
+	private static final String DIR_NAME = "conf/";
 
-	private static final String[] NAMES = { "controls", "gameSettings", "profile", "winConf" };
-
-	private static final String EXTENSION = ".xml";
+	private static final Map<String, String> FILES = new HashMap<String, String>() {
+		private static final long serialVersionUID = 1L;
+		{
+			this.put("winConf", "winConf.xml");
+			this.put("controls", "controls.xml");
+			this.put("profile", "profile.xml");
+			this.put("gameSettings", "gameSettings.xml");
+			this.put("serverConf", "serverConf.xml");
+		}
+	};
 
 	private static void addConfFiles(DatafilesManager dfm) {
-		dfm.addFile("winConf", "conf/winConf.xml");
-		dfm.addFile("controls", "conf/controls.xml");
-		dfm.addFile("profile", "conf/profile.xml");
-		dfm.addFile("gameSettings", "conf/gameSettings.xml");
+		for (String name : FILES.keySet()) {
+			dfm.addFile(name, DIR_NAME + FILES.get(name));
+		}
 	}
 
 	private static void createConfIfNotSet() {
@@ -26,9 +34,9 @@ public class ConfFiles {// String name, String path
 			new File(DIR_NAME).mkdir();
 		}
 
-		for (String name : NAMES) {
+		for (String name : FILES.keySet()) {
 			try {
-				String path = DIR_NAME + "/" + name + EXTENSION;
+				String path = DIR_NAME + FILES.get(name);
 
 				File f = new File(path);
 

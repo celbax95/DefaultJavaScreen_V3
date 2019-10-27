@@ -1,0 +1,6 @@
+background	585	;	0
+title		551	;	59
+join		755	;	419
+host		799	;	655
+exit		886	;	886
+settings	69	;	911

@@ -70,7 +70,7 @@ public class MenuJoin implements MenuPage {
 
 	private Menu m;
 
-	private Object profileConf;
+	private Object profileConf, serverConf;
 
 	private XMLManager manager;
 
@@ -102,7 +102,10 @@ public class MenuJoin implements MenuPage {
 
 		DatafilesManager dfm = DatafilesManager.getInstance();
 		this.profileConf = dfm.getFile("profile");
+		this.serverConf = dfm.getFile("serverConf");
 		this.manager = dfm.getXmlManager();
+
+		this.idServer = (int) this.manager.getParam(this.serverConf, "id", 0);
 
 		String myUsername = (String) this.manager.getParam(this.profileConf, PARAM_NAME_USERNAME, "user");
 		Color myColor = Color.decode((String) this.manager.getParam(this.profileConf, PARAM_NAME_COLOR, "#000000"));
@@ -110,6 +113,7 @@ public class MenuJoin implements MenuPage {
 		this.wReady = this.wReady();
 		this.wTitle();
 		this.wBack();
+		this.wServerSettings();
 
 		this.pads = new WElement[this.maxPlayer];
 		this.ready = new WElement[this.maxPlayer];
@@ -268,6 +272,17 @@ public class MenuJoin implements MenuPage {
 		}
 	}
 
+	private void stop() {
+		try {
+			MenuJoin.this.searcher.stop();
+		} catch (NullPointerException e) {
+		}
+		try {
+			MenuJoin.this.hub.stop();
+		} catch (NullPointerException e) {
+		}
+	}
+
 	@Override
 	public void update(Input input) {
 		for (Widget w : this.widgets) {
@@ -279,12 +294,7 @@ public class MenuJoin implements MenuPage {
 		WButton btn = new WButton(this) {
 			@Override
 			public void action() {
-				if (MenuJoin.this.searcher != null) {
-					MenuJoin.this.searcher.stop();
-				}
-				if (MenuJoin.this.hub != null) {
-					MenuJoin.this.hub.stop();
-				}
+				MenuJoin.this.stop();
 				MenuJoin.this.m.applyPage(new MenuMain(MenuJoin.this.m));
 			}
 		};
@@ -385,6 +395,31 @@ public class MenuJoin implements MenuPage {
 		this.widgets.add(w);
 
 		return w;
+	}
+
+	private void wServerSettings() {
+		WButton w = new WButton(this) {
+			@Override
+			public void action() {
+				MenuJoin.this.stop();
+				MenuJoin.this.m.applyPage(new MenuServerSettings(MenuJoin.this.m, 1));
+			}
+		};
+
+		DERectangle r = new DERectangle();
+		r.setSize(new Point(200, 100));
+		r.setLabel(new TextData(new Point(), new Font("Arial", Font.BOLD, 30), "Settings", Color.BLACK, 3));
+		r.setBorder(new BorderData(3, Color.black, 2));
+		r.setColor(Color.GRAY);
+		w.setStdDrawElement(r);
+
+		r.setColor(Color.LIGHT_GRAY);
+		w.setPressedDrawElement(r);
+
+		w.setPos(new Point(800, 850));
+		w.setHitboxFromDrawElement();
+
+		this.widgets.add(w);
 	}
 
 	private void wTitle() {

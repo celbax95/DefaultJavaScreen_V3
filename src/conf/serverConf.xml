@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?><conf>
+
+    <!-- Server parameters -->
+
+    <param name="id" type="integer" value="0"/>
+
+</conf>

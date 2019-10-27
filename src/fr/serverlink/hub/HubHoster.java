@@ -291,9 +291,15 @@ public abstract class HubHoster {
 	}
 
 	public void stop() {
-		this.dataReceiver.interrupt();
-		this.dataUpdater.interrupt();
-		this.pingTester.interrupt();
+		if (this.dataReceiver != null) {
+			this.dataReceiver.interrupt();
+		}
+		if (this.dataUpdater != null) {
+			this.dataUpdater.interrupt();
+		}
+		if (this.pingTester != null) {
+			this.pingTester.interrupt();
+		}
 	}
 
 	private void updatePorts() {

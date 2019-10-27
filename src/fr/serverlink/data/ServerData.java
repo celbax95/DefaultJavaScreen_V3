@@ -20,6 +20,10 @@ public class ServerData {
 		return GROUP_IPS[serverIndex];
 	}
 
+	public static int getIPAmount() {
+		return GROUP_IPS.length;
+	}
+
 	public static int getPort(int serverIndex) {
 		return GLOBAL_PORT;
 	}

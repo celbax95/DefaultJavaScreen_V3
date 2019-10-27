@@ -85,7 +85,7 @@ public class MenuHost implements MenuPage {
 
 	private Menu m;
 
-	private Object profileConf;
+	private Object profileConf, serverConf;
 
 	private XMLManager manager;
 
@@ -107,9 +107,6 @@ public class MenuHost implements MenuPage {
 
 	public MenuHost(Menu m) {
 
-		// TODO
-		this.idServer = 0;
-
 		this.m = m;
 
 		this.widgets = new Vector<>();
@@ -118,13 +115,17 @@ public class MenuHost implements MenuPage {
 
 		DatafilesManager dfm = DatafilesManager.getInstance();
 		this.profileConf = dfm.getFile("profile");
+		this.serverConf = dfm.getFile("serverConf");
 		this.manager = dfm.getXmlManager();
+
+		this.idServer = (int) this.manager.getParam(this.serverConf, "id", 0);
 
 		String myUsername = (String) this.manager.getParam(this.profileConf, PARAM_NAME_USERNAME, "user");
 		Color myColor = Color.decode((String) this.manager.getParam(this.profileConf, PARAM_NAME_COLOR, "#000000"));
 
 		this.wTitle();
 		this.wBack();
+		this.wServerSettings();
 
 		this.wPlay = this.wPlay();
 
@@ -300,6 +301,20 @@ public class MenuHost implements MenuPage {
 		this.changeWPlayState();
 	}
 
+	private void stop() {
+		if (this.hub != null) {
+			MenuHost.this.hub.stop();
+		}
+
+		if (this.linker != null) {
+			MenuHost.this.linker.stop();
+		}
+
+		if (this.playCountdown != null) {
+			MenuHost.this.playCountdown.interrupt();
+		}
+	}
+
 	@Override
 	public void update(Input input) {
 		for (Widget w : this.widgets) {
@@ -311,13 +326,7 @@ public class MenuHost implements MenuPage {
 		WButton btn = new WButton(this) {
 			@Override
 			public void action() {
-				try {
-					MenuHost.this.hub.stop();
-					MenuHost.this.linker.stop();
-					MenuHost.this.playCountdown.interrupt();
-				} catch (NullPointerException e) {
-				}
-
+				MenuHost.this.stop();
 				MenuHost.this.m.applyPage(new MenuMain(MenuHost.this.m));
 			}
 		};
@@ -443,6 +452,31 @@ public class MenuHost implements MenuPage {
 		this.widgets.add(w);
 
 		return w;
+	}
+
+	private void wServerSettings() {
+		WButton w = new WButton(this) {
+			@Override
+			public void action() {
+				MenuHost.this.stop();
+				MenuHost.this.m.applyPage(new MenuServerSettings(MenuHost.this.m, 0));
+			}
+		};
+
+		DERectangle r = new DERectangle();
+		r.setSize(new Point(200, 100));
+		r.setLabel(new TextData(new Point(), new Font("Arial", Font.BOLD, 30), "Settings", Color.BLACK, 3));
+		r.setBorder(new BorderData(3, Color.black, 2));
+		r.setColor(Color.GRAY);
+		w.setStdDrawElement(r);
+
+		r.setColor(Color.LIGHT_GRAY);
+		w.setPressedDrawElement(r);
+
+		w.setPos(new Point(800, 850));
+		w.setHitboxFromDrawElement();
+
+		this.widgets.add(w);
 	}
 
 	private void wTitle() {
