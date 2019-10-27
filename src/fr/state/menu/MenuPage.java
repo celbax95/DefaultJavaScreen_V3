@@ -8,5 +8,9 @@ public interface MenuPage {
 
 	void draw(Graphics2D g);
 
+	boolean isLoaded();
+
+	void load();
+
 	void update(Input input);
 }

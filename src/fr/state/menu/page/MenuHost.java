@@ -49,6 +49,7 @@ public class MenuHost implements MenuPage {
 	private static final String[] RES_PATHS = { "title", "backStd", "backPressed" };
 
 	private static final String RES_FOLDER = "/resources/menu/menuHost/";
+
 	private static final String RES_EXTENSION = ".png";
 
 	private static final String PAGE_NAME = "menuHost";
@@ -57,8 +58,8 @@ public class MenuHost implements MenuPage {
 	private static final Color NOT_READY = Color.RED;
 
 	private static final String PARAM_NAME_USERNAME = "username";
-	private static final String PARAM_NAME_COLOR = "color";
 
+	private static final String PARAM_NAME_COLOR = "color";
 	static {
 		for (int i = 0; i < RES_NAMES.length; i++) {
 			RES_NAMES[i] = PAGE_NAME + "/" + RES_NAMES[i];
@@ -70,12 +71,13 @@ public class MenuHost implements MenuPage {
 	}
 
 	private static final int ID_HOST = 0;
-
 	private static final int TIME_TO_PLAY = 3000;
 
 	private static final Color PLAY_ACTIVATED_COLOR = new Color(0, 180, 0);
 
 	private static final Color PLAY_UNACTIVATED_COLOR = new Color(130, 60, 60);
+
+	private boolean loaded;
 
 	private WSwitch wPlay;
 
@@ -106,92 +108,8 @@ public class MenuHost implements MenuPage {
 	private Thread playCountdown;
 
 	public MenuHost(Menu m) {
-
+		this.loaded = false;
 		this.m = m;
-
-		this.widgets = new Vector<>();
-
-		this.loadResources();
-
-		DatafilesManager dfm = DatafilesManager.getInstance();
-		this.profileConf = dfm.getFile("profile");
-		this.serverConf = dfm.getFile("serverConf");
-		this.manager = dfm.getXmlManager();
-
-		this.idServer = (int) this.manager.getParam(this.serverConf, "id", 0);
-
-		String myUsername = (String) this.manager.getParam(this.profileConf, PARAM_NAME_USERNAME, "user");
-		Color myColor = Color.decode((String) this.manager.getParam(this.profileConf, PARAM_NAME_COLOR, "#000000"));
-
-		this.wTitle();
-		this.wBack();
-		this.wServerSettings();
-
-		this.wPlay = this.wPlay();
-
-		this.pads = new WElement[this.maxPlayer];
-		this.ready = new WElement[this.maxPlayer];
-		this.players = new PlayerData[this.maxPlayer];
-
-		int size = 300;
-
-		for (int i = 0; i < this.maxPlayer; i++) {
-			this.pads[i] = this.wPad(new Point(300 + size * i, 450));
-			this.ready[i] = this.wReady(new Point(410 + size * i, 720));
-		}
-
-		for (int i = 0; i < this.maxPlayer; i++) {
-			this.players[i] = null;
-		}
-
-		this.putPlayerOnPad(new PlayerData(ID_HOST, myUsername, myColor, true), 0);
-		this.setPlayerReady(0, true);
-
-		this.changeWPlayState();
-
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				MenuHost.this.hub = new HubHoster(ID_HOST, myUsername, myColor, MenuHost.this.maxPlayer,
-						ServerData.getGroup(MenuHost.this.idServer), ServerData.getPort(MenuHost.this.idServer)) {
-
-					@Override
-					public void gameStarting(boolean state) {
-
-					}
-
-					@Override
-					public void noMorePlayer() {
-						MenuHost.this.resetPads();
-					}
-
-					@Override
-					public void playerAdded(int id, String username, Color color) {
-						int i = MenuHost.this.getEmptyPad();
-
-						if (i == -1)
-							return;
-
-						MenuHost.this.putPlayerOnPad(new PlayerData(id, username, color, false), i);
-					}
-
-					@Override
-					public void playerRemoved(int id) {
-						MenuHost.this.removePlayerFromPad(MenuHost.this.getPlayerPad(id));
-					}
-
-					@Override
-					public void readyChanged(int id, boolean ready) {
-						MenuHost.this.setPlayerReady(MenuHost.this.getPlayerPad(id), ready);
-					}
-				};
-				MenuHost.this.linker = new Linker(ID_HOST, ServerData.getGroup(MenuHost.this.idServer),
-						ServerData.getPort(MenuHost.this.idServer));
-
-				MenuHost.this.hub.start();
-				MenuHost.this.linker.start();
-			}
-		}).start();
 	}
 
 	private void changeWPlayState() {
@@ -243,6 +161,102 @@ public class MenuHost implements MenuPage {
 				return i;
 		}
 		return -1;
+	}
+
+	@Override
+	public boolean isLoaded() {
+		return this.loaded;
+	}
+
+	@Override
+	public void load() {
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				MenuHost.this.widgets = new Vector<>();
+
+				MenuHost.this.loadResources();
+
+				DatafilesManager dfm = DatafilesManager.getInstance();
+				MenuHost.this.profileConf = dfm.getFile("profile");
+				MenuHost.this.serverConf = dfm.getFile("serverConf");
+				MenuHost.this.manager = dfm.getXmlManager();
+
+				MenuHost.this.idServer = (int) MenuHost.this.manager.getParam(MenuHost.this.serverConf, "id", 0);
+
+				String myUsername = (String) MenuHost.this.manager.getParam(MenuHost.this.profileConf,
+						PARAM_NAME_USERNAME, "user");
+				Color myColor = Color.decode((String) MenuHost.this.manager.getParam(MenuHost.this.profileConf,
+						PARAM_NAME_COLOR, "#000000"));
+
+				MenuHost.this.wTitle();
+				MenuHost.this.wBack();
+				MenuHost.this.wServerSettings();
+
+				MenuHost.this.wPlay = MenuHost.this.wPlay();
+
+				MenuHost.this.pads = new WElement[MenuHost.this.maxPlayer];
+				MenuHost.this.ready = new WElement[MenuHost.this.maxPlayer];
+				MenuHost.this.players = new PlayerData[MenuHost.this.maxPlayer];
+
+				int size = 300;
+
+				for (int i = 0; i < MenuHost.this.maxPlayer; i++) {
+					MenuHost.this.pads[i] = MenuHost.this.wPad(new Point(300 + size * i, 450));
+					MenuHost.this.ready[i] = MenuHost.this.wReady(new Point(410 + size * i, 720));
+				}
+
+				for (int i = 0; i < MenuHost.this.maxPlayer; i++) {
+					MenuHost.this.players[i] = null;
+				}
+
+				MenuHost.this.putPlayerOnPad(new PlayerData(ID_HOST, myUsername, myColor, true), 0);
+				MenuHost.this.setPlayerReady(0, true);
+
+				MenuHost.this.changeWPlayState();
+
+				MenuHost.this.hub = new HubHoster(ID_HOST, myUsername, myColor, MenuHost.this.maxPlayer,
+						ServerData.getGroup(MenuHost.this.idServer), ServerData.getPort(MenuHost.this.idServer)) {
+
+					@Override
+					public void gameStarting(boolean state) {
+
+					}
+
+					@Override
+					public void noMorePlayer() {
+						MenuHost.this.resetPads();
+					}
+
+					@Override
+					public void playerAdded(int id, String username, Color color) {
+						int i = MenuHost.this.getEmptyPad();
+
+						if (i == -1)
+							return;
+
+						MenuHost.this.putPlayerOnPad(new PlayerData(id, username, color, false), i);
+					}
+
+					@Override
+					public void playerRemoved(int id) {
+						MenuHost.this.removePlayerFromPad(MenuHost.this.getPlayerPad(id));
+					}
+
+					@Override
+					public void readyChanged(int id, boolean ready) {
+						MenuHost.this.setPlayerReady(MenuHost.this.getPlayerPad(id), ready);
+					}
+				};
+				MenuHost.this.linker = new Linker(ID_HOST, ServerData.getGroup(MenuHost.this.idServer),
+						ServerData.getPort(MenuHost.this.idServer));
+
+				MenuHost.this.hub.start();
+				MenuHost.this.linker.start();
+
+				MenuHost.this.loaded = true;
+			}
+		}).start();
 	}
 
 	private void loadResources() {

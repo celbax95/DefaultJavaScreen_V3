@@ -31,21 +31,11 @@ public class MenuTemoin implements MenuPage {
 
 	private Menu m;
 
+	private boolean loaded;
+
 	public MenuTemoin(Menu m) {
-
+		this.loaded = false;
 		this.m = m;
-
-		this.widgets = new Vector<>();
-
-		this.wButtonToMenu();
-		this.wTitle();
-		WSwitch sw = this.wSwitch();
-		this.wSlide();
-		this.wVSlide();
-		this.wUserInput();
-		this.wUserKeyInput();
-		WScroller scroller = this.wScroller();
-		scroller.add(sw);
 	}
 
 	@Override
@@ -53,6 +43,33 @@ public class MenuTemoin implements MenuPage {
 		for (Widget w : this.widgets) {
 			w.draw(g);
 		}
+	}
+
+	@Override
+	public boolean isLoaded() {
+		return this.loaded;
+	}
+
+	@Override
+	public void load() {
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				MenuTemoin.this.widgets = new Vector<>();
+
+				MenuTemoin.this.wButtonToMenu();
+				MenuTemoin.this.wTitle();
+				WSwitch sw = MenuTemoin.this.wSwitch();
+				MenuTemoin.this.wSlide();
+				MenuTemoin.this.wVSlide();
+				MenuTemoin.this.wUserInput();
+				MenuTemoin.this.wUserKeyInput();
+				WScroller scroller = MenuTemoin.this.wScroller();
+				scroller.add(sw);
+
+				MenuTemoin.this.loaded = true;
+			}
+		}).start();
 	}
 
 	@Override

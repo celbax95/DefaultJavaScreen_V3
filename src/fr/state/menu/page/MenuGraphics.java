@@ -76,10 +76,11 @@ public class MenuGraphics implements MenuPage {
 		}
 	}
 
+	private boolean loaded;
+
 	private Object winConf;
 
 	private XMLManager manager;
-
 	private WButton[] exclusiveResBtn;
 
 	private int resBtnIndex;
@@ -93,49 +94,8 @@ public class MenuGraphics implements MenuPage {
 	private Menu m;
 
 	public MenuGraphics(Menu m) {
-
+		this.loaded = false;
 		this.m = m;
-
-		this.loadResources();
-
-		this.winData = m.getMenuState().getStatePanel().getWinData();
-
-		this.widgets = new Vector<>();
-
-		this.exclusiveResBtn = new WButton[NB_RES_EXCLUSIVE_BTN];
-		this.resBtnIndex = 0;
-
-		DatafilesManager dfm = DatafilesManager.getInstance();
-		this.winConf = dfm.getFile("winConf");
-		this.manager = dfm.getXmlManager();
-
-		int width = (int) this.manager.getParam(this.winConf, "width", 0);
-		int height = (int) this.manager.getParam(this.winConf, "height", 0);
-		boolean fullscreen = (boolean) this.manager.getParam(this.winConf, "fullscreen", false);
-
-		if (fullscreen) {
-			this.resBtnIndex = NB_RES_EXCLUSIVE_BTN - 1;
-		} else if (width == 1280 && height == 720) {
-			this.resBtnIndex = 0;
-		} else if (width == 1366 && height == 768) {
-			this.resBtnIndex = 1;
-		} else if (width == 1600 && height == 900) {
-			this.resBtnIndex = 2;
-		} else if (width == 1920 && height == 1080) {
-			this.resBtnIndex = 3;
-		}
-
-		this.wTitle();
-		this.wBack();
-		this.wFrame();
-		int i = 0;
-		this.exclusiveResBtn[i++] = this.w1280();
-		this.exclusiveResBtn[i++] = this.w1366();
-		this.exclusiveResBtn[i++] = this.w1600();
-		this.exclusiveResBtn[i++] = this.w1920();
-		this.exclusiveResBtn[i++] = this.wFullscreen();
-		this.needRestart = this.wRestart();
-		this.switchResolutionBtn();
 	}
 
 	@Override
@@ -143,6 +103,63 @@ public class MenuGraphics implements MenuPage {
 		for (Widget w : this.widgets) {
 			w.draw(g);
 		}
+	}
+
+	@Override
+	public boolean isLoaded() {
+		return this.loaded;
+	}
+
+	@Override
+	public void load() {
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				MenuGraphics.this.loadResources();
+
+				MenuGraphics.this.winData = MenuGraphics.this.m.getMenuState().getStatePanel().getWinData();
+
+				MenuGraphics.this.widgets = new Vector<>();
+
+				MenuGraphics.this.exclusiveResBtn = new WButton[NB_RES_EXCLUSIVE_BTN];
+				MenuGraphics.this.resBtnIndex = 0;
+
+				DatafilesManager dfm = DatafilesManager.getInstance();
+				MenuGraphics.this.winConf = dfm.getFile("winConf");
+				MenuGraphics.this.manager = dfm.getXmlManager();
+
+				int width = (int) MenuGraphics.this.manager.getParam(MenuGraphics.this.winConf, "width", 0);
+				int height = (int) MenuGraphics.this.manager.getParam(MenuGraphics.this.winConf, "height", 0);
+				boolean fullscreen = (boolean) MenuGraphics.this.manager.getParam(MenuGraphics.this.winConf,
+						"fullscreen", false);
+
+				if (fullscreen) {
+					MenuGraphics.this.resBtnIndex = NB_RES_EXCLUSIVE_BTN - 1;
+				} else if (width == 1280 && height == 720) {
+					MenuGraphics.this.resBtnIndex = 0;
+				} else if (width == 1366 && height == 768) {
+					MenuGraphics.this.resBtnIndex = 1;
+				} else if (width == 1600 && height == 900) {
+					MenuGraphics.this.resBtnIndex = 2;
+				} else if (width == 1920 && height == 1080) {
+					MenuGraphics.this.resBtnIndex = 3;
+				}
+
+				MenuGraphics.this.wTitle();
+				MenuGraphics.this.wBack();
+				MenuGraphics.this.wFrame();
+				int i = 0;
+				MenuGraphics.this.exclusiveResBtn[i++] = MenuGraphics.this.w1280();
+				MenuGraphics.this.exclusiveResBtn[i++] = MenuGraphics.this.w1366();
+				MenuGraphics.this.exclusiveResBtn[i++] = MenuGraphics.this.w1600();
+				MenuGraphics.this.exclusiveResBtn[i++] = MenuGraphics.this.w1920();
+				MenuGraphics.this.exclusiveResBtn[i++] = MenuGraphics.this.wFullscreen();
+				MenuGraphics.this.needRestart = MenuGraphics.this.wRestart();
+				MenuGraphics.this.switchResolutionBtn();
+
+				MenuGraphics.this.loaded = true;
+			}
+		}).start();
 	}
 
 	private void loadResources() {

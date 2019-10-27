@@ -61,10 +61,11 @@ public class MenuProfile implements MenuPage {
 		}
 	}
 
+	private boolean loaded;
+
 	private List<Widget> widgets;
 
 	private Menu m;
-
 	private Object profileConf;
 
 	private XMLManager manager;
@@ -74,32 +75,8 @@ public class MenuProfile implements MenuPage {
 	private WElement colorBlock;
 
 	public MenuProfile(Menu m) {
-
+		this.loaded = false;
 		this.m = m;
-
-		this.widgets = new Vector<>();
-
-		this.loadResources();
-
-		DatafilesManager dfm = DatafilesManager.getInstance();
-		this.profileConf = dfm.getFile("profile");
-		this.manager = dfm.getXmlManager();
-
-		String username = (String) this.manager.getParam(this.profileConf, PARAM_NAME_USERNAME, 0);
-		String colorHex = (String) this.manager.getParam(this.profileConf, PARAM_NAME_COLOR, 0);
-
-		this.color = Color.decode(colorHex);
-
-		this.wTitle();
-		this.wBack();
-		this.wFrame();
-		this.wUsernameInput().setData(username);
-		this.wColorRed().setValue(this.color.getRed());
-		this.wColorGreen().setValue(this.color.getGreen());
-		this.wColorBlue().setValue(this.color.getBlue());
-		this.colorBlock = this.wColorBlock();
-		this.wColorSelect();
-		this.setColor(this.color);
 	}
 
 	@Override
@@ -107,6 +84,48 @@ public class MenuProfile implements MenuPage {
 		for (Widget w : this.widgets) {
 			w.draw(g);
 		}
+	}
+
+	@Override
+	public boolean isLoaded() {
+		return this.loaded;
+	}
+
+	@Override
+	public void load() {
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+
+				MenuProfile.this.widgets = new Vector<>();
+
+				MenuProfile.this.loadResources();
+
+				DatafilesManager dfm = DatafilesManager.getInstance();
+				MenuProfile.this.profileConf = dfm.getFile("profile");
+				MenuProfile.this.manager = dfm.getXmlManager();
+
+				String username = (String) MenuProfile.this.manager.getParam(MenuProfile.this.profileConf,
+						PARAM_NAME_USERNAME, 0);
+				String colorHex = (String) MenuProfile.this.manager.getParam(MenuProfile.this.profileConf,
+						PARAM_NAME_COLOR, 0);
+
+				MenuProfile.this.color = Color.decode(colorHex);
+
+				MenuProfile.this.wTitle();
+				MenuProfile.this.wBack();
+				MenuProfile.this.wFrame();
+				MenuProfile.this.wUsernameInput().setData(username);
+				MenuProfile.this.wColorRed().setValue(MenuProfile.this.color.getRed());
+				MenuProfile.this.wColorGreen().setValue(MenuProfile.this.color.getGreen());
+				MenuProfile.this.wColorBlue().setValue(MenuProfile.this.color.getBlue());
+				MenuProfile.this.colorBlock = MenuProfile.this.wColorBlock();
+				MenuProfile.this.wColorSelect();
+				MenuProfile.this.setColor(MenuProfile.this.color);
+
+				MenuProfile.this.loaded = true;
+			}
+		}).start();
 	}
 
 	private void loadResources() {

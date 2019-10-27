@@ -55,24 +55,14 @@ public class MenuMain implements MenuPage {
 			RES_PATHS[i] = RES_FOLDER + RES_PATHS[i] + RES_EXTENSION;
 		}
 	}
-
+	private boolean loaded;
 	private List<Widget> widgets;
 
 	private Menu m;
 
 	public MenuMain(Menu m) {
+		this.loaded = false;
 		this.m = m;
-
-		this.widgets = new Vector<>();
-
-		this.loadResources();
-
-		this.wBackground();
-		this.wTitle();
-		this.wJoinButton();
-		this.wHostButton();
-		this.wExitButton();
-		this.wSettingsButton();
 	}
 
 	@Override
@@ -80,6 +70,32 @@ public class MenuMain implements MenuPage {
 		for (Widget w : this.widgets) {
 			w.draw(g);
 		}
+	}
+
+	@Override
+	public boolean isLoaded() {
+		return this.loaded;
+	}
+
+	@Override
+	public void load() {
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				MenuMain.this.widgets = new Vector<>();
+
+				MenuMain.this.loadResources();
+
+				MenuMain.this.wBackground();
+				MenuMain.this.wTitle();
+				MenuMain.this.wJoinButton();
+				MenuMain.this.wHostButton();
+				MenuMain.this.wExitButton();
+				MenuMain.this.wSettingsButton();
+
+				MenuMain.this.loaded = true;
+			}
+		}).start();
 	}
 
 	private void loadResources() {

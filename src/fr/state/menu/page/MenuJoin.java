@@ -92,49 +92,84 @@ public class MenuJoin implements MenuPage {
 
 	private Color defaultPadColor = new Color(0, 0, 0, 0);
 
+	private boolean loaded;
+
 	public MenuJoin(Menu m) {
-
+		this.loaded = false;
 		this.m = m;
+	}
 
-		this.widgets = new Vector<>();
-
-		this.loadResources();
-
-		DatafilesManager dfm = DatafilesManager.getInstance();
-		this.profileConf = dfm.getFile("profile");
-		this.serverConf = dfm.getFile("serverConf");
-		this.manager = dfm.getXmlManager();
-
-		this.idServer = (int) this.manager.getParam(this.serverConf, "id", 0);
-
-		String myUsername = (String) this.manager.getParam(this.profileConf, PARAM_NAME_USERNAME, "user");
-		Color myColor = Color.decode((String) this.manager.getParam(this.profileConf, PARAM_NAME_COLOR, "#000000"));
-
-		this.wReady = this.wReady();
-		this.wTitle();
-		this.wBack();
-		this.wServerSettings();
-
-		this.pads = new WElement[this.maxPlayer];
-		this.ready = new WElement[this.maxPlayer];
-		this.players = new PlayerData[this.maxPlayer];
-
-		int size = 300;
-
-		for (int i = 0; i < this.maxPlayer; i++) {
-			this.pads[i] = this.wPad(new Point(300 + size * i, 450));
-			this.ready[i] = this.wReady(new Point(410 + size * i, 720));
+	@Override
+	public void draw(Graphics2D g) {
+		for (Widget w : this.widgets) {
+			w.draw(g);
 		}
+	}
 
-		for (int i = 0; i < this.maxPlayer; i++) {
-			this.players[i] = null;
+	public int getEmptyPad() {
+		for (int i = 0; i < this.players.length; i++) {
+			if (this.players[i] == null)
+				return i;
 		}
+		return -1;
+	}
 
-		this.putPlayerOnPad(new PlayerData(-1, myUsername, myColor), 0);
+	public int getPlayerPad(int playerId) {
+		for (int i = 0; i < this.players.length; i++) {
+			if (this.players[i] != null && this.players[i].id == playerId)
+				return i;
+		}
+		return -1;
+	}
 
+	@Override
+	public boolean isLoaded() {
+		return this.loaded;
+	}
+
+	@Override
+	public void load() {
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
+				MenuJoin.this.widgets = new Vector<>();
+
+				MenuJoin.this.loadResources();
+
+				DatafilesManager dfm = DatafilesManager.getInstance();
+				MenuJoin.this.profileConf = dfm.getFile("profile");
+				MenuJoin.this.serverConf = dfm.getFile("serverConf");
+				MenuJoin.this.manager = dfm.getXmlManager();
+
+				MenuJoin.this.idServer = (int) MenuJoin.this.manager.getParam(MenuJoin.this.serverConf, "id", 0);
+
+				String myUsername = (String) MenuJoin.this.manager.getParam(MenuJoin.this.profileConf,
+						PARAM_NAME_USERNAME, "user");
+				Color myColor = Color.decode((String) MenuJoin.this.manager.getParam(MenuJoin.this.profileConf,
+						PARAM_NAME_COLOR, "#000000"));
+
+				MenuJoin.this.wReady = MenuJoin.this.wReady();
+				MenuJoin.this.wTitle();
+				MenuJoin.this.wBack();
+				MenuJoin.this.wServerSettings();
+
+				MenuJoin.this.pads = new WElement[MenuJoin.this.maxPlayer];
+				MenuJoin.this.ready = new WElement[MenuJoin.this.maxPlayer];
+				MenuJoin.this.players = new PlayerData[MenuJoin.this.maxPlayer];
+
+				int size = 300;
+
+				for (int i = 0; i < MenuJoin.this.maxPlayer; i++) {
+					MenuJoin.this.pads[i] = MenuJoin.this.wPad(new Point(300 + size * i, 450));
+					MenuJoin.this.ready[i] = MenuJoin.this.wReady(new Point(410 + size * i, 720));
+				}
+
+				for (int i = 0; i < MenuJoin.this.maxPlayer; i++) {
+					MenuJoin.this.players[i] = null;
+				}
+
+				MenuJoin.this.putPlayerOnPad(new PlayerData(-1, myUsername, myColor), 0);
+
 				MenuJoin.this.hub = new HubJoiner(myUsername, myColor, ServerData.getGroup(MenuJoin.this.idServer),
 						ServerData.getPort(MenuJoin.this.idServer)) {
 
@@ -182,31 +217,10 @@ public class MenuJoin implements MenuPage {
 
 				MenuJoin.this.hub.start();
 				MenuJoin.this.searcher.start();
+
+				MenuJoin.this.loaded = true;
 			}
 		}).start();
-	}
-
-	@Override
-	public void draw(Graphics2D g) {
-		for (Widget w : this.widgets) {
-			w.draw(g);
-		}
-	}
-
-	public int getEmptyPad() {
-		for (int i = 0; i < this.players.length; i++) {
-			if (this.players[i] == null)
-				return i;
-		}
-		return -1;
-	}
-
-	public int getPlayerPad(int playerId) {
-		for (int i = 0; i < this.players.length; i++) {
-			if (this.players[i] != null && this.players[i].id == playerId)
-				return i;
-		}
-		return -1;
 	}
 
 	private void loadResources() {

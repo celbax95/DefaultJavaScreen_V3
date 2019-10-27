@@ -58,24 +58,14 @@ public class MenuSettings implements MenuPage {
 		}
 	}
 
-	private List<Widget> widgets;
+	private boolean loaded;
 
+	private List<Widget> widgets;
 	private Menu m;
 
 	public MenuSettings(Menu m) {
-
+		this.loaded = false;
 		this.m = m;
-
-		this.widgets = new Vector<>();
-
-		this.loadResources();
-
-		this.wTitle();
-		this.wBack();
-		this.wGraph();
-		this.wControls();
-		this.wProfile();
-		this.wGameSettings();
 	}
 
 	@Override
@@ -83,6 +73,32 @@ public class MenuSettings implements MenuPage {
 		for (Widget w : this.widgets) {
 			w.draw(g);
 		}
+	}
+
+	@Override
+	public boolean isLoaded() {
+		return this.loaded;
+	}
+
+	@Override
+	public void load() {
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				MenuSettings.this.widgets = new Vector<>();
+
+				MenuSettings.this.loadResources();
+
+				MenuSettings.this.wTitle();
+				MenuSettings.this.wBack();
+				MenuSettings.this.wGraph();
+				MenuSettings.this.wControls();
+				MenuSettings.this.wProfile();
+				MenuSettings.this.wGameSettings();
+
+				MenuSettings.this.loaded = true;
+			}
+		}).start();
 	}
 
 	private void loadResources() {

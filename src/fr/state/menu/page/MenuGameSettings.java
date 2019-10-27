@@ -27,10 +27,10 @@ public class MenuGameSettings implements MenuPage {
 	private static final String[] RES_PATHS = { "title", "backStd", "backPressed", "frame", "itemFreq", };
 
 	private static final String RES_FOLDER = "/resources/menu/menuGameSettings/";
+
 	private static final String RES_EXTENSION = ".png";
 
 	private static final String PAGE_NAME = "menuGameSettings";
-
 	private static final String PARAM_NAME_ITEM = "itemFreq";
 
 	static {
@@ -43,6 +43,8 @@ public class MenuGameSettings implements MenuPage {
 		}
 	}
 
+	private boolean loaded;
+
 	private List<Widget> widgets;
 
 	private Menu m;
@@ -52,25 +54,8 @@ public class MenuGameSettings implements MenuPage {
 	private XMLManager manager;
 
 	public MenuGameSettings(Menu m) {
-
+		this.loaded = false;
 		this.m = m;
-
-		this.widgets = new Vector<>();
-
-		this.loadResources();
-
-		DatafilesManager dfm = DatafilesManager.getInstance();
-		this.gameSettingsConf = dfm.getFile("gameSettings");
-		this.manager = dfm.getXmlManager();
-
-		int itemFreq = (int) this.manager.getParam(this.gameSettingsConf, PARAM_NAME_ITEM, 0);
-
-		this.wTitle();
-		this.wBack();
-		this.wFrame();
-		this.wItemFreq();
-		this.wItemFreqSlider().setValue(itemFreq);
-
 	}
 
 	@Override
@@ -78,6 +63,38 @@ public class MenuGameSettings implements MenuPage {
 		for (Widget w : this.widgets) {
 			w.draw(g);
 		}
+	}
+
+	@Override
+	public boolean isLoaded() {
+		return this.loaded;
+	}
+
+	@Override
+	public void load() {
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				MenuGameSettings.this.widgets = new Vector<>();
+
+				MenuGameSettings.this.loadResources();
+
+				DatafilesManager dfm = DatafilesManager.getInstance();
+				MenuGameSettings.this.gameSettingsConf = dfm.getFile("gameSettings");
+				MenuGameSettings.this.manager = dfm.getXmlManager();
+
+				int itemFreq = (int) MenuGameSettings.this.manager.getParam(MenuGameSettings.this.gameSettingsConf,
+						PARAM_NAME_ITEM, 0);
+
+				MenuGameSettings.this.wTitle();
+				MenuGameSettings.this.wBack();
+				MenuGameSettings.this.wFrame();
+				MenuGameSettings.this.wItemFreq();
+				MenuGameSettings.this.wItemFreqSlider().setValue(itemFreq);
+
+				MenuGameSettings.this.loaded = true;
+			}
+		}).start();
 	}
 
 	private void loadResources() {

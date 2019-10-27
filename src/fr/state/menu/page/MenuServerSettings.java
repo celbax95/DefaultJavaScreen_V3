@@ -48,6 +48,7 @@ public class MenuServerSettings implements MenuPage {
 		}
 	}
 
+	private boolean loaded;
 	private Object serverConf;
 
 	private XMLManager manager;
@@ -68,30 +69,8 @@ public class MenuServerSettings implements MenuPage {
 	 *                   1 : menuJoin
 	 */
 	public MenuServerSettings(Menu m, int returnPage) {
-
+		this.loaded = false;
 		this.m = m;
-
-		this.returnPage = returnPage;
-
-		this.loadResources();
-
-		this.widgets = new Vector<>();
-
-		this.exclusiveBtn = new WButton[NB_EXCLUSIVE_BTN];
-		this.btnIndex = -1;
-
-		DatafilesManager dfm = DatafilesManager.getInstance();
-		this.serverConf = dfm.getFile("serverConf");
-		this.manager = dfm.getXmlManager();
-
-		this.wTitle();
-		this.wBack();
-
-		for (int i = 0; i < NB_EXCLUSIVE_BTN; i++) {
-			this.exclusiveBtn[i] = this.wServerIDChoose("" + i, new Point(480 + 210 * i, 600), i);
-		}
-
-		this.setBtnIndex((int) this.manager.getParam(this.serverConf, "id", 0));
 	}
 
 	@Override
@@ -99,6 +78,45 @@ public class MenuServerSettings implements MenuPage {
 		for (Widget w : this.widgets) {
 			w.draw(g);
 		}
+	}
+
+	@Override
+	public boolean isLoaded() {
+		return this.loaded;
+	}
+
+	@Override
+	public void load() {
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				MenuServerSettings.this.returnPage = MenuServerSettings.this.returnPage;
+
+				MenuServerSettings.this.loadResources();
+
+				MenuServerSettings.this.widgets = new Vector<>();
+
+				MenuServerSettings.this.exclusiveBtn = new WButton[NB_EXCLUSIVE_BTN];
+				MenuServerSettings.this.btnIndex = -1;
+
+				DatafilesManager dfm = DatafilesManager.getInstance();
+				MenuServerSettings.this.serverConf = dfm.getFile("serverConf");
+				MenuServerSettings.this.manager = dfm.getXmlManager();
+
+				MenuServerSettings.this.wTitle();
+				MenuServerSettings.this.wBack();
+
+				for (int i = 0; i < NB_EXCLUSIVE_BTN; i++) {
+					MenuServerSettings.this.exclusiveBtn[i] = MenuServerSettings.this.wServerIDChoose("" + i,
+							new Point(480 + 210 * i, 600), i);
+				}
+
+				MenuServerSettings.this.setBtnIndex(
+						(int) MenuServerSettings.this.manager.getParam(MenuServerSettings.this.serverConf, "id", 0));
+
+				MenuServerSettings.this.loaded = true;
+			}
+		}).start();
 	}
 
 	private void loadResources() {

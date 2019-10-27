@@ -89,36 +89,11 @@ public class MenuControls implements MenuPage {
 
 	private WUserKeyInput[] controls;
 
+	private boolean loaded;
+
 	public MenuControls(Menu m) {
-
+		this.loaded = false;
 		this.m = m;
-
-		this.widgets = new Vector<>();
-
-		this.loadResources();
-
-		DatafilesManager dfm = DatafilesManager.getInstance();
-		this.controlsConf = dfm.getFile("controls");
-		this.manager = dfm.getXmlManager();
-
-		this.wTitle();
-		this.wBack();
-
-		WScroller scroller = this.wScroller();
-
-		scroller.add(this.getWControlsList());
-
-		this.wBorder();
-
-		this.controls = new WUserKeyInput[PARAM_NAMES.length];
-
-		for (int i = 0; i < PARAM_NAMES.length; i++) {
-			this.controls[i] = this.getWUserKeyInput(i, PARAM_NAMES[i]);
-			this.controls[i].setData((int) this.manager.getParam(this.controlsConf, PARAM_NAMES[i], 0));
-			scroller.add(this.controls[i]);
-		}
-
-		this.changeColorOnSame();
 	}
 
 	private void changeColorOnSame() {
@@ -189,6 +164,49 @@ public class MenuControls implements MenuPage {
 		u.setHitboxFromDrawElement();
 
 		return u;
+	}
+
+	@Override
+	public boolean isLoaded() {
+		return this.loaded;
+	}
+
+	@Override
+	public void load() {
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				MenuControls.this.widgets = new Vector<>();
+
+				MenuControls.this.loadResources();
+
+				DatafilesManager dfm = DatafilesManager.getInstance();
+				MenuControls.this.controlsConf = dfm.getFile("controls");
+				MenuControls.this.manager = dfm.getXmlManager();
+
+				MenuControls.this.wTitle();
+				MenuControls.this.wBack();
+
+				WScroller scroller = MenuControls.this.wScroller();
+
+				scroller.add(MenuControls.this.getWControlsList());
+
+				MenuControls.this.wBorder();
+
+				MenuControls.this.controls = new WUserKeyInput[PARAM_NAMES.length];
+
+				for (int i = 0; i < PARAM_NAMES.length; i++) {
+					MenuControls.this.controls[i] = MenuControls.this.getWUserKeyInput(i, PARAM_NAMES[i]);
+					MenuControls.this.controls[i].setData((int) MenuControls.this.manager
+							.getParam(MenuControls.this.controlsConf, PARAM_NAMES[i], 0));
+					scroller.add(MenuControls.this.controls[i]);
+				}
+
+				MenuControls.this.changeColorOnSame();
+
+				MenuControls.this.loaded = true;
+			}
+		}).start();
 	}
 
 	private void loadResources() {
