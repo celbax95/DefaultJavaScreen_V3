@@ -296,6 +296,8 @@ public class MenuHost implements MenuPage {
 		this.players[padId] = null;
 
 		((DERectangle) this.ready[padId].getDrawElement()).setColor(new Color(0, 0, 0, 0));
+
+		this.changeWPlayState();
 	}
 
 	private void resetPads() {
