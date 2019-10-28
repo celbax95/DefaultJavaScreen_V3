@@ -1,4 +1,0 @@
-title			:	550		:	76
-back			:	42		:	42
-frame			:	333		:	337
-itemFreq		:	738		:	400
