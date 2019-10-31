@@ -32,8 +32,6 @@ public class Searcher {
 
 		this.idSetter = idSetter;
 
-		System.out.println(stat);
-
 		this.linkerPort = linkerPort;
 		try {
 			this.groupIP = InetAddress.getByName(groupIP);

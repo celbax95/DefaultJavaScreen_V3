@@ -189,10 +189,6 @@ public class MenuJoin implements MenuPage {
 		if (padId == -1)
 			return;
 
-		if (this.wReady.isEnabled() == false) {
-			this.wReady.setEnabled(true);
-		}
-
 		DERectangle r = (DERectangle) this.pads[padId].getDrawElement();
 
 		r.setColor(p.color);
@@ -220,9 +216,9 @@ public class MenuJoin implements MenuPage {
 
 		r.setLabel(td);
 
-		this.players[padId] = null;
-
 		((DERectangle) this.ready[padId].getDrawElement()).setColor(new Color(0, 0, 0, 0));
+
+		this.players[padId] = null;
 	}
 
 	private void resetPads() {
@@ -240,6 +236,20 @@ public class MenuJoin implements MenuPage {
 		if (playerPad == 0 && ready == false && this.wReady.isActive()) {
 			this.wReady.setActive(false);
 		}
+	}
+
+	private boolean stackPlayers() {
+		boolean r = false;
+
+		for (int i = 1, size = this.players.length - 1; i < size; i++) {
+			if (this.players[i] == null && this.players[i + 1] != null) {
+				this.players[i] = this.players[i + 1];
+				this.players[i + 1] = null;
+				r = true;
+			}
+		}
+
+		return r;
 	}
 
 	private void start() {
@@ -271,11 +281,14 @@ public class MenuJoin implements MenuPage {
 					return;
 
 				MenuJoin.this.putPlayerOnPad(new PlayerData(id, username, color), i);
+
+				MenuJoin.this.updatePads();
 			}
 
 			@Override
 			public void playerRemoved(int id) {
 				MenuJoin.this.removePlayerFromPad(MenuJoin.this.getPlayerPad(id));
+				MenuJoin.this.updatePads();
 			}
 
 			@Override
@@ -311,6 +324,19 @@ public class MenuJoin implements MenuPage {
 	public void update(Input input) {
 		for (Widget w : this.widgets) {
 			w.update(input);
+		}
+	}
+
+	private void updatePads() {
+		if (this.stackPlayers() == false)
+			return;
+
+		for (int i = 1; i < this.players.length; i++) {
+			if (this.players[i] == null) {
+				this.removePlayerFromPad(i);
+			} else {
+				this.putPlayerOnPad(this.players[i], i);
+			}
 		}
 	}
 
@@ -395,7 +421,6 @@ public class MenuJoin implements MenuPage {
 		w.setPressedOnDrawElement(r.clone());
 
 		w.setPos(new Point(400, 850));
-		w.setEnabled(false);
 		w.setHitboxFromDrawElement();
 
 		this.widgets.add(w);

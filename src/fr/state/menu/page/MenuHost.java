@@ -241,6 +241,8 @@ public class MenuHost implements MenuPage {
 
 		this.players[padId] = p;
 
+		this.setPlayerReady(padId, p.ready);
+
 		this.changeWPlayState();
 	}
 
@@ -257,9 +259,9 @@ public class MenuHost implements MenuPage {
 
 		r.setLabel(td);
 
-		this.players[padId] = null;
+		this.setPlayerReady(padId, false);
 
-		((DERectangle) this.ready[padId].getDrawElement()).setColor(new Color(0, 0, 0, 0));
+		this.players[padId] = null;
 
 		this.changeWPlayState();
 	}
@@ -274,11 +276,28 @@ public class MenuHost implements MenuPage {
 		if (playerPad == -1)
 			return;
 
-		this.players[playerPad].ready = ready;
+		if (this.players[playerPad] == null) {
+			((DERectangle) this.ready[playerPad].getDrawElement()).setColor(new Color(0, 0, 0, 0));
+		} else {
+			this.players[playerPad].ready = ready;
 
-		((DERectangle) this.ready[playerPad].getDrawElement()).setColor(ready ? READY : NOT_READY);
-
+			((DERectangle) this.ready[playerPad].getDrawElement()).setColor(ready ? READY : NOT_READY);
+		}
 		this.changeWPlayState();
+	}
+
+	private boolean stackPlayers() {
+		boolean r = false;
+
+		for (int i = 1, size = this.players.length - 1; i < size; i++) {
+			if (this.players[i] == null && this.players[i + 1] != null) {
+				this.players[i] = this.players[i + 1];
+				this.players[i + 1] = null;
+				r = true;
+			}
+		}
+
+		return r;
 	}
 
 	public void start() {
@@ -309,11 +328,13 @@ public class MenuHost implements MenuPage {
 					return;
 
 				MenuHost.this.putPlayerOnPad(new PlayerData(id, username, color, false), i);
+				MenuHost.this.updatePads();
 			}
 
 			@Override
 			public void playerRemoved(int id) {
 				MenuHost.this.removePlayerFromPad(MenuHost.this.getPlayerPad(id));
+				MenuHost.this.updatePads();
 			}
 
 			@Override
@@ -355,6 +376,19 @@ public class MenuHost implements MenuPage {
 	public void update(Input input) {
 		for (Widget w : this.widgets) {
 			w.update(input);
+		}
+	}
+
+	private void updatePads() {
+		if (this.stackPlayers() == false)
+			return;
+
+		for (int i = 1; i < this.players.length; i++) {
+			if (this.players[i] == null) {
+				this.removePlayerFromPad(i);
+			} else {
+				this.putPlayerOnPad(this.players[i], i);
+			}
 		}
 	}
 
