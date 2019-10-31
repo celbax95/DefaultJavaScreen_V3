@@ -12,6 +12,7 @@ import fr.imagesmanager.ImageLoader;
 import fr.imagesmanager.ImageManager;
 import fr.inputs.Input;
 import fr.serverlink.data.ServerData;
+import fr.serverlink.data.ServerDelays;
 import fr.serverlink.hub.HubJoiner;
 import fr.serverlink.link.Searcher;
 import fr.state.menu.Menu;
@@ -251,19 +252,15 @@ public class MenuJoin implements MenuPage {
 			@Override
 			public void idAssigned(int id) {
 				MenuJoin.this.searcher.stop();
+				MenuJoin.this.searcher = null;
 				MenuJoin.this.players[0].id = id;
 			}
 
 			@Override
 			public void noMorePlayer() {
-				MenuJoin.this.wReady.setEnabled(false);
+				this.stop();
 				MenuJoin.this.resetPads();
-				MenuJoin.this.setPlayerReady(0, false);
-				MenuJoin.this.searcher.stop();
-				MenuJoin.this.hub.stop();
-				MenuJoin.this.players[0].id = -1;
-				MenuJoin.this.hub.start();
-				MenuJoin.this.searcher.start();
+				this.start();
 			}
 
 			@Override
@@ -285,7 +282,6 @@ public class MenuJoin implements MenuPage {
 			public void readyChanged(int id, boolean ready) {
 				MenuJoin.this.setPlayerReady(MenuJoin.this.getPlayerPad(id), ready);
 			}
-
 		};
 
 		if (this.searcher != null) {
@@ -306,6 +302,9 @@ public class MenuJoin implements MenuPage {
 		if (this.hub != null) {
 			MenuJoin.this.hub.stop();
 		}
+
+		MenuJoin.this.setPlayerReady(0, false);
+		this.players[0].id = -1;
 	}
 
 	@Override
@@ -427,10 +426,17 @@ public class MenuJoin implements MenuPage {
 			@Override
 			public void action() {
 				MenuJoin.this.stop();
-
 				MenuJoin.this.resetPads();
-
-				MenuJoin.this.start();
+				new Thread(new Runnable() {
+					@Override
+					public void run() {
+						try {
+							Thread.sleep(ServerDelays.UPDATE_TEST_RATE);
+						} catch (InterruptedException e) {
+						}
+						MenuJoin.this.start();
+					}
+				}).start();
 			}
 		};
 
