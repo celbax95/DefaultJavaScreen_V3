@@ -106,7 +106,7 @@ public class TextData {
 		switch (state) {
 		case 0:
 			// Relative
-			g.drawString(this.text, absp.ix(), absp.iy());
+			g.drawString(this.text, absp.ix(), absp.iy() + this.size.iy() / 2);
 			break;
 		case 1:
 			// X centered - Y relative
@@ -114,13 +114,13 @@ public class TextData {
 			break;
 		case 2:
 			// X relative - Y centered
-			g.drawString(this.text, absp.ix(), absp.iy() + holderSize.iy() / 2 + holderSize.iy() / 4);
+			g.drawString(this.text, absp.ix(), absp.iy() + this.size.iy() / 2 + holderSize.iy() / 2);
 			break;
 		case 3:
 			// Centered
 			Point holderHalfSize = holderSize.clone().div(2);
 			g.drawString(this.text, absp.ix() + holderHalfSize.ix() - this.size.ix() / 2,
-					absp.iy() + holderHalfSize.iy() + this.size.iy() / 4);
+					absp.iy() + holderHalfSize.iy() / 2 + this.size.iy() / 2);
 			break;
 		}
 	}

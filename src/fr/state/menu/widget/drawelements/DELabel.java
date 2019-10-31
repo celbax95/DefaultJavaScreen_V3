@@ -9,7 +9,7 @@ import fr.util.point.Point;
 
 public class DELabel implements DrawElement {
 
-	private Point pos;
+	private Point pos, supBound;
 
 	private boolean lock;
 
@@ -23,6 +23,7 @@ public class DELabel implements DrawElement {
 	public DELabel() {
 		super();
 		this.pos = new Point();
+		this.supBound = null;
 		this.label = null;
 	}
 
@@ -56,7 +57,7 @@ public class DELabel implements DrawElement {
 		// Absolute Point
 		Point absp = ref.clone().add(this.pos);
 
-		this.label.draw(g, absp, null);
+		this.label.draw(g, absp, this.supBound);
 	}
 
 	/**
@@ -80,6 +81,10 @@ public class DELabel implements DrawElement {
 	@Override
 	public Point getSize() {
 		return this.label.getSize();
+	}
+
+	public Point getSupBound() {
+		return this.supBound;
 	}
 
 	@Override
@@ -121,5 +126,9 @@ public class DELabel implements DrawElement {
 			return;
 		}
 		this.pos = pos;
+	}
+
+	public void setSupBound(Point supBound) {
+		this.supBound = supBound;
 	}
 }
