@@ -192,6 +192,7 @@ public class MenuHost implements MenuPage {
 				MenuHost.this.wTitle();
 				MenuHost.this.wBack();
 				MenuHost.this.wServerSettings();
+				MenuHost.this.wRefresh();
 
 				MenuHost.this.wPlay = MenuHost.this.wPlay();
 
@@ -215,44 +216,7 @@ public class MenuHost implements MenuPage {
 
 				MenuHost.this.changeWPlayState();
 
-				MenuHost.this.hub = new HubHoster(ID_HOST, myUsername, myColor, MenuHost.this.maxPlayer,
-						ServerData.getGroup(MenuHost.this.idServer), ServerData.getPort(MenuHost.this.idServer)) {
-
-					@Override
-					public void gameStarting(boolean state) {
-
-					}
-
-					@Override
-					public void noMorePlayer() {
-						MenuHost.this.resetPads();
-					}
-
-					@Override
-					public void playerAdded(int id, String username, Color color) {
-						int i = MenuHost.this.getEmptyPad();
-
-						if (i == -1)
-							return;
-
-						MenuHost.this.putPlayerOnPad(new PlayerData(id, username, color, false), i);
-					}
-
-					@Override
-					public void playerRemoved(int id) {
-						MenuHost.this.removePlayerFromPad(MenuHost.this.getPlayerPad(id));
-					}
-
-					@Override
-					public void readyChanged(int id, boolean ready) {
-						MenuHost.this.setPlayerReady(MenuHost.this.getPlayerPad(id), ready);
-					}
-				};
-				MenuHost.this.linker = new Linker(ID_HOST, ServerData.getGroup(MenuHost.this.idServer),
-						ServerData.getPort(MenuHost.this.idServer));
-
-				MenuHost.this.hub.start();
-				MenuHost.this.linker.start();
+				MenuHost.this.start();
 
 				MenuHost.this.loaded = true;
 			}
@@ -315,6 +279,62 @@ public class MenuHost implements MenuPage {
 		((DERectangle) this.ready[playerPad].getDrawElement()).setColor(ready ? READY : NOT_READY);
 
 		this.changeWPlayState();
+	}
+
+	public void start() {
+
+		// hub
+		if (this.hub != null) {
+			MenuHost.this.hub.stop();
+		}
+		MenuHost.this.hub = new HubHoster(ID_HOST, this.players[0].username, this.players[0].color,
+				MenuHost.this.maxPlayer, ServerData.getGroup(MenuHost.this.idServer),
+				ServerData.getPort(MenuHost.this.idServer)) {
+
+			@Override
+			public void gameStarting(boolean state) {
+
+			}
+
+			@Override
+			public void noMorePlayer() {
+				MenuHost.this.resetPads();
+			}
+
+			@Override
+			public void playerAdded(int id, String username, Color color) {
+				int i = MenuHost.this.getEmptyPad();
+
+				if (i == -1)
+					return;
+
+				MenuHost.this.putPlayerOnPad(new PlayerData(id, username, color, false), i);
+			}
+
+			@Override
+			public void playerRemoved(int id) {
+				MenuHost.this.removePlayerFromPad(MenuHost.this.getPlayerPad(id));
+			}
+
+			@Override
+			public void readyChanged(int id, boolean ready) {
+				MenuHost.this.setPlayerReady(MenuHost.this.getPlayerPad(id), ready);
+			}
+		};
+
+		// Linker
+		if (this.linker != null) {
+			MenuHost.this.linker.stop();
+		}
+		MenuHost.this.linker = new Linker(ID_HOST, ServerData.getGroup(MenuHost.this.idServer),
+				ServerData.getPort(MenuHost.this.idServer));
+
+		if (this.playCountdown != null) {
+			MenuHost.this.playCountdown.interrupt();
+		}
+
+		MenuHost.this.hub.start();
+		MenuHost.this.linker.start();
 	}
 
 	private void stop() {
@@ -468,6 +488,34 @@ public class MenuHost implements MenuPage {
 		this.widgets.add(w);
 
 		return w;
+	}
+
+	public void wRefresh() {
+		WButton w = new WButton(this) {
+			@Override
+			public void action() {
+				MenuHost.this.stop();
+
+				MenuHost.this.resetPads();
+
+				MenuHost.this.start();
+			}
+		};
+
+		DERectangle r = new DERectangle();
+		r.setSize(new Point(100, 100));
+		r.setLabel(new TextData(new Point(), new Font("Arial", Font.BOLD, 25), "Refresh", Color.BLACK, 3));
+		r.setBorder(new BorderData(3, Color.black, 2));
+		r.setColor(Color.GRAY);
+		w.setStdDrawElement(r);
+
+		r.setColor(Color.LIGHT_GRAY);
+		w.setPressedDrawElement(r);
+
+		w.setPos(new Point(1100, 850));
+		w.setHitboxFromDrawElement();
+
+		this.widgets.add(w);
 	}
 
 	private void wServerSettings() {
