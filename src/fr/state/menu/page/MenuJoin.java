@@ -42,11 +42,44 @@ public class MenuJoin implements MenuPage {
 		}
 	}
 
-	private static final String[] RES_NAMES = { "title", "backStd", "backPressed" };
+	private static final String[] RES_NAMES1 = {
+			"title",
+			"backStd",
+			"backPressed",
+			"notReadyPressed",
+			"notReadyStd",
+			"eadyPressed",
+			"readyStd" };
+	private static final String[] RES_PATHS1 = {
+			"title",
+			"backStd",
+			"backPressed",
+			"notReadyPressed",
+			"notReadyStd",
+			"readyPressed",
+			"readyStd" };
+	private static final String RES_FOLDER1 = "/resources/menu/menuJoin/";
 
-	private static final String[] RES_PATHS = { "title", "backStd", "backPressed" };
+	private static final String[] RES_NAMES2 = {
+			"notReadyCell",
+			"readyCell",
+			"playerPadEmpty",
+			"refreshStd",
+			"refreshPressed",
+			"serverSettingsStd",
+			"serverSettingsPressed",
+			"playerPadEmpty" };
+	private static final String[] RES_PATHS2 = {
+			"notReadyCell",
+			"readyCell",
+			"playerPadEmpty",
+			"refreshStd",
+			"refreshPressed",
+			"serverSettingsStd",
+			"serverSettingsPressed",
+			"playerPadEmpty" };
+	private static final String RES_FOLDER2 = "/resources/menu/lobby/";
 
-	private static final String RES_FOLDER = "/resources/menu/menuJoin/";
 	private static final String RES_EXTENSION = ".png";
 
 	private static final String PAGE_NAME = "menuJoin";
@@ -58,12 +91,20 @@ public class MenuJoin implements MenuPage {
 	private static final String PARAM_NAME_COLOR = "color";
 
 	static {
-		for (int i = 0; i < RES_NAMES.length; i++) {
-			RES_NAMES[i] = PAGE_NAME + "/" + RES_NAMES[i];
+		for (int i = 0; i < RES_NAMES1.length; i++) {
+			RES_NAMES1[i] = PAGE_NAME + "/" + RES_NAMES1[i];
 		}
 
-		for (int i = 0; i < RES_PATHS.length; i++) {
-			RES_PATHS[i] = RES_FOLDER + RES_PATHS[i] + RES_EXTENSION;
+		for (int i = 0; i < RES_PATHS1.length; i++) {
+			RES_PATHS1[i] = RES_FOLDER1 + RES_PATHS1[i] + RES_EXTENSION;
+		}
+
+		for (int i = 0; i < RES_NAMES2.length; i++) {
+			RES_NAMES2[i] = PAGE_NAME + "/" + RES_NAMES2[i];
+		}
+
+		for (int i = 0; i < RES_PATHS2.length; i++) {
+			RES_PATHS2[i] = RES_FOLDER2 + RES_PATHS2[i] + RES_EXTENSION;
 		}
 	}
 
@@ -182,7 +223,8 @@ public class MenuJoin implements MenuPage {
 	private void loadResources() {
 		ImageLoader il = new ImageLoader();
 
-		il.load(RES_NAMES, RES_PATHS);
+		il.load(RES_NAMES1, RES_PATHS1);
+		il.load(RES_NAMES2, RES_PATHS2);
 	}
 
 	public void putPlayerOnPad(PlayerData p, int padId) {

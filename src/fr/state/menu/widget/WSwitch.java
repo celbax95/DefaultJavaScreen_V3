@@ -207,15 +207,15 @@ public abstract class WSwitch implements Widget {
 	private void setCurrentDE() {
 		if (this.active) {
 			if (this.pressed && this.mouseOn && this.pressedOn != null) {
-				this.currentDE = this.pressedOn;
+				this.setCurrentDE(this.pressedOn);
 			} else {
-				this.currentDE = this.on;
+				this.setCurrentDE(this.on);
 			}
 		} else {
 			if (this.pressed && this.mouseOn && this.pressedOff != null) {
-				this.currentDE = this.pressedOff;
+				this.setCurrentDE(this.pressedOff);
 			} else {
-				this.currentDE = this.off;
+				this.setCurrentDE(this.off);
 			}
 		}
 	}
