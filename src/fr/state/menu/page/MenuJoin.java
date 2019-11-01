@@ -12,6 +12,7 @@ import fr.imagesmanager.ImageLoader;
 import fr.imagesmanager.ImageManager;
 import fr.inputs.Input;
 import fr.serverlink.data.ServerData;
+import fr.serverlink.data.ServerDelays;
 import fr.serverlink.hub.HubJoiner;
 import fr.serverlink.link.Searcher;
 import fr.state.menu.Menu;
@@ -152,6 +153,7 @@ public class MenuJoin implements MenuPage {
 				MenuJoin.this.wTitle();
 				MenuJoin.this.wBack();
 				MenuJoin.this.wServerSettings();
+				MenuJoin.this.wRefresh();
 
 				MenuJoin.this.pads = new WElement[MenuJoin.this.maxPlayer];
 				MenuJoin.this.ready = new WElement[MenuJoin.this.maxPlayer];
@@ -170,53 +172,7 @@ public class MenuJoin implements MenuPage {
 
 				MenuJoin.this.putPlayerOnPad(new PlayerData(-1, myUsername, myColor), 0);
 
-				MenuJoin.this.hub = new HubJoiner(myUsername, myColor, ServerData.getGroup(MenuJoin.this.idServer),
-						ServerData.getPort(MenuJoin.this.idServer)) {
-
-					@Override
-					public void idAssigned(int id) {
-						MenuJoin.this.searcher.stop();
-						MenuJoin.this.players[0].id = id;
-					}
-
-					@Override
-					public void noMorePlayer() {
-						MenuJoin.this.wReady.setEnabled(false);
-						MenuJoin.this.resetPads();
-						MenuJoin.this.setPlayerReady(0, false);
-						MenuJoin.this.searcher.stop();
-						MenuJoin.this.hub.stop();
-						MenuJoin.this.players[0].id = -1;
-						MenuJoin.this.hub.start();
-						MenuJoin.this.searcher.start();
-					}
-
-					@Override
-					public void playerAdded(int id, String username, Color color) {
-						int i = MenuJoin.this.getEmptyPad();
-
-						if (i == -1)
-							return;
-
-						MenuJoin.this.putPlayerOnPad(new PlayerData(id, username, color), i);
-					}
-
-					@Override
-					public void playerRemoved(int id) {
-						MenuJoin.this.removePlayerFromPad(MenuJoin.this.getPlayerPad(id));
-					}
-
-					@Override
-					public void readyChanged(int id, boolean ready) {
-						MenuJoin.this.setPlayerReady(MenuJoin.this.getPlayerPad(id), ready);
-					}
-
-				};
-				MenuJoin.this.searcher = new Searcher(MenuJoin.this.hub, ServerData.getGroup(MenuJoin.this.idServer),
-						ServerData.getPort(MenuJoin.this.idServer));
-
-				MenuJoin.this.hub.start();
-				MenuJoin.this.searcher.start();
+				MenuJoin.this.start();
 
 				MenuJoin.this.loaded = true;
 			}
@@ -232,10 +188,6 @@ public class MenuJoin implements MenuPage {
 	public void putPlayerOnPad(PlayerData p, int padId) {
 		if (padId == -1)
 			return;
-
-		if (this.wReady.isEnabled() == false) {
-			this.wReady.setEnabled(true);
-		}
 
 		DERectangle r = (DERectangle) this.pads[padId].getDrawElement();
 
@@ -264,9 +216,9 @@ public class MenuJoin implements MenuPage {
 
 		r.setLabel(td);
 
-		this.players[padId] = null;
-
 		((DERectangle) this.ready[padId].getDrawElement()).setColor(new Color(0, 0, 0, 0));
+
+		this.players[padId] = null;
 	}
 
 	private void resetPads() {
@@ -286,21 +238,105 @@ public class MenuJoin implements MenuPage {
 		}
 	}
 
-	private void stop() {
-		try {
-			MenuJoin.this.searcher.stop();
-		} catch (NullPointerException e) {
+	private boolean stackPlayers() {
+		boolean r = false;
+
+		for (int i = 1, size = this.players.length - 1; i < size; i++) {
+			if (this.players[i] == null && this.players[i + 1] != null) {
+				this.players[i] = this.players[i + 1];
+				this.players[i + 1] = null;
+				r = true;
+			}
 		}
-		try {
+
+		return r;
+	}
+
+	private void start() {
+		if (this.hub != null) {
 			MenuJoin.this.hub.stop();
-		} catch (NullPointerException e) {
 		}
+		MenuJoin.this.hub = new HubJoiner(this.players[0].username, this.players[0].color,
+				ServerData.getGroup(MenuJoin.this.idServer), ServerData.getPort(MenuJoin.this.idServer)) {
+
+			@Override
+			public void idAssigned(int id) {
+				MenuJoin.this.searcher.stop();
+				MenuJoin.this.searcher = null;
+				MenuJoin.this.players[0].id = id;
+			}
+
+			@Override
+			public void noMorePlayer() {
+				this.stop();
+				MenuJoin.this.resetPads();
+				this.start();
+			}
+
+			@Override
+			public void playerAdded(int id, String username, Color color) {
+				int i = MenuJoin.this.getEmptyPad();
+
+				if (i == -1)
+					return;
+
+				MenuJoin.this.putPlayerOnPad(new PlayerData(id, username, color), i);
+
+				MenuJoin.this.updatePads();
+			}
+
+			@Override
+			public void playerRemoved(int id) {
+				MenuJoin.this.removePlayerFromPad(MenuJoin.this.getPlayerPad(id));
+				MenuJoin.this.updatePads();
+			}
+
+			@Override
+			public void readyChanged(int id, boolean ready) {
+				MenuJoin.this.setPlayerReady(MenuJoin.this.getPlayerPad(id), ready);
+			}
+		};
+
+		if (this.searcher != null) {
+			MenuJoin.this.searcher.stop();
+		}
+		MenuJoin.this.searcher = new Searcher(MenuJoin.this.hub, ServerData.getGroup(MenuJoin.this.idServer),
+				ServerData.getPort(MenuJoin.this.idServer));
+
+		MenuJoin.this.hub.start();
+		MenuJoin.this.searcher.start();
+	}
+
+	private void stop() {
+		if (this.searcher != null) {
+			MenuJoin.this.searcher.stop();
+		}
+
+		if (this.hub != null) {
+			MenuJoin.this.hub.stop();
+		}
+
+		MenuJoin.this.setPlayerReady(0, false);
+		this.players[0].id = -1;
 	}
 
 	@Override
 	public void update(Input input) {
 		for (Widget w : this.widgets) {
 			w.update(input);
+		}
+	}
+
+	private void updatePads() {
+		if (this.stackPlayers() == false)
+			return;
+
+		for (int i = 1; i < this.players.length; i++) {
+			if (this.players[i] == null) {
+				this.removePlayerFromPad(i);
+			} else {
+				this.putPlayerOnPad(this.players[i], i);
+			}
 		}
 	}
 
@@ -385,7 +421,6 @@ public class MenuJoin implements MenuPage {
 		w.setPressedOnDrawElement(r.clone());
 
 		w.setPos(new Point(400, 850));
-		w.setEnabled(false);
 		w.setHitboxFromDrawElement();
 
 		this.widgets.add(w);
@@ -409,6 +444,41 @@ public class MenuJoin implements MenuPage {
 		this.widgets.add(w);
 
 		return w;
+	}
+
+	public void wRefresh() {
+		WButton w = new WButton(this) {
+			@Override
+			public void action() {
+				MenuJoin.this.stop();
+				MenuJoin.this.resetPads();
+				new Thread(new Runnable() {
+					@Override
+					public void run() {
+						try {
+							Thread.sleep(ServerDelays.UPDATE_TEST_RATE);
+						} catch (InterruptedException e) {
+						}
+						MenuJoin.this.start();
+					}
+				}).start();
+			}
+		};
+
+		DERectangle r = new DERectangle();
+		r.setSize(new Point(100, 100));
+		r.setLabel(new TextData(new Point(), new Font("Arial", Font.BOLD, 25), "Refresh", Color.BLACK, 3));
+		r.setBorder(new BorderData(3, Color.black, 2));
+		r.setColor(Color.GRAY);
+		w.setStdDrawElement(r);
+
+		r.setColor(Color.LIGHT_GRAY);
+		w.setPressedDrawElement(r);
+
+		w.setPos(new Point(1100, 850));
+		w.setHitboxFromDrawElement();
+
+		this.widgets.add(w);
 	}
 
 	private void wServerSettings() {

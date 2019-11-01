@@ -96,8 +96,10 @@ public abstract class HubJoiner implements IdSetter {
 
 			this.playersData.put(id, new PlayerData(id, username, color, ready));
 
-			this.playerAdded(id, username, color);
-			this.readyChanged(id, ready);
+			if (Thread.currentThread().isInterrupted() == false) {
+				this.playerAdded(id, username, color);
+				this.readyChanged(id, ready);
+			}
 
 		} else {
 			PlayerData pd = this.playersData.get(id);

@@ -28,7 +28,6 @@ public class Searcher {
 	private IdSetter idSetter;
 
 	public Searcher(IdSetter idSetter, String groupIP, int linkerPort) {
-
 		this.myID = -1;
 
 		this.idSetter = idSetter;
@@ -115,7 +114,7 @@ public class Searcher {
 		this.myID = -1;
 
 		if (this.receiver != null) {
-			this.receiver = null;
+			this.receiver.interrupt();
 		}
 		this.setReceiver();
 		this.receiver.start();
