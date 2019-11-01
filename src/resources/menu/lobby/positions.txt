@@ -1,0 +1,10 @@
+title			:	550		:	76
+back			:	42		:	42
+frame			:	333		:	337
+controlsList	:	339		:	343
+left			:	1213	:	352
+right			:	1213	:	481
+jump			:	1213	:	609
+shoot			:	1213	:	737
+use				:	1213	:	865
+leave			:	1213	:	993

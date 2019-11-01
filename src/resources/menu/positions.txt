@@ -1,0 +1,9 @@
+title			:	550		:	76
+back			:	42		:	42
+playerPad		:	604		:	340
+playerSquare	:	pad+58	:	pad+3
+readyCell		:	pad+180	:	pad+124
+userNamePos		:	pad+3	:	pad+172
+settings		:	42		:	938
+refresh			:	168		:	958
+button			:	1499	:	548

@@ -1,0 +1,4 @@
+title			:	550		:	76
+back			:	42		:	42
+border			:	618		:	392
+elementBg		:	border+6:	border+6
