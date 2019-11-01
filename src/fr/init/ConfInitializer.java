@@ -1,5 +1,10 @@
 package fr.init;
 
+import java.awt.Font;
+import java.awt.FontFormatException;
+import java.awt.GraphicsEnvironment;
+import java.io.IOException;
+
 import fr.datafilesmanager.DatafilesManager;
 import fr.datafilesmanager.XMLManager;
 import fr.state.menu.MenuState;
@@ -69,10 +74,21 @@ public class ConfInitializer {
 
 	}
 
+	private void loadFonts() {
+		try {
+			Font customFont = Font.createFont(Font.TRUETYPE_FONT,
+					this.getClass().getResourceAsStream("/resources/font/ITCKRIST.ttf"));
+			GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(customFont);
+		} catch (IOException | FontFormatException e) {
+			e.printStackTrace();
+		}
+	}
+
 	/**
 	 * Creation des elements a partir de la conf
 	 */
 	public void start() {
+		this.loadFonts();
 
 		this.initConfFiles();
 
