@@ -33,6 +33,7 @@ public class DELabel implements DrawElement {
 			return;
 		this.setPos(new Point(other.pos));
 		this.setLabel(other.label == null ? null : other.label.clone());
+		this.supBound = other.supBound.clone();
 		this.lock = false;
 	}
 
@@ -84,7 +85,7 @@ public class DELabel implements DrawElement {
 	}
 
 	public Point getSupBound() {
-		return this.supBound;
+		return this.supBound.clone();
 	}
 
 	@Override
@@ -107,10 +108,6 @@ public class DELabel implements DrawElement {
 	 */
 	public void setLabel(TextData label) {
 		if (label != null) {
-			if (this.lock) {
-				this.lockWarn();
-				return;
-			}
 			this.label = label.clone();
 			this.label.lock();
 		}
@@ -129,6 +126,6 @@ public class DELabel implements DrawElement {
 	}
 
 	public void setSupBound(Point supBound) {
-		this.supBound = supBound;
+		this.supBound = supBound.clone();
 	}
 }

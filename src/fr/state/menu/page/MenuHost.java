@@ -3,7 +3,6 @@ package fr.state.menu.page;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
@@ -12,6 +11,7 @@ import fr.datafilesmanager.XMLManager;
 import fr.imagesmanager.ImageLoader;
 import fr.imagesmanager.ImageManager;
 import fr.inputs.Input;
+import fr.serverlink.data.PlayerData;
 import fr.serverlink.data.ServerData;
 import fr.serverlink.hub.HubHoster;
 import fr.serverlink.link.Linker;
@@ -23,25 +23,9 @@ import fr.state.menu.widget.WElement;
 import fr.state.menu.widget.WSwitch;
 import fr.state.menu.widget.data.TextData;
 import fr.state.menu.widget.drawelements.DEImage;
-import fr.state.menu.widget.drawelements.DERectangle;
 import fr.util.point.Point;
 
 public class MenuHost implements MenuPage {
-
-	private class PlayerData {
-		public int id;
-		public String username;
-		public Color color;
-		public boolean ready;
-
-		public PlayerData(int id, String username, Color color, boolean ready) {
-			super();
-			this.id = id;
-			this.username = username;
-			this.color = color;
-			this.ready = ready;
-		}
-	}
 
 	private static final String[] RES_NAMES1 = {
 			"title",
@@ -63,30 +47,9 @@ public class MenuHost implements MenuPage {
 			"playPressed" };
 	private static final String RES_FOLDER1 = "/resources/menu/menuHost/";
 
-	private static final String[] RES_NAMES2 = {
-			"notReadyCell",
-			"readyCell",
-			"playerPadEmpty",
-			"refreshStd",
-			"refreshPressed",
-			"serverSettingsStd",
-			"serverSettingsPressed",
-			"playerPadEmpty" };
-	private static final String[] RES_PATHS2 = {
-			"notReadyCell",
-			"readyCell",
-			"playerPadEmpty",
-			"refreshStd",
-			"refreshPressed",
-			"serverSettingsStd",
-			"serverSettingsPressed",
-			"playerPadEmpty" };
-	private static final String RES_FOLDER2 = "/resources/menu/lobby/";
-
 	private static final String RES_EXTENSION = ".png";
 
 	private static final String PAGE_NAME = "menuHost";
-	private static final String NAME2 = "lobby";
 
 	private static final String PARAM_NAME_USERNAME = "username";
 
@@ -98,14 +61,6 @@ public class MenuHost implements MenuPage {
 
 		for (int i = 0; i < RES_PATHS1.length; i++) {
 			RES_PATHS1[i] = RES_FOLDER1 + RES_PATHS1[i] + RES_EXTENSION;
-		}
-
-		for (int i = 0; i < RES_NAMES2.length; i++) {
-			RES_NAMES2[i] = NAME2 + "/" + RES_NAMES2[i];
-		}
-
-		for (int i = 0; i < RES_PATHS2.length; i++) {
-			RES_PATHS2[i] = RES_FOLDER2 + RES_PATHS2[i] + RES_EXTENSION;
 		}
 	}
 
@@ -130,12 +85,6 @@ public class MenuHost implements MenuPage {
 
 	private XMLManager manager;
 
-	private WElement[] pads;
-
-	private WElement[] ready;
-
-	private PlayerData[] players;
-
 	private int maxPlayer = 4;
 
 	private int idServer;
@@ -148,31 +97,22 @@ public class MenuHost implements MenuPage {
 
 	private WElement wWaiting;
 
+	private Lobby lobby;
+
 	public MenuHost(Menu m) {
 		this.loaded = false;
 		this.m = m;
 	}
 
 	private void changeWPlayState() {
-		List<Integer> pads = new ArrayList<>(); // pad occupe
-		int ready = 0;
-		for (int i = 0; i < this.maxPlayer; i++) {
-			if (this.players[i] != null) {
-				pads.add(i);
-				if (this.players[i].ready) {
-					ready++;
-				}
-			}
-		}
+		int players = this.lobby.getNbPlayer();
+		int readys = this.lobby.getNbReady();
+		boolean playEnabled = players >= 2 && players == readys;
 
-		if (pads.size() >= 2 && pads.size() == ready) {
-			this.wPlay.setVisible(true);
-			this.wWaiting.setVisible(false);
-		} else {
-			this.wPlay.setActive(false);
-			this.wPlay.setVisible(false);
-			this.wWaiting.setVisible(true);
-		}
+		this.wPlay.setActive(false);
+
+		this.wPlay.setVisible(playEnabled);
+		this.wWaiting.setVisible(!playEnabled);
 	}
 
 	@Override
@@ -180,22 +120,7 @@ public class MenuHost implements MenuPage {
 		for (Widget w : this.widgets) {
 			w.draw(g);
 		}
-	}
-
-	private int getEmptyPad() {
-		for (int i = 0; i < this.players.length; i++) {
-			if (this.players[i] == null)
-				return i;
-		}
-		return -1;
-	}
-
-	private int getPlayerPad(int playerId) {
-		for (int i = 0; i < this.players.length; i++) {
-			if (this.players[i] != null && this.players[i].id == playerId)
-				return i;
-		}
-		return -1;
+		this.lobby.draw(g);
 	}
 
 	@Override
@@ -224,6 +149,8 @@ public class MenuHost implements MenuPage {
 				Color myColor = Color.decode((String) MenuHost.this.manager.getParam(MenuHost.this.profileConf,
 						PARAM_NAME_COLOR, "#000000"));
 
+				MenuHost.this.lobby = new Lobby(MenuHost.this, PADS_POS);
+
 				MenuHost.this.wTitle();
 				MenuHost.this.wBack();
 				MenuHost.this.wWaiting = MenuHost.this.wWaiting();
@@ -232,22 +159,8 @@ public class MenuHost implements MenuPage {
 
 				MenuHost.this.wPlay = MenuHost.this.wPlay();
 
-				MenuHost.this.pads = new WElement[MenuHost.this.maxPlayer];
-				MenuHost.this.ready = new WElement[MenuHost.this.maxPlayer];
-				MenuHost.this.players = new PlayerData[MenuHost.this.maxPlayer];
-
-				for (int i = 0; i < MenuHost.this.maxPlayer; i++) {
-					MenuHost.this.wPadFrame(PADS_POS[i]);
-					MenuHost.this.pads[i] = MenuHost.this.wPad(PADS_POS[i].clone().add(new Point(58, 3)));
-					MenuHost.this.ready[i] = MenuHost.this.wReady(PADS_POS[i].clone().add(new Point(180, 124)));
-				}
-
-				for (int i = 0; i < MenuHost.this.maxPlayer; i++) {
-					MenuHost.this.players[i] = null;
-				}
-
-				MenuHost.this.putPlayerOnPad(new PlayerData(ID_HOST, myUsername, myColor, true), 0);
-				MenuHost.this.setPlayerReady(0, true);
+				MenuHost.this.lobby.setMainPlayer(new PlayerData(ID_HOST, myUsername, myColor, true));
+				MenuHost.this.lobby.setPlayerReady(ID_HOST, true);
 
 				MenuHost.this.changeWPlayState();
 
@@ -261,86 +174,7 @@ public class MenuHost implements MenuPage {
 	private void loadResources() {
 		ImageLoader il = new ImageLoader();
 
-		for (int i = 0; i < RES_NAMES1.length; i++) {
-			System.out.println(RES_NAMES1[i] + " : " + RES_PATHS1[i]);
-		}
-
 		il.load(RES_NAMES1, RES_PATHS1);
-		il.load(RES_NAMES2, RES_PATHS2);
-	}
-
-	private void putPlayerOnPad(PlayerData p, int padId) {
-		DERectangle r = (DERectangle) this.pads[padId].getDrawElement();
-
-		r.setColor(p.color);
-
-		TextData td = r.getLabel().clone();
-		td.setText(p.username);
-
-		r.setLabel(td);
-
-		this.pads[padId].setVisible(true);
-
-		this.players[padId] = p;
-
-		this.setPlayerReady(padId, p.ready);
-
-		this.changeWPlayState();
-	}
-
-	private void removePlayerFromPad(int padId) {
-		if (padId < 0)
-			return;
-
-		this.pads[padId].setVisible(false);
-
-		this.setPlayerReady(padId, false);
-
-		this.players[padId] = null;
-
-		this.changeWPlayState();
-	}
-
-	private void resetPads() {
-		for (int i = 1; i < this.maxPlayer; i++) {
-			this.removePlayerFromPad(i);
-		}
-	}
-
-	private void setPlayerReady(int playerPad, boolean ready) {
-		if (playerPad == -1)
-			return;
-
-		ImageManager im = ImageManager.getInstance();
-
-		if (this.players[playerPad] == null) {
-			this.ready[playerPad].setVisible(false);
-		} else {
-			this.players[playerPad].ready = ready;
-
-			this.ready[playerPad].setVisible(true);
-			DEImage i = (DEImage) this.ready[playerPad].getDrawElement().clone();
-
-			i.setImage(ready ? im.get("lobby/readyCell") : im.get("lobby/notReadyCell"));
-
-			this.ready[playerPad].setDrawElement(i);
-
-		}
-		this.changeWPlayState();
-	}
-
-	private boolean stackPlayers() {
-		boolean r = false;
-
-		for (int i = 1, size = this.players.length - 1; i < size; i++) {
-			if (this.players[i] == null && this.players[i + 1] != null) {
-				this.players[i] = this.players[i + 1];
-				this.players[i + 1] = null;
-				r = true;
-			}
-		}
-
-		return r;
 	}
 
 	public void start() {
@@ -349,9 +183,14 @@ public class MenuHost implements MenuPage {
 		if (this.hub != null) {
 			MenuHost.this.hub.stop();
 		}
-		MenuHost.this.hub = new HubHoster(ID_HOST, this.players[0].username, this.players[0].color,
-				MenuHost.this.maxPlayer, ServerData.getGroup(MenuHost.this.idServer),
-				ServerData.getPort(MenuHost.this.idServer)) {
+
+		PlayerData p = this.lobby.getMainPlayer();
+
+		if (p == null)
+			return;
+
+		MenuHost.this.hub = new HubHoster(ID_HOST, p.getUsername(), p.getColor(), MenuHost.this.maxPlayer,
+				ServerData.getGroup(MenuHost.this.idServer), ServerData.getPort(MenuHost.this.idServer)) {
 
 			@Override
 			public void gameStarting(boolean state) {
@@ -360,29 +199,25 @@ public class MenuHost implements MenuPage {
 
 			@Override
 			public void noMorePlayer() {
-				MenuHost.this.resetPads();
+				MenuHost.this.lobby.removeAllPlayers();
 			}
 
 			@Override
 			public void playerAdded(int id, String username, Color color) {
-				int i = MenuHost.this.getEmptyPad();
-
-				if (i == -1)
-					return;
-
-				MenuHost.this.putPlayerOnPad(new PlayerData(id, username, color, false), i);
-				MenuHost.this.updatePads();
+				MenuHost.this.lobby.addPlayer(new PlayerData(id, username, color, false));
+				MenuHost.this.changeWPlayState();
 			}
 
 			@Override
 			public void playerRemoved(int id) {
-				MenuHost.this.removePlayerFromPad(MenuHost.this.getPlayerPad(id));
-				MenuHost.this.updatePads();
+				MenuHost.this.lobby.removePlayer(id);
+				MenuHost.this.changeWPlayState();
 			}
 
 			@Override
 			public void readyChanged(int id, boolean ready) {
-				MenuHost.this.setPlayerReady(MenuHost.this.getPlayerPad(id), ready);
+				MenuHost.this.lobby.setPlayerReady(id, ready);
+				MenuHost.this.changeWPlayState();
 			}
 		};
 
@@ -422,19 +257,6 @@ public class MenuHost implements MenuPage {
 		}
 	}
 
-	private void updatePads() {
-		if (this.stackPlayers() == false)
-			return;
-
-		for (int i = 1; i < this.players.length; i++) {
-			if (this.players[i] == null) {
-				this.removePlayerFromPad(i);
-			} else {
-				this.putPlayerOnPad(this.players[i], i);
-			}
-		}
-	}
-
 	private void wBack() {
 		WButton btn = new WButton(this) {
 			@Override
@@ -459,45 +281,6 @@ public class MenuHost implements MenuPage {
 		btn.setHitboxFromDrawElement();
 
 		this.widgets.add(btn);
-	}
-
-	private WElement wPad(Point pos) {
-
-		WElement w = new WElement(this);
-
-		DERectangle de = new DERectangle();
-
-		de.setLabel(new TextData(new Point(new Point(0, 178)), new Font("Copperplate Gothic Bold", Font.PLAIN, 30), "",
-				Color.black, 1));
-		de.setColor(Color.black);
-		de.setSize(new Point(143, 143));
-
-		w.setDrawElement(de);
-		w.setPos(pos.clone());
-
-		w.setVisible(false);
-
-		this.widgets.add(w);
-
-		return w;
-	}
-
-	private WElement wPadFrame(Point pos) {
-
-		ImageManager im = ImageManager.getInstance();
-
-		WElement w = new WElement(this);
-
-		DEImage i = new DEImage();
-
-		i.setImage(im.get("lobby/playerPadEmpty"));
-
-		w.setDrawElement(i);
-		w.setPos(pos.clone());
-
-		this.widgets.add(w);
-
-		return w;
 	}
 
 	private WSwitch wPlay() {
@@ -570,32 +353,13 @@ public class MenuHost implements MenuPage {
 		return w;
 	}
 
-	private WElement wReady(Point pos) {
-
-		ImageManager im = ImageManager.getInstance();
-
-		WElement w = new WElement(this);
-
-		DEImage i = new DEImage();
-
-		i.setImage(im.get("lobby/notReadyCell"));
-
-		w.setDrawElement(i);
-		w.setPos(pos.clone());
-		w.setVisible(false);
-
-		this.widgets.add(w);
-
-		return w;
-	}
-
 	public void wRefresh() {
 		WButton w = new WButton(this) {
 			@Override
 			public void action() {
 				MenuHost.this.stop();
 
-				MenuHost.this.resetPads();
+				MenuHost.this.lobby.removeAllPlayers();
 
 				MenuHost.this.start();
 			}
