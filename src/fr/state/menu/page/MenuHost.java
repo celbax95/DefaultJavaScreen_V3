@@ -21,7 +21,6 @@ import fr.state.menu.Widget;
 import fr.state.menu.widget.WButton;
 import fr.state.menu.widget.WElement;
 import fr.state.menu.widget.WSwitch;
-import fr.state.menu.widget.data.BorderData;
 import fr.state.menu.widget.data.TextData;
 import fr.state.menu.widget.drawelements.DEImage;
 import fr.state.menu.widget.drawelements.DERectangle;
@@ -87,9 +86,7 @@ public class MenuHost implements MenuPage {
 	private static final String RES_EXTENSION = ".png";
 
 	private static final String PAGE_NAME = "menuHost";
-
-	private static final Color READY = Color.GREEN;
-	private static final Color NOT_READY = Color.RED;
+	private static final String NAME2 = "lobby";
 
 	private static final String PARAM_NAME_USERNAME = "username";
 
@@ -104,7 +101,7 @@ public class MenuHost implements MenuPage {
 		}
 
 		for (int i = 0; i < RES_NAMES2.length; i++) {
-			RES_NAMES2[i] = PAGE_NAME + "/" + RES_NAMES2[i];
+			RES_NAMES2[i] = NAME2 + "/" + RES_NAMES2[i];
 		}
 
 		for (int i = 0; i < RES_PATHS2.length; i++) {
@@ -115,15 +112,15 @@ public class MenuHost implements MenuPage {
 	private static final int ID_HOST = 0;
 	private static final int TIME_TO_PLAY = 3000;
 
-	private static final Color PLAY_ACTIVATED_COLOR = new Color(0, 180, 0);
-
-	private static final Color PLAY_UNACTIVATED_COLOR = new Color(130, 60, 60);
+	private static final Point[] PADS_POS = {
+			new Point(604, 340),
+			new Point(1050, 340),
+			new Point(604, 600),
+			new Point(1050, 600) };
 
 	private boolean loaded;
 
 	private WSwitch wPlay;
-
-	private Color defaultPadColor = new Color(0, 0, 0, 0);
 
 	private List<Widget> widgets;
 
@@ -149,6 +146,8 @@ public class MenuHost implements MenuPage {
 
 	private Thread playCountdown;
 
+	private WElement wWaiting;
+
 	public MenuHost(Menu m) {
 		this.loaded = false;
 		this.m = m;
@@ -167,18 +166,12 @@ public class MenuHost implements MenuPage {
 		}
 
 		if (pads.size() >= 2 && pads.size() == ready) {
-			this.wPlay.setEnabled(true);
-			((DERectangle) this.wPlay.getOffDrawElement()).setColor(PLAY_ACTIVATED_COLOR);
-			((DERectangle) this.wPlay.getOnDrawElement()).setColor(PLAY_ACTIVATED_COLOR);
-			((DERectangle) this.wPlay.getPressedOnDrawElement()).setColor(PLAY_ACTIVATED_COLOR);
-			((DERectangle) this.wPlay.getPressedOffDrawElement()).setColor(PLAY_ACTIVATED_COLOR);
+			this.wPlay.setVisible(true);
+			this.wWaiting.setVisible(false);
 		} else {
-			this.wPlay.setEnabled(false);
 			this.wPlay.setActive(false);
-			((DERectangle) this.wPlay.getOffDrawElement()).setColor(PLAY_UNACTIVATED_COLOR);
-			((DERectangle) this.wPlay.getOnDrawElement()).setColor(PLAY_UNACTIVATED_COLOR);
-			((DERectangle) this.wPlay.getPressedOnDrawElement()).setColor(PLAY_UNACTIVATED_COLOR);
-			((DERectangle) this.wPlay.getPressedOffDrawElement()).setColor(PLAY_UNACTIVATED_COLOR);
+			this.wPlay.setVisible(false);
+			this.wWaiting.setVisible(true);
 		}
 	}
 
@@ -233,6 +226,7 @@ public class MenuHost implements MenuPage {
 
 				MenuHost.this.wTitle();
 				MenuHost.this.wBack();
+				MenuHost.this.wWaiting = MenuHost.this.wWaiting();
 				MenuHost.this.wServerSettings();
 				MenuHost.this.wRefresh();
 
@@ -242,11 +236,10 @@ public class MenuHost implements MenuPage {
 				MenuHost.this.ready = new WElement[MenuHost.this.maxPlayer];
 				MenuHost.this.players = new PlayerData[MenuHost.this.maxPlayer];
 
-				int size = 300;
-
 				for (int i = 0; i < MenuHost.this.maxPlayer; i++) {
-					MenuHost.this.pads[i] = MenuHost.this.wPad(new Point(300 + size * i, 450));
-					MenuHost.this.ready[i] = MenuHost.this.wReady(new Point(410 + size * i, 720));
+					MenuHost.this.wPadFrame(PADS_POS[i]);
+					MenuHost.this.pads[i] = MenuHost.this.wPad(PADS_POS[i].clone().add(new Point(58, 3)));
+					MenuHost.this.ready[i] = MenuHost.this.wReady(PADS_POS[i].clone().add(new Point(180, 124)));
 				}
 
 				for (int i = 0; i < MenuHost.this.maxPlayer; i++) {
@@ -268,6 +261,10 @@ public class MenuHost implements MenuPage {
 	private void loadResources() {
 		ImageLoader il = new ImageLoader();
 
+		for (int i = 0; i < RES_NAMES1.length; i++) {
+			System.out.println(RES_NAMES1[i] + " : " + RES_PATHS1[i]);
+		}
+
 		il.load(RES_NAMES1, RES_PATHS1);
 		il.load(RES_NAMES2, RES_PATHS2);
 	}
@@ -282,6 +279,8 @@ public class MenuHost implements MenuPage {
 
 		r.setLabel(td);
 
+		this.pads[padId].setVisible(true);
+
 		this.players[padId] = p;
 
 		this.setPlayerReady(padId, p.ready);
@@ -293,14 +292,7 @@ public class MenuHost implements MenuPage {
 		if (padId < 0)
 			return;
 
-		DERectangle r = (DERectangle) this.pads[padId].getDrawElement();
-
-		r.setColor(this.defaultPadColor);
-
-		TextData td = r.getLabel().clone();
-		td.setText("");
-
-		r.setLabel(td);
+		this.pads[padId].setVisible(false);
 
 		this.setPlayerReady(padId, false);
 
@@ -319,12 +311,20 @@ public class MenuHost implements MenuPage {
 		if (playerPad == -1)
 			return;
 
+		ImageManager im = ImageManager.getInstance();
+
 		if (this.players[playerPad] == null) {
-			((DERectangle) this.ready[playerPad].getDrawElement()).setColor(new Color(0, 0, 0, 0));
+			this.ready[playerPad].setVisible(false);
 		} else {
 			this.players[playerPad].ready = ready;
 
-			((DERectangle) this.ready[playerPad].getDrawElement()).setColor(ready ? READY : NOT_READY);
+			this.ready[playerPad].setVisible(true);
+			DEImage i = (DEImage) this.ready[playerPad].getDrawElement().clone();
+
+			i.setImage(ready ? im.get("lobby/readyCell") : im.get("lobby/notReadyCell"));
+
+			this.ready[playerPad].setDrawElement(i);
+
 		}
 		this.changeWPlayState();
 	}
@@ -467,12 +467,32 @@ public class MenuHost implements MenuPage {
 
 		DERectangle de = new DERectangle();
 
-		de.setBorder(new BorderData(5, Color.BLACK, 1));
-		de.setLabel(new TextData(new Point(), new Font("Copperplate Gothic Bold", Font.PLAIN, 30), "", Color.black, 3));
-		de.setColor(this.defaultPadColor);
-		de.setSize(new Point(250, 250));
+		de.setLabel(new TextData(new Point(new Point(0, 178)), new Font("Copperplate Gothic Bold", Font.PLAIN, 30), "",
+				Color.black, 1));
+		de.setColor(Color.black);
+		de.setSize(new Point(143, 143));
 
 		w.setDrawElement(de);
+		w.setPos(pos.clone());
+
+		w.setVisible(false);
+
+		this.widgets.add(w);
+
+		return w;
+	}
+
+	private WElement wPadFrame(Point pos) {
+
+		ImageManager im = ImageManager.getInstance();
+
+		WElement w = new WElement(this);
+
+		DEImage i = new DEImage();
+
+		i.setImage(im.get("lobby/playerPadEmpty"));
+
+		w.setDrawElement(i);
 		w.setPos(pos.clone());
 
 		this.widgets.add(w);
@@ -493,26 +513,23 @@ public class MenuHost implements MenuPage {
 
 					@Override
 					public void run() {
-						String playMsg = "Starts in X";
-
 						int countdown = TIME_TO_PLAY / 1000;
 
-						for (int i = countdown; i > 0; i--) {
-							TextData td = ((DERectangle) MenuHost.this.wPlay.getOnDrawElement()).getLabel().clone();
-							td.setText(playMsg.replace("X", String.valueOf(i)));
-							((DERectangle) MenuHost.this.wPlay.getOnDrawElement()).setLabel(td.clone());
-							((DERectangle) MenuHost.this.wPlay.getPressedOnDrawElement()).setLabel(td.clone());
-							try {
-								Thread.sleep(1000);
-							} catch (InterruptedException e) {
-								Thread.currentThread().interrupt();
-								return;
+						for (int i = countdown; i >= 0; i--) {
+							TextData td = ((DEImage) MenuHost.this.wPlay.getOnDrawElement()).getLabel().clone();
+							td.setText(String.valueOf(i));
+							((DEImage) MenuHost.this.wPlay.getOnDrawElement()).setLabel(td.clone());
+							((DEImage) MenuHost.this.wPlay.getPressedOnDrawElement()).setLabel(td.clone());
+
+							if (i > 0) {
+								try {
+									Thread.sleep(1000);
+								} catch (InterruptedException e) {
+									Thread.currentThread().interrupt();
+									return;
+								}
 							}
 						}
-						TextData td = ((DERectangle) MenuHost.this.wPlay.getOnDrawElement()).getLabel().clone();
-						td.setText("Starting...");
-						((DERectangle) MenuHost.this.wPlay.getOnDrawElement()).setLabel(td.clone());
-						((DERectangle) MenuHost.this.wPlay.getPressedOnDrawElement()).setLabel(td.clone());
 
 						// TODO
 						System.out.println("LET'S PLAY !");
@@ -521,25 +538,29 @@ public class MenuHost implements MenuPage {
 			}
 		};
 
-		TextData td = new TextData(new Point(), new Font("Copperplate Gothic Bold", Font.PLAIN, 30), "PLAY",
-				Color.black, 3);
+		TextData td = new TextData(new Point(0, 22), new Font("Kristen ITC", Font.PLAIN, 35), "", Color.black, 1);
 
-		DERectangle r = new DERectangle();
-		r.setSize(new Point(250, 100));
-		r.setLabel(td.clone());
-		r.setBorder(new BorderData(3, Color.black, 1));
+		ImageManager im = ImageManager.getInstance();
 
-		w.setOffDrawElement(r.clone());
+		DEImage i = new DEImage();
+		i.setImage(im.get(PAGE_NAME + "/playStd"));
+		w.setOffDrawElement(i);
 
-		w.setPressedOffDrawElement(r.clone());
+		i = new DEImage();
+		i.setImage(im.get(PAGE_NAME + "/playPressed"));
+		w.setPressedOffDrawElement(i);
 
-		td.setText("");
-		r.setLabel(td.clone());
-		w.setOnDrawElement(r.clone());
+		i = new DEImage();
+		i.setImage(im.get(PAGE_NAME + "/cancelStd"));
+		i.setLabel(td);
+		w.setOnDrawElement(i);
 
-		w.setPressedOnDrawElement(r.clone());
+		i = new DEImage();
+		i.setImage(im.get(PAGE_NAME + "/cancelPressed"));
+		i.setLabel(td);
+		w.setPressedOnDrawElement(i);
 
-		w.setPos(new Point(400, 850));
+		w.setPos(new Point(1499, 548));
 		w.setHitboxFromDrawElement();
 
 		w.setActive(false);
@@ -551,16 +572,17 @@ public class MenuHost implements MenuPage {
 
 	private WElement wReady(Point pos) {
 
+		ImageManager im = ImageManager.getInstance();
+
 		WElement w = new WElement(this);
 
-		DERectangle de = new DERectangle();
+		DEImage i = new DEImage();
 
-		de.setBorder(new BorderData(3, Color.BLACK, 1));
-		de.setColor(this.defaultPadColor);
-		de.setSize(new Point(30, 30));
+		i.setImage(im.get("lobby/notReadyCell"));
 
-		w.setDrawElement(de);
+		w.setDrawElement(i);
 		w.setPos(pos.clone());
+		w.setVisible(false);
 
 		this.widgets.add(w);
 
@@ -579,17 +601,17 @@ public class MenuHost implements MenuPage {
 			}
 		};
 
-		DERectangle r = new DERectangle();
-		r.setSize(new Point(100, 100));
-		r.setLabel(new TextData(new Point(), new Font("Arial", Font.BOLD, 25), "Refresh", Color.BLACK, 3));
-		r.setBorder(new BorderData(3, Color.black, 2));
-		r.setColor(Color.GRAY);
-		w.setStdDrawElement(r);
+		ImageManager im = ImageManager.getInstance();
 
-		r.setColor(Color.LIGHT_GRAY);
-		w.setPressedDrawElement(r);
+		DEImage i = new DEImage();
+		i.setImage(im.get("lobby/refreshStd"));
 
-		w.setPos(new Point(1100, 850));
+		w.setStdDrawElement(i.clone());
+
+		i.setImage(im.get("lobby/refreshPressed"));
+		w.setPressedDrawElement(i);
+
+		w.setPos(new Point(168, 958));
 		w.setHitboxFromDrawElement();
 
 		this.widgets.add(w);
@@ -604,17 +626,17 @@ public class MenuHost implements MenuPage {
 			}
 		};
 
-		DERectangle r = new DERectangle();
-		r.setSize(new Point(200, 100));
-		r.setLabel(new TextData(new Point(), new Font("Arial", Font.BOLD, 30), "Settings", Color.BLACK, 3));
-		r.setBorder(new BorderData(3, Color.black, 2));
-		r.setColor(Color.GRAY);
-		w.setStdDrawElement(r);
+		ImageManager im = ImageManager.getInstance();
 
-		r.setColor(Color.LIGHT_GRAY);
-		w.setPressedDrawElement(r);
+		DEImage i = new DEImage();
+		i.setImage(im.get("lobby/serverSettingsStd"));
 
-		w.setPos(new Point(800, 850));
+		w.setStdDrawElement(i.clone());
+
+		i.setImage(im.get("lobby/serverSettingsPressed"));
+		w.setPressedDrawElement(i);
+
+		w.setPos(new Point(42, 938));
 		w.setHitboxFromDrawElement();
 
 		this.widgets.add(w);
@@ -631,6 +653,21 @@ public class MenuHost implements MenuPage {
 		title.setDrawElement(i);
 
 		this.widgets.add(title);
+	}
+
+	private WElement wWaiting() {
+		WElement w = new WElement(this);
+
+		w.setPos(new Point(1499, 548));
+
+		DEImage i = new DEImage();
+		i.setImage(ImageManager.getInstance().get(PAGE_NAME + "/playBlocked"));
+
+		w.setDrawElement(i);
+
+		this.widgets.add(w);
+
+		return w;
 	}
 
 }

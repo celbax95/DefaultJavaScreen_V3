@@ -110,7 +110,8 @@ public class TextData {
 			break;
 		case 1:
 			// X centered - Y relative
-			g.drawString(this.text, absp.ix() + holderSize.ix() / 2 - this.size.ix() / 2, absp.iy());
+			g.drawString(this.text, absp.ix() + holderSize.ix() / 2 - this.size.ix() / 2,
+					absp.iy() + this.size.iy() / 2);
 			break;
 		case 2:
 			// X relative - Y centered

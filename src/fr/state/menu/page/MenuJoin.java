@@ -83,6 +83,7 @@ public class MenuJoin implements MenuPage {
 	private static final String RES_EXTENSION = ".png";
 
 	private static final String PAGE_NAME = "menuJoin";
+	private static final String NAME2 = "lobby";
 
 	private static final Color READY = Color.GREEN;
 	private static final Color NOT_READY = Color.RED;
@@ -100,13 +101,15 @@ public class MenuJoin implements MenuPage {
 		}
 
 		for (int i = 0; i < RES_NAMES2.length; i++) {
-			RES_NAMES2[i] = PAGE_NAME + "/" + RES_NAMES2[i];
+			RES_NAMES2[i] = NAME2 + "/" + RES_NAMES2[i];
 		}
 
 		for (int i = 0; i < RES_PATHS2.length; i++) {
 			RES_PATHS2[i] = RES_FOLDER2 + RES_PATHS2[i] + RES_EXTENSION;
 		}
 	}
+
+	private static final int[][] PADS_POS = { { 604, 340 }, { 900, 340 }, { 604, 540 }, { 900, 540 } };
 
 	private List<Widget> widgets;
 
@@ -507,17 +510,17 @@ public class MenuJoin implements MenuPage {
 			}
 		};
 
-		DERectangle r = new DERectangle();
-		r.setSize(new Point(100, 100));
-		r.setLabel(new TextData(new Point(), new Font("Arial", Font.BOLD, 25), "Refresh", Color.BLACK, 3));
-		r.setBorder(new BorderData(3, Color.black, 2));
-		r.setColor(Color.GRAY);
-		w.setStdDrawElement(r);
+		ImageManager im = ImageManager.getInstance();
 
-		r.setColor(Color.LIGHT_GRAY);
-		w.setPressedDrawElement(r);
+		DEImage i = new DEImage();
+		i.setImage(im.get("lobby/refreshStd"));
 
-		w.setPos(new Point(1100, 850));
+		w.setStdDrawElement(i.clone());
+
+		i.setImage(im.get("lobby/refreshPressed"));
+		w.setPressedDrawElement(i);
+
+		w.setPos(new Point(168, 958));
 		w.setHitboxFromDrawElement();
 
 		this.widgets.add(w);
@@ -532,17 +535,17 @@ public class MenuJoin implements MenuPage {
 			}
 		};
 
-		DERectangle r = new DERectangle();
-		r.setSize(new Point(200, 100));
-		r.setLabel(new TextData(new Point(), new Font("Arial", Font.BOLD, 30), "Settings", Color.BLACK, 3));
-		r.setBorder(new BorderData(3, Color.black, 2));
-		r.setColor(Color.GRAY);
-		w.setStdDrawElement(r);
+		ImageManager im = ImageManager.getInstance();
 
-		r.setColor(Color.LIGHT_GRAY);
-		w.setPressedDrawElement(r);
+		DEImage i = new DEImage();
+		i.setImage(im.get("lobby/serverSettingsStd"));
 
-		w.setPos(new Point(800, 850));
+		w.setStdDrawElement(i.clone());
+
+		i.setImage(im.get("lobby/serverSettingsPressed"));
+		w.setPressedDrawElement(i);
+
+		w.setPos(new Point(42, 938));
 		w.setHitboxFromDrawElement();
 
 		this.widgets.add(w);
