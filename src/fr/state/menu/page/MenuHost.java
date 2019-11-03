@@ -69,9 +69,9 @@ public class MenuHost implements MenuPage {
 
 	private static final Point[] PADS_POS = {
 			new Point(604, 340),
-			new Point(1050, 340),
-			new Point(604, 600),
-			new Point(1050, 600) };
+			new Point(1056, 340),
+			new Point(604, 684),
+			new Point(1056, 684) };
 
 	private boolean loaded;
 

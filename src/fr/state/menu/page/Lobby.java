@@ -24,6 +24,8 @@ public class Lobby {
 	private static final String RES_FOLDER2 = "/resources/menu/lobby/";
 	private static final String RES_EXTENSION = ".png";
 
+	private static final Point USERNAME_SIZE = new Point(254, 37);
+
 	private static final String[] RES_NAMES2 = {
 			"notReadyCell",
 			"readyCell",
@@ -80,10 +82,10 @@ public class Lobby {
 		this.players = new PlayerData[maxPlayer];
 
 		for (int i = 0; i < maxPlayer; i++) {
-			this.wPadFrame(padsPos[i]);
-			this.usernames[i] = this.wUsername(padsPos[i].clone().add(new Point(0, 180)));
 			this.pads[i] = this.wPad(padsPos[i].clone().add(new Point(58, 3)));
 			this.ready[i] = this.wReady(padsPos[i].clone().add(new Point(180, 124)));
+			this.wPadFrame(padsPos[i]);
+			this.usernames[i] = this.wUsername(padsPos[i].clone().add(new Point(3, 172)));
 		}
 		for (int i = 0; i < Lobby.maxPlayer; i++) {
 			this.players[i] = null;
@@ -331,10 +333,10 @@ public class Lobby {
 		DELabel l = new DELabel();
 
 		TextData td = new TextData(new Point(), new Font("Copperplate Gothic Bold", Font.PLAIN, 30), "", Color.BLACK,
-				1);
+				3);
 
 		l.setLabel(td);
-		l.setSupBound(new Point(270, 0));
+		l.setSupBound(USERNAME_SIZE.clone());
 
 		w.setPos(pos);
 		w.setDrawElement(l);
