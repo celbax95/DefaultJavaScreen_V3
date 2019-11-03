@@ -17,26 +17,37 @@ import fr.state.menu.MenuPage;
 import fr.state.menu.Widget;
 import fr.state.menu.widget.WButton;
 import fr.state.menu.widget.WElement;
-import fr.state.menu.widget.data.BorderData;
+import fr.state.menu.widget.WScroller;
 import fr.state.menu.widget.data.TextData;
 import fr.state.menu.widget.drawelements.DEImage;
-import fr.state.menu.widget.drawelements.DERectangle;
 import fr.util.point.Point;
 
 public class MenuServerSettings implements MenuPage {
 
-	private static final String[] RES_NAMES = { "title", "backStd", "backPressed" };
+	private static final String[] RES_NAMES = {
+			"title",
+			"backStd",
+			"backPressed",
+			"border",
+			"elementStd",
+			"elementSel" };
 
-	private static final String[] RES_PATHS = { "title", "backStd", "backPressed" };
+	private static final String[] RES_PATHS = {
+			"title",
+			"backStd",
+			"backPressed",
+			"border",
+			"elementStd",
+			"elementSel" };
 
-	private static final String RES_FOLDER = "/resources/menu/menuGraphics/";
+	private static final String RES_FOLDER = "/resources/menu/menuServerSettings/";
 	private static final String RES_EXTENSION = ".png";
 
 	private static final String PAGE_NAME = "menuSeverSettings";
 
 	private static final int NB_EXCLUSIVE_BTN = ServerData.getIPAmount();
 
-	private static final Color ENABLE = Color.GRAY, DISABLE = Color.LIGHT_GRAY;
+	private static final int ELEMENT_HEIGHT = 128;
 
 	static {
 		for (int i = 0; i < RES_NAMES.length; i++) {
@@ -62,6 +73,8 @@ public class MenuServerSettings implements MenuPage {
 	private Menu m;
 
 	private int returnPage;
+
+	private WScroller wScrollList;
 
 	/**
 	 * @param returnPage </br>
@@ -105,11 +118,8 @@ public class MenuServerSettings implements MenuPage {
 
 				MenuServerSettings.this.wTitle();
 				MenuServerSettings.this.wBack();
-
-				for (int i = 0; i < NB_EXCLUSIVE_BTN; i++) {
-					MenuServerSettings.this.exclusiveBtn[i] = MenuServerSettings.this.wServerIDChoose("" + i,
-							new Point(480 + 210 * i, 600), i);
-				}
+				MenuServerSettings.this.wScrollList = MenuServerSettings.this.wScrollList();
+				MenuServerSettings.this.wFrame();
 
 				MenuServerSettings.this.setBtnIndex(
 						(int) MenuServerSettings.this.manager.getParam(MenuServerSettings.this.serverConf, "id", 0));
@@ -125,22 +135,60 @@ public class MenuServerSettings implements MenuPage {
 		il.load(RES_NAMES, RES_PATHS);
 	}
 
+	private WButton serverIdBtn(Point pos, String text, int id) {
+		WButton w = new WButton(this) {
+
+			@Override
+			public void action() {
+				MenuServerSettings.this.manager.setParam(MenuServerSettings.this.serverConf, "id", id);
+				MenuServerSettings.this.manager.saveFile(MenuServerSettings.this.serverConf);
+
+				MenuServerSettings.this.setBtnIndex(id);
+			}
+		};
+
+		TextData td = new TextData(new Point(), new Font("Kristen ITC", Font.PLAIN, 30), text, Color.black, 3);
+
+		ImageManager im = ImageManager.getInstance();
+
+		DEImage i = new DEImage();
+		i.setImage(im.get(PAGE_NAME + "/elementStd"));
+
+		i.setLabel(td);
+
+		w.setStdDrawElement(i);
+
+		w.setPos(pos.clone());
+		w.setHitboxFromDrawElement();
+
+		return w;
+	}
+
 	private void setBtnIndex(int index) {
 		if (index != this.btnIndex) {
+			int oldIndex = this.btnIndex;
 			this.btnIndex = index;
-			this.switchSelBtn();
+			this.switchSelBtn(oldIndex);
 			this.m.getMenuState().getStatePanel().getWinData().setNeedRestart(true);
 		}
 	}
 
-	private void switchSelBtn() {
-		for (WButton w : this.exclusiveBtn) {
-			w.setCanPressed(true);
-			((DERectangle) w.getStdDrawElement()).setColor(ENABLE);
-		}
-		((DERectangle) this.exclusiveBtn[this.btnIndex].getStdDrawElement()).setColor(DISABLE);
+	private void switchSelBtn(int oldIndex) {
+		ImageManager im = ImageManager.getInstance();
 
-		this.exclusiveBtn[this.btnIndex].setCanPressed(false);
+		if (oldIndex >= 0 && oldIndex < this.exclusiveBtn.length) {
+			WButton w = this.exclusiveBtn[this.btnIndex];
+			DEImage i = (DEImage) w.getStdDrawElement().clone();
+			i.setImage(im.get(PAGE_NAME + "/elementStd"));
+			w.setStdDrawElement(i);
+			w.setCanPressed(true);
+		}
+
+		WButton w = this.exclusiveBtn[this.btnIndex];
+		DEImage i = (DEImage) w.getStdDrawElement().clone();
+		i.setImage(im.get(PAGE_NAME + "/elementSel"));
+		w.setStdDrawElement(i);
+		w.setCanPressed(false);
 	}
 
 	@Override
@@ -159,7 +207,6 @@ public class MenuServerSettings implements MenuPage {
 				} else if (MenuServerSettings.this.returnPage == 1) {
 					MenuServerSettings.this.m.applyPage(new MenuJoin(MenuServerSettings.this.m));
 				}
-
 			}
 		};
 
@@ -181,33 +228,32 @@ public class MenuServerSettings implements MenuPage {
 		this.widgets.add(btn);
 	}
 
-	private WButton wServerIDChoose(String text, Point pos, int id) {
-		WButton w = new WButton(this) {
+	private void wFrame() {
+		WElement w = new WElement(this);
 
-			@Override
-			public void action() {
-				MenuServerSettings.this.manager.setParam(MenuServerSettings.this.serverConf, "id", id);
-				MenuServerSettings.this.manager.saveFile(MenuServerSettings.this.serverConf);
+		ImageManager im = ImageManager.getInstance();
 
-				MenuServerSettings.this.setBtnIndex(id);
-			}
-		};
+		DEImage i = new DEImage();
+		i.setImage(im.get(PAGE_NAME + "/border"));
 
-		DERectangle r = new DERectangle();
+		w.setDrawElement(i);
+		w.setPos(new Point(618, 392));
 
-		r.setSize(new Point(200, 100));
-		r.setColor(new Color(130, 130, 130));
-		TextData td = new TextData(new Point(), new Font("Arial", Font.BOLD, 30), text, Color.BLACK, 3);
-		r.setLabel(td);
-		r.setBorder(new BorderData(3, Color.BLACK, 2));
+		this.widgets.add(w);
+	}
 
-		w.setStdDrawElement(r.clone());
+	private WScroller wScrollList() {
+		WScroller w = new WScroller(this);
 
-		r.setColor(new Color(160, 160, 160));
-		w.setPressedDrawElement(r);
+		w.setPos(new Point(624, 398));
+		w.setSize(new Point(670, 509));
 
-		w.setPos(pos.clone());
-		w.setHitboxFromDrawElement();
+		for (int i = 0; i < NB_EXCLUSIVE_BTN; i++) {
+			MenuServerSettings.this.exclusiveBtn[i] = MenuServerSettings.this
+					.serverIdBtn(new Point(0, i * ELEMENT_HEIGHT), "text", i);
+
+			w.add(this.exclusiveBtn[i]);
+		}
 
 		this.widgets.add(w);
 
