@@ -200,9 +200,8 @@ public class Lobby {
 		this.putPlayerOnPad(player, 0);
 	}
 
-	public void setPadLabel(int padId, String text) {
-		text = text.trim();
-		if (text == null || text.equals("")) {
+	private void setPadLabel(int padId, String text) {
+		if (text == null || text.trim().equals("")) {
 			this.usernames[padId].setVisible(false);
 		} else {
 			DELabel u = (DELabel) this.usernames[padId].getDrawElement();

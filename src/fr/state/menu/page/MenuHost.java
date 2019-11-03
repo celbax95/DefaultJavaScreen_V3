@@ -27,7 +27,7 @@ import fr.util.point.Point;
 
 public class MenuHost implements MenuPage {
 
-	private static final String[] RES_NAMES1 = {
+	private static final String[] RES_NAMES = {
 			"title",
 			"backStd",
 			"backPressed",
@@ -36,7 +36,7 @@ public class MenuHost implements MenuPage {
 			"playBlocked",
 			"playStd",
 			"playPressed" };
-	private static final String[] RES_PATHS1 = {
+	private static final String[] RES_PATHS = {
 			"title",
 			"backStd",
 			"backPressed",
@@ -45,7 +45,7 @@ public class MenuHost implements MenuPage {
 			"playBlocked",
 			"playStd",
 			"playPressed" };
-	private static final String RES_FOLDER1 = "/resources/menu/menuHost/";
+	private static final String RES_FOLDER = "/resources/menu/menuHost/";
 
 	private static final String RES_EXTENSION = ".png";
 
@@ -55,12 +55,12 @@ public class MenuHost implements MenuPage {
 
 	private static final String PARAM_NAME_COLOR = "color";
 	static {
-		for (int i = 0; i < RES_NAMES1.length; i++) {
-			RES_NAMES1[i] = PAGE_NAME + "/" + RES_NAMES1[i];
+		for (int i = 0; i < RES_NAMES.length; i++) {
+			RES_NAMES[i] = PAGE_NAME + "/" + RES_NAMES[i];
 		}
 
-		for (int i = 0; i < RES_PATHS1.length; i++) {
-			RES_PATHS1[i] = RES_FOLDER1 + RES_PATHS1[i] + RES_EXTENSION;
+		for (int i = 0; i < RES_PATHS.length; i++) {
+			RES_PATHS[i] = RES_FOLDER + RES_PATHS[i] + RES_EXTENSION;
 		}
 	}
 
@@ -174,7 +174,7 @@ public class MenuHost implements MenuPage {
 	private void loadResources() {
 		ImageLoader il = new ImageLoader();
 
-		il.load(RES_NAMES1, RES_PATHS1);
+		il.load(RES_NAMES, RES_PATHS);
 	}
 
 	public void start() {
