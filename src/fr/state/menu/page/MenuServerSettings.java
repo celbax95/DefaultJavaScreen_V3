@@ -20,6 +20,7 @@ import fr.state.menu.widget.WElement;
 import fr.state.menu.widget.WScroller;
 import fr.state.menu.widget.data.TextData;
 import fr.state.menu.widget.drawelements.DEImage;
+import fr.state.menu.widget.drawelements.DERectangle;
 import fr.util.point.Point;
 
 public class MenuServerSettings implements MenuPage {
@@ -119,7 +120,7 @@ public class MenuServerSettings implements MenuPage {
 				MenuServerSettings.this.wTitle();
 				MenuServerSettings.this.wBack();
 				MenuServerSettings.this.wScrollList = MenuServerSettings.this.wScrollList();
-				MenuServerSettings.this.wFrame();
+				MenuServerSettings.this.wBorder();
 
 				MenuServerSettings.this.setBtnIndex(
 						(int) MenuServerSettings.this.manager.getParam(MenuServerSettings.this.serverConf, "id", 0));
@@ -235,7 +236,7 @@ public class MenuServerSettings implements MenuPage {
 		this.widgets.add(btn);
 	}
 
-	private void wFrame() {
+	private void wBorder() {
 		WElement w = new WElement(this);
 
 		ImageManager im = ImageManager.getInstance();
@@ -253,8 +254,18 @@ public class MenuServerSettings implements MenuPage {
 		WScroller w = new WScroller(this);
 
 		w.setPos(new Point(624, 398));
-		w.setSize(new Point(670, 509));
+		w.setSize(new Point(673, 509));
 		w.setMaxScroll(ELEMENT_HEIGHT * NB_EXCLUSIVE_BTN - 509);
+
+		DERectangle r = new DERectangle();
+		r.setSize(new Point(10, 70));
+		r.setColor(new Color(60, 60, 60));
+//		r.setBorder(new BorderData(2, Color.black, 1));
+		r.setRoundBorder(5);
+
+		w.setSlider(r);
+		w.setPaddingSide(1);
+
 		for (int i = 0; i < NB_EXCLUSIVE_BTN; i++) {
 			MenuServerSettings.this.exclusiveBtn[i] = MenuServerSettings.this
 					.serverIdBtn(new Point(0, i * ELEMENT_HEIGHT), "Server n° " + (i + 1), i);
