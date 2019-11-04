@@ -55,7 +55,7 @@ public class Lobby {
 		}
 	}
 
-	private static final int maxPlayer = 4;
+	private int maxPlayer;
 
 	private List<Widget> widgets;
 
@@ -74,20 +74,22 @@ public class Lobby {
 
 		this.widgets = new Vector<>();
 
+		this.maxPlayer = padsPos.length;
+
 		this.loadResources();
 
-		this.pads = new WElement[maxPlayer];
-		this.usernames = new WElement[maxPlayer];
-		this.ready = new WElement[maxPlayer];
-		this.players = new PlayerData[maxPlayer];
+		this.pads = new WElement[this.maxPlayer];
+		this.usernames = new WElement[this.maxPlayer];
+		this.ready = new WElement[this.maxPlayer];
+		this.players = new PlayerData[this.maxPlayer];
 
-		for (int i = 0; i < maxPlayer; i++) {
+		for (int i = 0; i < this.maxPlayer; i++) {
 			this.pads[i] = this.wPad(padsPos[i].clone().add(new Point(58, 3)));
 			this.ready[i] = this.wReady(padsPos[i].clone().add(new Point(180, 124)));
 			this.wPadFrame(padsPos[i]);
 			this.usernames[i] = this.wUsername(padsPos[i].clone().add(new Point(3, 172)));
 		}
-		for (int i = 0; i < Lobby.maxPlayer; i++) {
+		for (int i = 0; i < this.maxPlayer; i++) {
 			this.players[i] = null;
 		}
 	}
@@ -191,7 +193,7 @@ public class Lobby {
 	}
 
 	private void resetPads() {
-		for (int i = 1; i < Lobby.maxPlayer; i++) {
+		for (int i = 1; i < this.maxPlayer; i++) {
 			this.removePlayerFromPad(i);
 		}
 	}

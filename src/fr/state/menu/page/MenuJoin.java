@@ -51,6 +51,9 @@ public class MenuJoin implements MenuPage {
 	private static final String PARAM_NAME_USERNAME = "username";
 	private static final String PARAM_NAME_COLOR = "color";
 
+	/**
+	 * PADS_POS.length = nombre max de joueurs
+	 */
 	private static final Point[] PADS_POS = {
 			new Point(604, 340),
 			new Point(1056, 340),
@@ -66,8 +69,6 @@ public class MenuJoin implements MenuPage {
 			RES_PATHS[i] = RES_FOLDER + RES_PATHS[i] + RES_EXTENSION;
 		}
 	}
-
-	private static final int MAX_PLAYER = 4;
 
 	private List<Widget> widgets;
 

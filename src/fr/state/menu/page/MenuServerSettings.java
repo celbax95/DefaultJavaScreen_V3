@@ -75,8 +75,6 @@ public class MenuServerSettings implements MenuPage {
 
 	private int returnPage;
 
-	private WScroller wScrollList;
-
 	/**
 	 * @param returnPage </br>
 	 *                   0 : menuHost </br>
@@ -119,7 +117,7 @@ public class MenuServerSettings implements MenuPage {
 
 				MenuServerSettings.this.wTitle();
 				MenuServerSettings.this.wBack();
-				MenuServerSettings.this.wScrollList = MenuServerSettings.this.wScrollList();
+				MenuServerSettings.this.wScrollList();
 				MenuServerSettings.this.wBorder();
 
 				MenuServerSettings.this.setBtnIndex(
@@ -260,7 +258,6 @@ public class MenuServerSettings implements MenuPage {
 		DERectangle r = new DERectangle();
 		r.setSize(new Point(10, 70));
 		r.setColor(new Color(60, 60, 60));
-//		r.setBorder(new BorderData(2, Color.black, 1));
 		r.setRoundBorder(5);
 
 		w.setSlider(r);

@@ -85,8 +85,6 @@ public class MenuHost implements MenuPage {
 
 	private XMLManager manager;
 
-	private int maxPlayer = 4;
-
 	private int idServer;
 
 	private HubHoster hub;
@@ -189,7 +187,7 @@ public class MenuHost implements MenuPage {
 		if (p == null)
 			return;
 
-		MenuHost.this.hub = new HubHoster(ID_HOST, p.getUsername(), p.getColor(), MenuHost.this.maxPlayer,
+		MenuHost.this.hub = new HubHoster(ID_HOST, p.getUsername(), p.getColor(), PADS_POS.length,
 				ServerData.getGroup(MenuHost.this.idServer), ServerData.getPort(MenuHost.this.idServer)) {
 
 			@Override
