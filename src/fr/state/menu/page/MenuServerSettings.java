@@ -147,7 +147,8 @@ public class MenuServerSettings implements MenuPage {
 			}
 		};
 
-		TextData td = new TextData(new Point(), new Font("Kristen ITC", Font.PLAIN, 30), text, Color.black, 3);
+		TextData td = new TextData(new Point(), new Font("Copperplate Gothic Bold", Font.PLAIN, 30), text, Color.black,
+				3);
 
 		ImageManager im = ImageManager.getInstance();
 
@@ -158,6 +159,10 @@ public class MenuServerSettings implements MenuPage {
 
 		w.setStdDrawElement(i);
 
+		i.setImage(im.get(PAGE_NAME + "/elementSel"));
+		w.setPressedDrawElement(i);
+
+		w.setCanPressed(true);
 		w.setPos(pos.clone());
 		w.setHitboxFromDrawElement();
 
@@ -177,7 +182,7 @@ public class MenuServerSettings implements MenuPage {
 		ImageManager im = ImageManager.getInstance();
 
 		if (oldIndex >= 0 && oldIndex < this.exclusiveBtn.length) {
-			WButton w = this.exclusiveBtn[this.btnIndex];
+			WButton w = this.exclusiveBtn[oldIndex];
 			DEImage i = (DEImage) w.getStdDrawElement().clone();
 			i.setImage(im.get(PAGE_NAME + "/elementStd"));
 			w.setStdDrawElement(i);
@@ -187,7 +192,9 @@ public class MenuServerSettings implements MenuPage {
 		WButton w = this.exclusiveBtn[this.btnIndex];
 		DEImage i = (DEImage) w.getStdDrawElement().clone();
 		i.setImage(im.get(PAGE_NAME + "/elementSel"));
+
 		w.setStdDrawElement(i);
+
 		w.setCanPressed(false);
 	}
 
@@ -247,10 +254,10 @@ public class MenuServerSettings implements MenuPage {
 
 		w.setPos(new Point(624, 398));
 		w.setSize(new Point(670, 509));
-
+		w.setMaxScroll(ELEMENT_HEIGHT * NB_EXCLUSIVE_BTN - 509);
 		for (int i = 0; i < NB_EXCLUSIVE_BTN; i++) {
 			MenuServerSettings.this.exclusiveBtn[i] = MenuServerSettings.this
-					.serverIdBtn(new Point(0, i * ELEMENT_HEIGHT), "text", i);
+					.serverIdBtn(new Point(0, i * ELEMENT_HEIGHT), "Server n° " + (i + 1), i);
 
 			w.add(this.exclusiveBtn[i]);
 		}

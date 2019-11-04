@@ -78,6 +78,7 @@ public class WScroller implements Widget {
 
 	private final static int BAR_WIDTH = 20;
 	private final static int MIN_SCROLL = 0;
+	private static final int DEFAULT_SCROLL_STEP = 30;
 	private final static Color ADVANCED_DRAW_COLOR = new Color(0, 255, 0);
 	private final static int PADDING_SLIDER = 4;
 	private final static Color TRANSLUCENT = new Color(0, 0, 0, 0);
@@ -124,7 +125,7 @@ public class WScroller implements Widget {
 		this.pos = new Point();
 		this.size = new Point();
 		this.scrollPoint = 0;
-		this.scrollStep = 0;
+		this.scrollStep = DEFAULT_SCROLL_STEP;
 		this.maxScroll = 0;
 		this.widgets = new ArrayList<>();
 		this.visible = true;
@@ -141,7 +142,6 @@ public class WScroller implements Widget {
 			@Override
 			public void valueChanged(int value, boolean pressed) {
 				WScroller.this.changeByBar(value);
-				System.out.println(value);
 			}
 		};
 

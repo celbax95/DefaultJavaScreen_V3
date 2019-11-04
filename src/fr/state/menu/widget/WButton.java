@@ -67,8 +67,7 @@ public abstract class WButton implements Widget {
 		this.setHitbox(hb);
 
 		this.setStdDrawElement(other.stdDrawElement == null ? null : other.stdDrawElement.clone());
-		this.setPressedDrawElement(
-				other.pressedDrawElement == null ? null : other.pressedDrawElement.clone());
+		this.setPressedDrawElement(other.pressedDrawElement == null ? null : other.pressedDrawElement.clone());
 		this.setCanPressed(other.canPressed);
 		this.setPage(other.page);
 	}
@@ -99,6 +98,7 @@ public abstract class WButton implements Widget {
 		return this.page;
 	}
 
+	@Override
 	public Point getPos() {
 		return this.pos;
 	}
@@ -194,6 +194,7 @@ public abstract class WButton implements Widget {
 		this.page = page;
 	}
 
+	@Override
 	public void setPos(Point pos) {
 		this.pos.set(pos);
 	}
@@ -223,7 +224,7 @@ public abstract class WButton implements Widget {
 			this.stdDrawElement = drawElement.clone();
 			this.stdDrawElement.lock();
 
-			if (this.currentDE == null) {
+			if (this.currentDE == null || !this.pressed) {
 				this.currentDE = this.stdDrawElement;
 			}
 		}
