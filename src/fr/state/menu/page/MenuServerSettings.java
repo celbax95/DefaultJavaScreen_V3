@@ -83,6 +83,7 @@ public class MenuServerSettings implements MenuPage {
 	public MenuServerSettings(Menu m, int returnPage) {
 		this.loaded = false;
 		this.m = m;
+		this.returnPage = returnPage;
 	}
 
 	@Override
