@@ -25,10 +25,10 @@ public class MenuGraphics implements MenuPage {
 			"backStd",
 			"backPressed",
 			"frame",
+			"853Std",
+			"853Sel",
 			"1280Std",
 			"1280Sel",
-			"1366Std",
-			"1366Sel",
 			"1600Std",
 			"1600Sel",
 			"1920Std",
@@ -42,10 +42,10 @@ public class MenuGraphics implements MenuPage {
 			"backStd",
 			"backPressed",
 			"frame",
+			"853Std",
+			"853Sel",
 			"1280Std",
 			"1280Sel",
-			"1366Std",
-			"1366Sel",
 			"1600Std",
 			"1600Sel",
 			"1920Std",
@@ -59,8 +59,8 @@ public class MenuGraphics implements MenuPage {
 
 	private static final String PAGE_NAME = "menuGraphics";
 
+	private static final Point res853 = new Point(853, 480);
 	private static final Point res1280 = new Point(1280, 720);
-	private static final Point res1366 = new Point(1366, 768);
 	private static final Point res1600 = new Point(1600, 900);
 	private static final Point res1920 = new Point(1920, 1080);
 
@@ -135,9 +135,9 @@ public class MenuGraphics implements MenuPage {
 
 				if (fullscreen) {
 					MenuGraphics.this.resBtnIndex = NB_RES_EXCLUSIVE_BTN - 1;
-				} else if (width == 1280 && height == 720) {
+				} else if (width == 853 && height == 480) {
 					MenuGraphics.this.resBtnIndex = 0;
-				} else if (width == 1366 && height == 768) {
+				} else if (width == 1280 && height == 720) {
 					MenuGraphics.this.resBtnIndex = 1;
 				} else if (width == 1600 && height == 900) {
 					MenuGraphics.this.resBtnIndex = 2;
@@ -149,8 +149,8 @@ public class MenuGraphics implements MenuPage {
 				MenuGraphics.this.wBack();
 				MenuGraphics.this.wFrame();
 				int i = 0;
+				MenuGraphics.this.exclusiveResBtn[i++] = MenuGraphics.this.w853();
 				MenuGraphics.this.exclusiveResBtn[i++] = MenuGraphics.this.w1280();
-				MenuGraphics.this.exclusiveResBtn[i++] = MenuGraphics.this.w1366();
 				MenuGraphics.this.exclusiveResBtn[i++] = MenuGraphics.this.w1600();
 				MenuGraphics.this.exclusiveResBtn[i++] = MenuGraphics.this.w1920();
 				MenuGraphics.this.exclusiveResBtn[i++] = MenuGraphics.this.wFullscreen();
@@ -195,7 +195,7 @@ public class MenuGraphics implements MenuPage {
 		WButton b = new WButton(this) {
 			@Override
 			public void action() {
-				MenuGraphics.this.setResBtnIndex(0);
+				MenuGraphics.this.setResBtnIndex(1);
 				MenuGraphics.this.manager.setParam(MenuGraphics.this.winConf, "width", res1280.ix());
 				MenuGraphics.this.manager.setParam(MenuGraphics.this.winConf, "height", res1280.iy());
 				MenuGraphics.this.manager.setParam(MenuGraphics.this.winConf, "fullscreen", false);
@@ -206,40 +206,9 @@ public class MenuGraphics implements MenuPage {
 		ImageManager im = ImageManager.getInstance();
 
 		DEImage std = new DEImage();
-		std.setImage(im.get(PAGE_NAME + "/1280Std"));
+		std.setImage(im.get("menuGraphics/1280Std"));
 		DEImage sel = new DEImage();
-		sel.setImage(im.get(PAGE_NAME + "/1280Sel"));
-
-		b.setStdDrawElement(std);
-		b.setPressedDrawElement(sel);
-		b.setCantPressDrawElement(sel);
-
-		b.setPos(new Point(531, 532));
-		b.setHitboxFromDrawElement();
-
-		this.widgets.add(b);
-
-		return b;
-	}
-
-	private WButton w1366() {
-		WButton b = new WButton(this) {
-			@Override
-			public void action() {
-				MenuGraphics.this.setResBtnIndex(1);
-				MenuGraphics.this.manager.setParam(MenuGraphics.this.winConf, "width", res1366.ix());
-				MenuGraphics.this.manager.setParam(MenuGraphics.this.winConf, "height", res1366.iy());
-				MenuGraphics.this.manager.setParam(MenuGraphics.this.winConf, "fullscreen", false);
-				MenuGraphics.this.manager.saveFile(MenuGraphics.this.winConf);
-			}
-		};
-
-		ImageManager im = ImageManager.getInstance();
-
-		DEImage std = new DEImage();
-		std.setImage(im.get("menuGraphics/1366Std"));
-		DEImage sel = new DEImage();
-		sel.setImage(im.get("menuGraphics/1366Sel"));
+		sel.setImage(im.get("menuGraphics/1280Sel"));
 
 		b.setStdDrawElement(std);
 		b.setPressedDrawElement(sel);
@@ -308,6 +277,37 @@ public class MenuGraphics implements MenuPage {
 		b.setCantPressDrawElement(sel);
 
 		b.setPos(new Point(1174, 532));
+		b.setHitboxFromDrawElement();
+
+		this.widgets.add(b);
+
+		return b;
+	}
+
+	private WButton w853() {
+		WButton b = new WButton(this) {
+			@Override
+			public void action() {
+				MenuGraphics.this.setResBtnIndex(0);
+				MenuGraphics.this.manager.setParam(MenuGraphics.this.winConf, "width", res853.ix());
+				MenuGraphics.this.manager.setParam(MenuGraphics.this.winConf, "height", res853.iy());
+				MenuGraphics.this.manager.setParam(MenuGraphics.this.winConf, "fullscreen", false);
+				MenuGraphics.this.manager.saveFile(MenuGraphics.this.winConf);
+			}
+		};
+
+		ImageManager im = ImageManager.getInstance();
+
+		DEImage std = new DEImage();
+		std.setImage(im.get(PAGE_NAME + "/853Std"));
+		DEImage sel = new DEImage();
+		sel.setImage(im.get(PAGE_NAME + "/853Sel"));
+
+		b.setStdDrawElement(std);
+		b.setPressedDrawElement(sel);
+		b.setCantPressDrawElement(sel);
+
+		b.setPos(new Point(531, 532));
 		b.setHitboxFromDrawElement();
 
 		this.widgets.add(b);
