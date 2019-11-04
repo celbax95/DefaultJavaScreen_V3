@@ -120,8 +120,9 @@ public class TextData {
 		case 3:
 			// Centered
 			Point holderHalfSize = holderSize.clone().div(2);
+
 			g.drawString(this.text, absp.ix() + holderHalfSize.ix() - this.size.ix() / 2,
-					absp.iy() + holderHalfSize.iy() / 2 + this.size.iy() / 2);
+					absp.iy() + holderHalfSize.iy() + this.size.iy() / 2 - (int) (this.size.y / 5));
 			break;
 		}
 	}
