@@ -23,6 +23,7 @@ import fr.state.menu.widget.WElement;
 import fr.state.menu.widget.WSwitch;
 import fr.state.menu.widget.data.TextData;
 import fr.state.menu.widget.drawelements.DEImage;
+import fr.statepanel.StatePanel;
 import fr.util.point.Point;
 
 public class MenuHost implements MenuPage {
@@ -312,8 +313,14 @@ public class MenuHost implements MenuPage {
 							}
 						}
 
-						// TODO
-						System.out.println("LET'S PLAY !");
+						StatePanel sp = MenuHost.this.m.getMenuState().getStatePanel();
+						sp.setState(sp.getAppStateManager().getState("loading"));
+						new Thread(new Runnable() {
+							@Override
+							public void run() {
+								MenuHost.this.stop();
+							}
+						}).start();
 					}
 				})).start();
 			}

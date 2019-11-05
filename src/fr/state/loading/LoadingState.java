@@ -1,4 +1,4 @@
-package fr.state.menu;
+package fr.state.loading;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -8,15 +8,13 @@ import fr.inputs.Input;
 import fr.statepanel.IAppState;
 import fr.statepanel.StatePanel;
 
-public class MenuState implements IAppState {
-
-	private Menu m;
+public class LoadingState implements IAppState {
 
 	private StatePanel sp;
 
 	private Input input;
 
-	private MenuLoop loop;
+	private LoadingLoop loop;
 
 	private final int GRAY = 40;
 
@@ -24,7 +22,6 @@ public class MenuState implements IAppState {
 
 	@Override
 	public void draw(Graphics2D g) {
-		this.m.draw(g);
 	}
 
 	public void getInput() {
@@ -33,7 +30,7 @@ public class MenuState implements IAppState {
 
 	@Override
 	public String getName() {
-		return "menu";
+		return "loading";
 	}
 
 	public StatePanel getStatePanel() {
@@ -46,37 +43,27 @@ public class MenuState implements IAppState {
 
 		ImageManager.getInstance().removeAll();
 
-		this.m = new Menu(this);
-		this.m.applyDefautPage();
-
-		this.sp.setBackground(this.BACKGROUND);
+		this.sp.setBackground(/* this.BACKGROUND */Color.pink);
 
 		this.input = new Input(this.sp.getWinData());
 
-		this.sp.addKeyboardListener(this.input.getKeyboardEventListener());
-		this.sp.addKeyboardListener(this.input.getKeyboardMirrorListener());
-		this.sp.addMouseListener(this.input.getMouseEventListener());
-		this.sp.addMouseListener(this.input.getMouseMirrorListener());
-
-		this.loop = new MenuLoop(this);
+		this.loop = new LoadingLoop(this);
 		this.loop.start();
 	}
 
 	@Override
 	public void stop() {
-		this.loop.stop();
 		this.sp.removeKeyboardListener(this.input.getKeyboardEventListener());
 		this.sp.removeKeyboardListener(this.input.getKeyboardMirrorListener());
 		this.sp.removeMouseListener(this.input.getMouseEventListener());
 		this.sp.removeMouseListener(this.input.getMouseMirrorListener());
-		this.m = null;
 		this.sp = null;
 		this.input = null;
+		this.loop.stop();
 		this.loop = null;
 	}
 
 	@Override
 	public void update() {
-		this.m.update(this.input);
 	}
 }

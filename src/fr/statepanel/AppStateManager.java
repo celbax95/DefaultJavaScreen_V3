@@ -3,8 +3,6 @@ package fr.statepanel;
 import java.util.HashMap;
 import java.util.Map;
 
-import fr.logger.Logger;
-
 /**
  * Gestion des etats
  *
@@ -16,11 +14,7 @@ public class AppStateManager {
 	// Map associant un nom a un etat
 	private Map<String, IAppState> states;
 
-	// Objet sur lequel on applique les etats
-	private Statable statable;
-
 	public AppStateManager() {
-		this.statable = null;
 		this.states = new HashMap<>();
 	}
 
@@ -39,39 +33,10 @@ public class AppStateManager {
 	}
 
 	/**
-	 * Applique le state associe au nom "name" a l'objet statable
-	 *
-	 * @param name : nom de l'etat dans la amp
-	 * @throws RuntimeException : si le l'objet statable n'est pas initialise ou si
-	 *                          l'etat n'est pas present dans la map
-	 */
-	public void applyState(String name) throws RuntimeException {
-		if (this.statable == null)
-			throw new IllegalStateException(
-					"Utilisez la methode init setStatable() pour initialiser l'element statable");
-
-		if (!this.states.containsKey(name))
-			throw new IllegalArgumentException("Le state \"" + name + "\" est inconnu");
-
-		this.statable.setState(this.states.get(name));
-
-		Logger.inf("Application du state \"" + name + "\"");
-	}
-
-	/**
 	 * Vide la map d'etats
 	 */
 	public void empty() {
 		this.states = new HashMap<>();
-	}
-
-	/**
-	 * Recupere l'objet statable
-	 *
-	 * @return : l'objet statable
-	 */
-	public Statable getStatable() {
-		return this.statable;
 	}
 
 	/**
@@ -81,6 +46,10 @@ public class AppStateManager {
 	 * @return : l'etat recupere / null si l'etat n'existe pas dans la map d'etats
 	 */
 	public IAppState getState(String name) {
+
+		if (!this.states.containsKey(name))
+			throw new IllegalArgumentException("Le state \"" + name + "\" est inconnu");
+
 		return this.states.get(name.toLowerCase());
 	}
 
@@ -91,16 +60,6 @@ public class AppStateManager {
 	 */
 	public Map<String, IAppState> getStates() {
 		return this.states;
-	}
-
-	/**
-	 * Initialise le singleton AppStateManager
-	 *
-	 * @param statable        : l'objet statable
-	 * @param hardwareListner : l'objet hardwareListner
-	 */
-	public void init(Statable statable) {
-		this.statable = statable;
 	}
 
 	/**
@@ -119,15 +78,6 @@ public class AppStateManager {
 	 */
 	public void removeState(String name) {
 		this.states.remove(name.toLowerCase());
-	}
-
-	/**
-	 * Initialise l'objet Statable
-	 *
-	 * @param statable : l'objet Statable
-	 */
-	public void setStatable(Statable statable) {
-		this.statable = statable;
 	}
 
 	/**

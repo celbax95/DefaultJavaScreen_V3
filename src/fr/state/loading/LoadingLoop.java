@@ -1,28 +1,21 @@
-package fr.state.menu;
+package fr.state.loading;
 
-public class MenuLoop implements Runnable {
+public class LoadingLoop implements Runnable {
 
 	private Thread loop;
 
-	private MenuState state;
+	private LoadingState state;
 
-	public MenuLoop(MenuState state) {
+	public LoadingLoop(LoadingState state) {
 		this.loop = new Thread(this);
 		this.state = state;
 	}
 
 	@Override
 	public void run() {
-		while (true) {
+		while (!this.loop.isInterrupted()) {
 			synchronized (this) {
-
-				if (this.loop.isInterrupted()) {
-					break;
-				}
-
 				try {
-					this.state.getInput();
-
 					this.state.update();
 
 					this.state.getStatePanel().repaint();

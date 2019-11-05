@@ -7,6 +7,7 @@ import java.io.IOException;
 
 import fr.datafilesmanager.DatafilesManager;
 import fr.datafilesmanager.XMLManager;
+import fr.state.loading.LoadingState;
 import fr.state.menu.MenuState;
 import fr.statepanel.AppStateManager;
 import fr.statepanel.StatePanel;
@@ -74,6 +75,11 @@ public class ConfInitializer {
 
 	}
 
+	private void initStates(AppStateManager asm) {
+		asm.addState(new MenuState());
+		asm.addState(new LoadingState());
+	}
+
 	private void loadFonts() {
 		try {
 			Font customFont = Font.createFont(Font.TRUETYPE_FONT,
@@ -106,13 +112,13 @@ public class ConfInitializer {
 		final Window screen = new Window();
 		final StatePanel mainPanel = new StatePanel(screen);
 		final WinData winData = this.getWinData(winConf);
+		final AppStateManager asm = new AppStateManager();
+		this.initStates(asm);
 
 		mainPanel.init(winData);
+		mainPanel.setAppStateManager(asm);
 
-		final AppStateManager stator = new AppStateManager();
-		stator.addState(new MenuState());
-		stator.setStatable(mainPanel);
-		stator.applyState("menu");
+		mainPanel.setState(asm.getState("menu"));
 
 		screen.init(mainPanel, winData);
 

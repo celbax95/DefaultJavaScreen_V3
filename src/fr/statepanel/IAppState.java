@@ -26,4 +26,6 @@ public interface IAppState {
 	void start(StatePanel panel);
 
 	void stop();
+
+	void update();
 }
