@@ -2,6 +2,7 @@ package fr.state.menu;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.util.Map;
 
 import fr.imagesmanager.ImageManager;
 import fr.inputs.Input;
@@ -38,6 +39,10 @@ public class MenuState implements IAppState {
 
 	public StatePanel getStatePanel() {
 		return this.sp;
+	}
+
+	@Override
+	public void setInitData(Map<String, Object> data) {
 	}
 
 	@Override
