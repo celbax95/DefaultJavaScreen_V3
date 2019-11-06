@@ -6,7 +6,6 @@ import java.util.Map;
 
 import fr.imagesmanager.ImageManager;
 import fr.inputs.Input;
-import fr.logger.Logger;
 import fr.statepanel.IAppState;
 import fr.statepanel.StatePanel;
 
@@ -53,10 +52,11 @@ public class LoadingState implements IAppState {
 	@Override
 	public void start(StatePanel panel) {
 
-		if (this.initData == null) {
-			Logger.err("Les donnees d'initialisation n'ont pas ete affectees");
-			System.exit(0);
-		}
+		// A utiliser pour faire passer les infos de la map choisie
+//		if (this.initData == null) {
+//			Logger.err("Les donnees d'initialisation n'ont pas ete affectees");
+//			System.exit(0);
+//		}
 
 		this.sp = panel;
 
