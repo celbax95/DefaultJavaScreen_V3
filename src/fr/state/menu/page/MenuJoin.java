@@ -2,7 +2,9 @@ package fr.state.menu.page;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 import fr.datafilesmanager.DatafilesManager;
@@ -22,6 +24,8 @@ import fr.state.menu.widget.WButton;
 import fr.state.menu.widget.WElement;
 import fr.state.menu.widget.WSwitch;
 import fr.state.menu.widget.drawelements.DEImage;
+import fr.statepanel.IAppState;
+import fr.statepanel.StatePanel;
 import fr.util.point.Point;
 
 public class MenuJoin implements MenuPage {
@@ -162,8 +166,33 @@ public class MenuJoin implements MenuPage {
 		if (p == null)
 			return;
 
-		MenuJoin.this.hub = new HubJoiner(p.getUsername(), p.getColor(), GlobalServerData.getGroup(MenuJoin.this.idServer),
+		MenuJoin.this.hub = new HubJoiner(p.getUsername(), p.getColor(),
+				GlobalServerData.getGroup(MenuJoin.this.idServer),
 				GlobalServerData.getHubPort(MenuJoin.this.idServer)) {
+
+			@Override
+			public void gameStarted() {
+				Map<String, Object> initData = new HashMap<>();
+
+				List<Integer> ids = MenuJoin.this.lobby.getPlayersId();
+
+				initData.put("ids", ids);
+				initData.put("myId", MenuJoin.this.lobby.getMainPlayer().getId());
+
+				StatePanel sp = MenuJoin.this.m.getMenuState().getStatePanel();
+
+				IAppState nextState = sp.getAppStateManager().getState("loading");
+				nextState.setInitData(initData);
+
+				new Thread(new Runnable() {
+					@Override
+					public void run() {
+						MenuJoin.this.stop();
+					}
+				}).start();
+
+				sp.setState(nextState);
+			}
 
 			@Override
 			public void idAssigned(int id) {

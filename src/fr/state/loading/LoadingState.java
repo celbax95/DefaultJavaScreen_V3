@@ -2,7 +2,6 @@ package fr.state.loading;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -66,7 +65,10 @@ public class LoadingState implements IAppState {
 		}
 
 		@SuppressWarnings("unchecked")
-		Map<Integer, Integer> linkIDPorts = (Map<Integer, Integer>) this.initData.get("linkIDPorts");
+		List<Integer> ids = (List<Integer>) this.initData.get("ids");
+		@SuppressWarnings("unchecked")
+		List<Integer> ports = (List<Integer>) this.initData.get("ports");
+		int myId = (int) this.initData.get("myId");
 
 		DatafilesManager dfm = DatafilesManager.getInstance();
 
@@ -79,21 +81,14 @@ public class LoadingState implements IAppState {
 
 		String groupIP = GlobalServerData.getGroup(serverID);
 
-		List<Integer> portsCli = new ArrayList<>();
-		for (Integer port : linkIDPorts.values()) {
-			portsCli.add(port);
+		LoadingRequestor lr = null;
+		if (ports != null) {
+			lr = new LoadingRequestor(groupIP, ports);
 		}
 
-		List<Integer> idsCli = new ArrayList<>();
-		for (Integer id : linkIDPorts.keySet()) {
-			idsCli.add(id);
-		}
+		Multiplayer m = new Multiplayer(groupIP, GlobalServerData.getP2PPort(serverID), ids);
 
-		LoadingRequestor lr = new LoadingRequestor(groupIP, portsCli);
-
-		Multiplayer m = new Multiplayer(groupIP, GlobalServerData.getP2PPort(serverID), idsCli);
-
-		LoadingCore lc = new LoadingCore(m, linkIDPorts, lr);
+		LoadingCore lc = new LoadingCore(m, myId, ids, lr);
 
 		this.sp = panel;
 

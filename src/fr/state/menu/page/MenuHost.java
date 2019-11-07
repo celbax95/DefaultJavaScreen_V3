@@ -318,14 +318,18 @@ public class MenuHost implements MenuPage {
 						}
 
 						Map<String, Object> initData = new HashMap<>();
-						initData.put("linkIDPorts", MenuHost.this.hub.getLinkIDPorts());
+
+						List<Integer> ports = MenuHost.this.hub.getListeningPorts();
+						List<Integer> ids = MenuHost.this.lobby.getPlayersId();
+
+						initData.put("ports", ports);
+						initData.put("ids", ids);
+						initData.put("myId", MenuHost.this.lobby.getMainPlayer().getId());
 
 						StatePanel sp = MenuHost.this.m.getMenuState().getStatePanel();
 
 						IAppState nextState = sp.getAppStateManager().getState("loading");
 						nextState.setInitData(initData);
-
-						sp.setState(nextState);
 
 						new Thread(new Runnable() {
 							@Override
@@ -333,6 +337,8 @@ public class MenuHost implements MenuPage {
 								MenuHost.this.stop();
 							}
 						}).start();
+
+						sp.setState(nextState);
 					}
 				})).start();
 			}

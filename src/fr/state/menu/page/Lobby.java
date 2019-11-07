@@ -3,6 +3,7 @@ package fr.state.menu.page;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
@@ -148,6 +149,19 @@ public class Lobby {
 				return i;
 		}
 		return -1;
+	}
+
+	/**
+	 * @return the players
+	 */
+	public List<Integer> getPlayersId() {
+		ArrayList<Integer> ids = new ArrayList<>();
+		for (HubPlayerData p : this.players) {
+			if (p != null) {
+				ids.add(p.getId());
+			}
+		}
+		return ids;
 	}
 
 	private void loadResources() {

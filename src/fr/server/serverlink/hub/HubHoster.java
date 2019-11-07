@@ -89,11 +89,8 @@ public abstract class HubHoster {
 
 	public abstract void gameStarting(boolean state);
 
-	/**
-	 * @return the linkIDPorts
-	 */
-	public Map<Integer, Integer> getLinkIDPorts() {
-		return this.linkIDPorts;
+	public List<Integer> getListeningPorts() {
+		return this.listeningPorts;
 	}
 
 	public abstract void noMorePlayer();

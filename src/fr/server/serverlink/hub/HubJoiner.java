@@ -65,6 +65,8 @@ public abstract class HubJoiner implements IdSetter {
 		this.portReceive = this.dataReceive.getLocalPort();
 	}
 
+	public abstract void gameStarted();
+
 	public abstract void idAssigned(int id);
 
 	public abstract void noMorePlayer();
@@ -131,7 +133,7 @@ public abstract class HubJoiner implements IdSetter {
 			this.playerDataReceived(splited);
 			break;
 		case LOADING_STATE_REQ:
-			System.out.println("OK CA MARCHE T'AS PAS FAIT DE LA MERDE");
+			this.gameStarted();
 		default:
 			break;
 		}
