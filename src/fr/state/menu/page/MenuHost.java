@@ -3,7 +3,9 @@ package fr.state.menu.page;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
 
 import fr.datafilesmanager.DatafilesManager;
@@ -11,10 +13,10 @@ import fr.datafilesmanager.XMLManager;
 import fr.imagesmanager.ImageLoader;
 import fr.imagesmanager.ImageManager;
 import fr.inputs.Input;
-import fr.serverlink.data.PlayerData;
-import fr.serverlink.data.ServerData;
-import fr.serverlink.hub.HubHoster;
-import fr.serverlink.link.Linker;
+import fr.server.GlobalServerData;
+import fr.server.serverlink.data.HubPlayerData;
+import fr.server.serverlink.hub.HubHoster;
+import fr.server.serverlink.link.Linker;
 import fr.state.menu.Menu;
 import fr.state.menu.MenuPage;
 import fr.state.menu.Widget;
@@ -23,6 +25,7 @@ import fr.state.menu.widget.WElement;
 import fr.state.menu.widget.WSwitch;
 import fr.state.menu.widget.data.TextData;
 import fr.state.menu.widget.drawelements.DEImage;
+import fr.statepanel.IAppState;
 import fr.statepanel.StatePanel;
 import fr.util.point.Point;
 
@@ -158,7 +161,7 @@ public class MenuHost implements MenuPage {
 
 				MenuHost.this.wPlay = MenuHost.this.wPlay();
 
-				MenuHost.this.lobby.setMainPlayer(new PlayerData(ID_HOST, myUsername, myColor, true));
+				MenuHost.this.lobby.setMainPlayer(new HubPlayerData(ID_HOST, myUsername, myColor, true));
 				MenuHost.this.lobby.setPlayerReady(ID_HOST, true);
 
 				MenuHost.this.changeWPlayState();
@@ -183,13 +186,14 @@ public class MenuHost implements MenuPage {
 			MenuHost.this.hub.stop();
 		}
 
-		PlayerData p = this.lobby.getMainPlayer();
+		HubPlayerData p = this.lobby.getMainPlayer();
 
 		if (p == null)
 			return;
 
 		MenuHost.this.hub = new HubHoster(ID_HOST, p.getUsername(), p.getColor(), PADS_POS.length,
-				ServerData.getGroup(MenuHost.this.idServer), ServerData.getPort(MenuHost.this.idServer)) {
+				GlobalServerData.getGroup(MenuHost.this.idServer),
+				GlobalServerData.getHubPort(MenuHost.this.idServer)) {
 
 			@Override
 			public void gameStarting(boolean state) {
@@ -203,7 +207,7 @@ public class MenuHost implements MenuPage {
 
 			@Override
 			public void playerAdded(int id, String username, Color color) {
-				MenuHost.this.lobby.addPlayer(new PlayerData(id, username, color, false));
+				MenuHost.this.lobby.addPlayer(new HubPlayerData(id, username, color, false));
 				MenuHost.this.changeWPlayState();
 			}
 
@@ -224,8 +228,8 @@ public class MenuHost implements MenuPage {
 		if (this.linker != null) {
 			MenuHost.this.linker.stop();
 		}
-		MenuHost.this.linker = new Linker(ID_HOST, ServerData.getGroup(MenuHost.this.idServer),
-				ServerData.getPort(MenuHost.this.idServer));
+		MenuHost.this.linker = new Linker(ID_HOST, GlobalServerData.getGroup(MenuHost.this.idServer),
+				GlobalServerData.getHubPort(MenuHost.this.idServer));
 
 		if (this.playCountdown != null) {
 			MenuHost.this.playCountdown.interrupt();
@@ -313,8 +317,16 @@ public class MenuHost implements MenuPage {
 							}
 						}
 
+						Map<String, Object> initData = new HashMap<>();
+						initData.put("linkIDPorts", MenuHost.this.hub.getLinkIDPorts());
+
 						StatePanel sp = MenuHost.this.m.getMenuState().getStatePanel();
-						sp.setState(sp.getAppStateManager().getState("loading"));
+
+						IAppState nextState = sp.getAppStateManager().getState("loading");
+						nextState.setInitData(initData);
+
+						sp.setState(nextState);
+
 						new Thread(new Runnable() {
 							@Override
 							public void run() {

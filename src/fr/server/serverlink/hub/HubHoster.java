@@ -1,4 +1,4 @@
-package fr.serverlink.hub;
+package fr.server.serverlink.hub;
 
 import java.awt.Color;
 import java.net.DatagramPacket;
@@ -10,9 +10,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
-import fr.serverlink.data.PlayerData;
-import fr.serverlink.data.Request;
-import fr.serverlink.data.ServerDelays;
+import fr.server.serverlink.data.HubPlayerData;
+import fr.server.serverlink.data.Request;
+import fr.server.serverlink.data.ServerDelays;
 
 public abstract class HubHoster {
 
@@ -24,7 +24,7 @@ public abstract class HubHoster {
 
 	private Thread dataUpdater, dataReceiver, pingTester;
 
-	private Map<Integer, PlayerData> playersData;
+	private Map<Integer, HubPlayerData> playersData;
 
 	private int maxPlayer;
 
@@ -43,7 +43,7 @@ public abstract class HubHoster {
 
 		this.playersData = new HashMap<>();
 
-		this.playersData.put(id, new PlayerData(id, username, color, true));
+		this.playersData.put(id, new HubPlayerData(id, username, color, true));
 
 		this.maxPlayer = maxPlayer;
 
@@ -69,7 +69,7 @@ public abstract class HubHoster {
 
 	private void addPlayer(String[] splited) {
 		if (this.playersData.size() < this.maxPlayer) {
-			PlayerData pd = this.playerDataReceived(splited);
+			HubPlayerData pd = this.playerDataReceived(splited);
 			if (pd != null && !this.playersData.containsKey(pd.getId())) {
 				this.playersData.put(Integer.valueOf(splited[2]), pd);
 
@@ -88,6 +88,13 @@ public abstract class HubHoster {
 	}
 
 	public abstract void gameStarting(boolean state);
+
+	/**
+	 * @return the linkIDPorts
+	 */
+	public Map<Integer, Integer> getLinkIDPorts() {
+		return this.linkIDPorts;
+	}
 
 	public abstract void noMorePlayer();
 
@@ -112,7 +119,7 @@ public abstract class HubHoster {
 
 	public abstract void playerAdded(int id, String username, Color color);
 
-	private PlayerData playerDataReceived(String[] splited) {
+	private HubPlayerData playerDataReceived(String[] splited) {
 
 		if (splited.length != 6)
 			return null;
@@ -131,7 +138,7 @@ public abstract class HubHoster {
 			color = Color.decode(colorTxt);
 		}
 
-		return new PlayerData(id, username, color, false);
+		return new HubPlayerData(id, username, color, false);
 	}
 
 	public abstract void playerRemoved(int id);
@@ -202,7 +209,7 @@ public abstract class HubHoster {
 							continue;
 						}
 
-						PlayerData pd = HubHoster.this.playersData.get(id);
+						HubPlayerData pd = HubHoster.this.playersData.get(id);
 
 						HubHoster.this.send(Request.UPDATE + "/" + id + "/" + pd.getUsername() + "/" + "#"
 								+ Integer.toHexString(pd.getColor().getRGB()).substring(2) + "/" + pd.isReady() + "/");
@@ -283,7 +290,7 @@ public abstract class HubHoster {
 	}
 
 	public void startGame() {
-		for (PlayerData p : this.playersData.values()) {
+		for (HubPlayerData p : this.playersData.values()) {
 			if (p.isReady() == false)
 				return;
 		}

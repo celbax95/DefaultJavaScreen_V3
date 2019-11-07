@@ -10,11 +10,11 @@ import fr.datafilesmanager.XMLManager;
 import fr.imagesmanager.ImageLoader;
 import fr.imagesmanager.ImageManager;
 import fr.inputs.Input;
-import fr.serverlink.data.PlayerData;
-import fr.serverlink.data.ServerData;
-import fr.serverlink.data.ServerDelays;
-import fr.serverlink.hub.HubJoiner;
-import fr.serverlink.link.Searcher;
+import fr.server.GlobalServerData;
+import fr.server.serverlink.data.HubPlayerData;
+import fr.server.serverlink.data.ServerDelays;
+import fr.server.serverlink.hub.HubJoiner;
+import fr.server.serverlink.link.Searcher;
 import fr.state.menu.Menu;
 import fr.state.menu.MenuPage;
 import fr.state.menu.Widget;
@@ -137,7 +137,7 @@ public class MenuJoin implements MenuPage {
 				MenuJoin.this.wServerSettings();
 				MenuJoin.this.wRefresh();
 
-				MenuJoin.this.lobby.setMainPlayer(new PlayerData(-1, myUsername, myColor, false));
+				MenuJoin.this.lobby.setMainPlayer(new HubPlayerData(-1, myUsername, myColor, false));
 
 				MenuJoin.this.start();
 
@@ -157,13 +157,13 @@ public class MenuJoin implements MenuPage {
 			MenuJoin.this.hub.stop();
 		}
 
-		PlayerData p = this.lobby.getMainPlayer();
+		HubPlayerData p = this.lobby.getMainPlayer();
 
 		if (p == null)
 			return;
 
-		MenuJoin.this.hub = new HubJoiner(p.getUsername(), p.getColor(), ServerData.getGroup(MenuJoin.this.idServer),
-				ServerData.getPort(MenuJoin.this.idServer)) {
+		MenuJoin.this.hub = new HubJoiner(p.getUsername(), p.getColor(), GlobalServerData.getGroup(MenuJoin.this.idServer),
+				GlobalServerData.getHubPort(MenuJoin.this.idServer)) {
 
 			@Override
 			public void idAssigned(int id) {
@@ -171,7 +171,7 @@ public class MenuJoin implements MenuPage {
 				MenuJoin.this.wReady.setVisible(true);
 				MenuJoin.this.searcher.stop();
 				MenuJoin.this.searcher = null;
-				PlayerData p = MenuJoin.this.lobby.getMainPlayer();
+				HubPlayerData p = MenuJoin.this.lobby.getMainPlayer();
 				p.setId(id);
 				MenuJoin.this.lobby.setMainPlayer(p);
 			}
@@ -187,7 +187,7 @@ public class MenuJoin implements MenuPage {
 
 			@Override
 			public void playerAdded(int id, String username, Color color) {
-				MenuJoin.this.lobby.addPlayer(new PlayerData(id, username, color, false));
+				MenuJoin.this.lobby.addPlayer(new HubPlayerData(id, username, color, false));
 			}
 
 			@Override
@@ -207,8 +207,8 @@ public class MenuJoin implements MenuPage {
 		if (this.searcher != null) {
 			MenuJoin.this.searcher.stop();
 		}
-		MenuJoin.this.searcher = new Searcher(MenuJoin.this.hub, ServerData.getGroup(MenuJoin.this.idServer),
-				ServerData.getPort(MenuJoin.this.idServer));
+		MenuJoin.this.searcher = new Searcher(MenuJoin.this.hub, GlobalServerData.getGroup(MenuJoin.this.idServer),
+				GlobalServerData.getHubPort(MenuJoin.this.idServer));
 
 		MenuJoin.this.hub.start();
 		MenuJoin.this.searcher.start();
@@ -223,8 +223,8 @@ public class MenuJoin implements MenuPage {
 			MenuJoin.this.hub.stop();
 		}
 
-		PlayerData p = this.lobby.getMainPlayer();
-		this.lobby.setMainPlayer(new PlayerData(-1, p.getUsername(), p.getColor(), false));
+		HubPlayerData p = this.lobby.getMainPlayer();
+		this.lobby.setMainPlayer(new HubPlayerData(-1, p.getUsername(), p.getColor(), false));
 	}
 
 	@Override

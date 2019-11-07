@@ -7,7 +7,7 @@ import java.net.MulticastSocket;
 import java.net.UnknownHostException;
 import java.util.List;
 
-import fr.serverlink.data.Request;
+import fr.server.serverlink.data.Request;
 
 public class LoadingRequestor {
 
@@ -22,7 +22,6 @@ public class LoadingRequestor {
 	private Thread sender;
 
 	public LoadingRequestor(String groupIP, List<Integer> portsCli) {
-
 		this.portsCli = portsCli;
 
 		this.groupIP = null;
@@ -62,7 +61,7 @@ public class LoadingRequestor {
 		this.sender = new Thread(new Runnable() {
 			@Override
 			public void run() {
-				while (Thread.currentThread().isInterrupted()) {
+				while (Thread.currentThread().isInterrupted() == false) {
 					LoadingRequestor.this.send();
 					try {
 						Thread.sleep(SEND_RATE);

@@ -11,7 +11,7 @@ import fr.datafilesmanager.XMLManager;
 import fr.imagesmanager.ImageLoader;
 import fr.imagesmanager.ImageManager;
 import fr.inputs.Input;
-import fr.serverlink.data.ServerData;
+import fr.server.GlobalServerData;
 import fr.state.menu.Menu;
 import fr.state.menu.MenuPage;
 import fr.state.menu.Widget;
@@ -46,7 +46,7 @@ public class MenuServerSettings implements MenuPage {
 
 	private static final String PAGE_NAME = "menuSeverSettings";
 
-	private static final int NB_EXCLUSIVE_BTN = ServerData.getIPAmount();
+	private static final int NB_EXCLUSIVE_BTN = GlobalServerData.getIPAmount();
 
 	private static final int ELEMENT_HEIGHT = 128;
 

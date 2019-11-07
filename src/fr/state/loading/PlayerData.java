@@ -1,16 +1,18 @@
-package fr.serverlink.data;
+package fr.state.loading;
 
 import java.awt.Color;
+
+import fr.util.point.Point;
 
 public class PlayerData {
 
 	private int id;
 
+	private Point pos, size;
+
 	private String username;
 
 	private Color color;
-
-	private boolean ready;
 
 	/**
 	 * @param id
@@ -18,12 +20,13 @@ public class PlayerData {
 	 * @param color
 	 * @param ready
 	 */
-	public PlayerData(int id, String username, Color color, boolean ready) {
+	public PlayerData(int id, String username, Point pos, Point size, Color color) {
 		super();
 		this.id = id;
 		this.username = username;
+		this.pos = new Point(pos);
+		this.size = new Point(size);
 		this.color = color;
-		this.ready = ready;
 	}
 
 	public Color getColor() {
@@ -37,15 +40,22 @@ public class PlayerData {
 		return this.id;
 	}
 
-	public String getUsername() {
-		return this.username;
+	/**
+	 * @return the pos
+	 */
+	public Point getPos() {
+		return this.pos;
 	}
 
 	/**
-	 * @return the ready
+	 * @return the size
 	 */
-	public boolean isReady() {
-		return this.ready;
+	public Point getSize() {
+		return this.size;
+	}
+
+	public String getUsername() {
+		return this.username;
 	}
 
 	public void setColor(Color color) {
@@ -60,10 +70,17 @@ public class PlayerData {
 	}
 
 	/**
-	 * @param ready the ready to set
+	 * @param pos the pos to set
 	 */
-	public void setReady(boolean ready) {
-		this.ready = ready;
+	public void setPos(Point pos) {
+		this.pos = pos;
+	}
+
+	/**
+	 * @param size the size to set
+	 */
+	public void setSize(Point size) {
+		this.size = size;
 	}
 
 	public void setUsername(String username) {

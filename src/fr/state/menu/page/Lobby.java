@@ -8,7 +8,7 @@ import java.util.Vector;
 
 import fr.imagesmanager.ImageLoader;
 import fr.imagesmanager.ImageManager;
-import fr.serverlink.data.PlayerData;
+import fr.server.serverlink.data.HubPlayerData;
 import fr.state.menu.MenuPage;
 import fr.state.menu.Widget;
 import fr.state.menu.widget.WElement;
@@ -65,7 +65,7 @@ public class Lobby {
 
 	private WElement[] usernames;
 
-	private PlayerData[] players;
+	private HubPlayerData[] players;
 
 	private MenuPage parent;
 
@@ -81,7 +81,7 @@ public class Lobby {
 		this.pads = new WElement[this.maxPlayer];
 		this.usernames = new WElement[this.maxPlayer];
 		this.ready = new WElement[this.maxPlayer];
-		this.players = new PlayerData[this.maxPlayer];
+		this.players = new HubPlayerData[this.maxPlayer];
 
 		for (int i = 0; i < this.maxPlayer; i++) {
 			this.pads[i] = this.wPad(padsPos[i].clone().add(new Point(58, 3)));
@@ -94,7 +94,7 @@ public class Lobby {
 		}
 	}
 
-	public void addPlayer(PlayerData p) {
+	public void addPlayer(HubPlayerData p) {
 		int i = this.getEmptyPad();
 
 		if (i == -1)
@@ -118,13 +118,13 @@ public class Lobby {
 		return -1;
 	}
 
-	public PlayerData getMainPlayer() {
+	public HubPlayerData getMainPlayer() {
 		return this.players[0];
 	}
 
 	public int getNbPlayer() {
 		int nb = 0;
-		for (PlayerData player : this.players) {
+		for (HubPlayerData player : this.players) {
 			if (player != null) {
 				nb++;
 			}
@@ -134,7 +134,7 @@ public class Lobby {
 
 	public int getNbReady() {
 		int nb = 0;
-		for (PlayerData player : this.players) {
+		for (HubPlayerData player : this.players) {
 			if (player != null && player.isReady()) {
 				nb++;
 			}
@@ -156,7 +156,7 @@ public class Lobby {
 		il.load(RES_NAMES2, RES_PATHS2);
 	}
 
-	private void putPlayerOnPad(PlayerData p, int padId) {
+	private void putPlayerOnPad(HubPlayerData p, int padId) {
 		this.players[padId] = p;
 
 		DERectangle r = (DERectangle) this.pads[padId].getDrawElement();
@@ -198,7 +198,7 @@ public class Lobby {
 		}
 	}
 
-	public void setMainPlayer(PlayerData player) {
+	public void setMainPlayer(HubPlayerData player) {
 		this.putPlayerOnPad(player, 0);
 	}
 

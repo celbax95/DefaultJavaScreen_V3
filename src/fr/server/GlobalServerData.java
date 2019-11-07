@@ -1,6 +1,6 @@
-package fr.serverlink.data;
+package fr.server;
 
-public class ServerData {
+public class GlobalServerData {
 
 	private static final String[] GROUP_IPS = {
 			"230.152.201.50",
@@ -9,7 +9,8 @@ public class ServerData {
 			"230.152.201.53",
 			"230.152.201.54" };
 
-	private static final int GLOBAL_PORT = 9998;
+	private static final int HUB_PORT = 9998;
+	private static final int P2P_PORT = 9997;
 
 	public static String getGroup(int serverIndex) {
 
@@ -20,11 +21,15 @@ public class ServerData {
 		return GROUP_IPS[serverIndex];
 	}
 
+	public static int getHubPort(int serverIndex) {
+		return HUB_PORT;
+	}
+
 	public static int getIPAmount() {
 		return GROUP_IPS.length;
 	}
 
-	public static int getPort(int serverIndex) {
-		return GLOBAL_PORT;
+	public static int getP2PPort(int serverIndex) {
+		return P2P_PORT;
 	}
 }

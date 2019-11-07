@@ -1,11 +1,11 @@
-package fr.serverlink.link;
+package fr.server.serverlink.link;
 
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
 
-import fr.serverlink.data.Request;
+import fr.server.serverlink.data.Request;
 
 public class Searcher {
 

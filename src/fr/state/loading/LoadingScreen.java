@@ -6,7 +6,7 @@ import java.net.MulticastSocket;
 import java.net.UnknownHostException;
 import java.util.Map;
 
-import fr.serverlink.data.ServerData;
+import fr.server.GlobalServerData;
 
 public class LoadingScreen {
 
@@ -22,7 +22,7 @@ public class LoadingScreen {
 
 		InetAddress address = null;
 		try {
-			address = InetAddress.getByName(ServerData.getGroup(serverIndex));
+			address = InetAddress.getByName(GlobalServerData.getGroup(serverIndex));
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
 		}

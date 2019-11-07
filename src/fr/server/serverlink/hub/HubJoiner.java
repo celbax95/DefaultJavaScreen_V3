@@ -1,4 +1,4 @@
-package fr.serverlink.hub;
+package fr.server.serverlink.hub;
 
 import java.awt.Color;
 import java.net.DatagramPacket;
@@ -9,10 +9,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import fr.serverlink.data.PlayerData;
-import fr.serverlink.data.Request;
-import fr.serverlink.data.ServerDelays;
-import fr.serverlink.link.IdSetter;
+import fr.server.serverlink.data.HubPlayerData;
+import fr.server.serverlink.data.Request;
+import fr.server.serverlink.data.ServerDelays;
+import fr.server.serverlink.link.IdSetter;
 
 public abstract class HubJoiner implements IdSetter {
 
@@ -27,11 +27,11 @@ public abstract class HubJoiner implements IdSetter {
 
 	private Thread dataReceiver, addRequestor, pinger, updateTester;
 
-	private Map<Integer, PlayerData> playersData;
+	private Map<Integer, HubPlayerData> playersData;
 
 	private Map<Integer, Long> updates;
 
-	private PlayerData myPlayer;
+	private HubPlayerData myPlayer;
 
 	private int myID;
 
@@ -39,7 +39,7 @@ public abstract class HubJoiner implements IdSetter {
 
 	public HubJoiner(String playerUsername, Color playerColor, String groupIP, int portSend) {
 		this.myID = -1;
-		this.myPlayer = new PlayerData(-1, playerUsername, playerColor, false);
+		this.myPlayer = new HubPlayerData(-1, playerUsername, playerColor, false);
 
 		this.portSend = portSend;
 
@@ -94,7 +94,7 @@ public abstract class HubJoiner implements IdSetter {
 
 			boolean ready = Boolean.parseBoolean(data[i++]);
 
-			this.playersData.put(id, new PlayerData(id, username, color, ready));
+			this.playersData.put(id, new HubPlayerData(id, username, color, ready));
 
 			if (Thread.currentThread().isInterrupted() == false) {
 				this.playerAdded(id, username, color);
@@ -102,7 +102,7 @@ public abstract class HubJoiner implements IdSetter {
 			}
 
 		} else {
-			PlayerData pd = this.playersData.get(id);
+			HubPlayerData pd = this.playersData.get(id);
 			pd.setUsername(data[i++]);
 
 			String colorTxt = data[i++];
@@ -130,6 +130,8 @@ public abstract class HubJoiner implements IdSetter {
 		case UPDATE:
 			this.playerDataReceived(splited);
 			break;
+		case LOADING_STATE_REQ:
+			System.out.println("OK CA MARCHE T'AS PAS FAIT DE LA MERDE");
 		default:
 			break;
 		}
