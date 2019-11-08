@@ -170,6 +170,8 @@ public class MenuJoin implements MenuPage {
 		nextState.setInitData(initData);
 
 		MenuJoin.this.stop();
+		this.hub.closeSockets();
+		this.searcher.closeSockets();
 
 		sp.setState(nextState);
 	}
@@ -183,6 +185,7 @@ public class MenuJoin implements MenuPage {
 	private void start() {
 		if (this.hub != null) {
 			MenuJoin.this.hub.stop();
+			this.hub.closeSockets();
 		}
 
 		HubPlayerData p = this.lobby.getMainPlayer();
@@ -240,6 +243,7 @@ public class MenuJoin implements MenuPage {
 
 		if (this.searcher != null) {
 			MenuJoin.this.searcher.stop();
+			this.searcher.closeSockets();
 		}
 		MenuJoin.this.searcher = new Searcher(MenuJoin.this.hub, GlobalServerData.getGroup(MenuJoin.this.idServer),
 				GlobalServerData.getHubPort(MenuJoin.this.idServer));
@@ -276,6 +280,8 @@ public class MenuJoin implements MenuPage {
 			@Override
 			public void action() {
 				MenuJoin.this.stop();
+				MenuJoin.this.hub.closeSockets();
+				MenuJoin.this.searcher.closeSockets();
 				MenuJoin.this.m.applyPage(new MenuMain(MenuJoin.this.m));
 			}
 		};
@@ -377,6 +383,8 @@ public class MenuJoin implements MenuPage {
 			@Override
 			public void action() {
 				MenuJoin.this.stop();
+				MenuJoin.this.hub.closeSockets();
+				MenuJoin.this.searcher.closeSockets();
 				MenuJoin.this.m.applyPage(new MenuServerSettings(MenuJoin.this.m, 1));
 			}
 		};

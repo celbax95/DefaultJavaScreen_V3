@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
+import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -57,12 +58,27 @@ public abstract class HubJoiner implements IdSetter {
 			this.dataReceive = new MulticastSocket();
 			this.dataReceive.setInterface(InetAddress.getLocalHost());
 			this.dataReceive.joinGroup(this.groupIP);
+			this.dataReceive.setSoTimeout(2000);
 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
 		this.portReceive = this.dataReceive.getLocalPort();
+	}
+
+	public void close() {
+		this.stop();
+		this.closeSockets();
+	}
+
+	public void closeSockets() {
+		if (this.dataSend != null) {
+			this.dataSend.close();
+		}
+		if (this.dataReceive != null) {
+			this.dataReceive.close();
+		}
 	}
 
 	public abstract void gameStarted();
@@ -191,9 +207,14 @@ public abstract class HubJoiner implements IdSetter {
 
 						DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
 
-						HubJoiner.this.dataReceive.receive(packet);
+						try {
 
-						HubJoiner.this.processData(new String(packet.getData()));
+							HubJoiner.this.dataReceive.receive(packet);
+
+							HubJoiner.this.processData(new String(packet.getData()));
+
+						} catch (SocketTimeoutException e) {
+						}
 					} catch (Exception e) {
 						Thread.currentThread().interrupt();
 						return;

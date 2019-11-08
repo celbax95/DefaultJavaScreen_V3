@@ -48,6 +48,15 @@ public class Searcher {
 		this.message = (Request.REQID + "/" + this.responseReceiver.getLocalPort() + "/").getBytes();
 	}
 
+	public void closeSockets() {
+		if (this.reqSender != null) {
+			this.reqSender.close();
+		}
+		if (this.responseReceiver != null) {
+			this.responseReceiver.close();
+		}
+	}
+
 	private void processResponse(String data) {
 		String[] splited = data.split("/");
 
@@ -109,7 +118,7 @@ public class Searcher {
 				}
 			}
 		});
-		this.receiver.setName("Searcher/sender");
+		this.sender.setName("Searcher/sender");
 	}
 
 	public void start() {

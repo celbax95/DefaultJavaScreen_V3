@@ -49,6 +49,15 @@ public class Linker {
 		}
 	}
 
+	public void closeScockets() {
+		if (this.reqListener != null) {
+			this.reqListener.close();
+		}
+		if (this.responseSender != null) {
+			this.responseSender.close();
+		}
+	}
+
 	private void processPacket(InetAddress inetAddress, String data) {
 
 		String[] splited = data.split("/");

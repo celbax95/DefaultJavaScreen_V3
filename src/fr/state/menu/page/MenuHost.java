@@ -186,6 +186,7 @@ public class MenuHost implements MenuPage {
 		// hub
 		if (this.hub != null) {
 			MenuHost.this.hub.stop();
+			this.hub.closeSockets();
 		}
 
 		HubPlayerData p = this.lobby.getMainPlayer();
@@ -229,6 +230,7 @@ public class MenuHost implements MenuPage {
 		// Linker
 		if (this.linker != null) {
 			MenuHost.this.linker.stop();
+			this.linker.closeScockets();
 		}
 		MenuHost.this.linker = new Linker(ID_HOST, GlobalServerData.getGroup(MenuHost.this.idServer),
 				GlobalServerData.getHubPort(MenuHost.this.idServer));
@@ -267,6 +269,8 @@ public class MenuHost implements MenuPage {
 			@Override
 			public void action() {
 				MenuHost.this.stop();
+				MenuHost.this.hub.closeSockets();
+				MenuHost.this.linker.closeScockets();
 				MenuHost.this.m.applyPage(new MenuMain(MenuHost.this.m));
 			}
 		};
@@ -406,6 +410,8 @@ public class MenuHost implements MenuPage {
 			@Override
 			public void action() {
 				MenuHost.this.stop();
+				MenuHost.this.hub.closeSockets();
+				MenuHost.this.linker.closeScockets();
 				MenuHost.this.m.applyPage(new MenuServerSettings(MenuHost.this.m, 0));
 			}
 		};

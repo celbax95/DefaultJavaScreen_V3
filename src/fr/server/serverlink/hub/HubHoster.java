@@ -87,6 +87,15 @@ public abstract class HubHoster {
 		}
 	}
 
+	public void closeSockets() {
+		if (this.dataShare != null) {
+			this.dataShare.close();
+		}
+		if (this.dataReceive != null) {
+			this.dataReceive.close();
+		}
+	}
+
 	public abstract void gameStarting(boolean state);
 
 	public List<Integer> getListeningPorts() {
