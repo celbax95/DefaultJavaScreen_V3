@@ -18,7 +18,9 @@ public class LoadingLoop implements Runnable {
 				try {
 					this.state.update();
 
-					this.state.getStatePanel().repaint();
+					if (this.state != null && this.state.getStatePanel() != null) {
+						this.state.getStatePanel().repaint();
+					}
 
 					Thread.sleep(32);
 				} catch (InterruptedException | NullPointerException e) {

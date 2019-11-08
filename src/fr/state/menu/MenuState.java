@@ -78,6 +78,8 @@ public class MenuState implements IAppState {
 		this.loop = null;
 
 		ImageManager.getInstance().removeStartWith("menu");
+
+		System.gc();
 	}
 
 	@Override
