@@ -1,6 +1,7 @@
 package fr.state.loading;
 
 import java.awt.Color;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -34,9 +35,13 @@ public class LoadingCore implements PDataProcessor {
 		if (requestor != null) {
 			this.waitingIds = new LinkedList<>();
 			for (Integer id : ids) {
-				this.waitingIds.add(id);
+				if (id != myId) {
+					this.waitingIds.add(id);
+				}
 			}
 		}
+
+		this.players = new HashMap<>();
 
 		this.myId = myId;
 
@@ -47,8 +52,6 @@ public class LoadingCore implements PDataProcessor {
 	@Override
 	public void newPData(PData pdata) {
 		OP op = pdata.getOpId();
-
-		System.out.println("okok");
 
 		if (pdata.getId() != this.myId) {
 			if (op == OP.PLAYER_STATE) {
@@ -63,6 +66,8 @@ public class LoadingCore implements PDataProcessor {
 					this.waitingIds.remove((Object) pdata.getId());
 					if (this.waitingIds.isEmpty()) {
 						this.requestor.stop();
+						this.waitingIds = null;
+						this.requestor = null;
 					}
 				}
 			}
@@ -74,17 +79,12 @@ public class LoadingCore implements PDataProcessor {
 			@Override
 			public void run() {
 				PDataFactory factory = new PDataFactory();
+				PlayerData myPlayer = LoadingCore.this.players.get(0);
 				while (Thread.currentThread().isInterrupted() == false) {
-					PData data = factory.createPlayerState(LoadingCore.this.myId, "coucou", new Point(100, 100),
-							new Point(100, 100), Color.black);
+					PData data = factory.createPlayerState(LoadingCore.this.myId, myPlayer.getUsername(),
+							myPlayer.getPos(), myPlayer.getSize(), Color.black);
 
 					LoadingCore.this.multiplayer.send(data);
-
-					if (LoadingCore.this.requestor != null) {
-						System.out.println("send1");
-					} else {
-						System.out.println("send2");
-					}
 
 					try {
 						Thread.sleep(1000);
@@ -107,7 +107,9 @@ public class LoadingCore implements PDataProcessor {
 
 	public void stop() {
 		this.multiplayer.stop();
-		this.requestor.stop();
+		if (this.requestor != null) {
+			this.requestor.stop();
+		}
 		if (this.sender != null) {
 			this.sender.interrupt();
 		}

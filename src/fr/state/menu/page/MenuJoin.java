@@ -94,6 +94,8 @@ public class MenuJoin implements MenuPage {
 
 	private boolean loaded;
 
+	private boolean gameStart;
+
 	public MenuJoin(Menu m) {
 		this.loaded = false;
 		this.m = m;
@@ -135,6 +137,8 @@ public class MenuJoin implements MenuPage {
 
 				MenuJoin.this.lobby = new Lobby(MenuJoin.this, PADS_POS);
 
+				MenuJoin.this.gameStart = false;
+
 				MenuJoin.this.wReady = MenuJoin.this.wReady();
 				MenuJoin.this.wTitle();
 				MenuJoin.this.wBack();
@@ -148,6 +152,29 @@ public class MenuJoin implements MenuPage {
 				MenuJoin.this.loaded = true;
 			}
 		}).start();
+	}
+
+	private void loadingState() {
+		Map<String, Object> initData = new HashMap<>();
+
+		List<Integer> ids = MenuJoin.this.lobby.getPlayersId();
+
+		initData.put("ids", ids);
+		initData.put("myId", MenuJoin.this.lobby.getMainPlayer().getId());
+
+		StatePanel sp = MenuJoin.this.m.getMenuState().getStatePanel();
+
+		IAppState nextState = sp.getAppStateManager().getState("loading");
+		nextState.setInitData(initData);
+
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				MenuJoin.this.stop();
+			}
+		}).start();
+
+		sp.setState(nextState);
 	}
 
 	private void loadResources() {
@@ -172,26 +199,7 @@ public class MenuJoin implements MenuPage {
 
 			@Override
 			public void gameStarted() {
-				Map<String, Object> initData = new HashMap<>();
-
-				List<Integer> ids = MenuJoin.this.lobby.getPlayersId();
-
-				initData.put("ids", ids);
-				initData.put("myId", MenuJoin.this.lobby.getMainPlayer().getId());
-
-				StatePanel sp = MenuJoin.this.m.getMenuState().getStatePanel();
-
-				IAppState nextState = sp.getAppStateManager().getState("loading");
-				nextState.setInitData(initData);
-
-				new Thread(new Runnable() {
-					@Override
-					public void run() {
-						MenuJoin.this.stop();
-					}
-				}).start();
-
-				sp.setState(nextState);
+				MenuJoin.this.gameStart = true;
 			}
 
 			@Override
@@ -260,6 +268,9 @@ public class MenuJoin implements MenuPage {
 	public void update(Input input) {
 		for (Widget w : this.widgets) {
 			w.update(input);
+		}
+		if (this.gameStart) {
+			this.loadingState();
 		}
 	}
 

@@ -63,6 +63,7 @@ public class LoadingRequestor {
 			public void run() {
 				while (Thread.currentThread().isInterrupted() == false) {
 					LoadingRequestor.this.send();
+
 					try {
 						Thread.sleep(SEND_RATE);
 					} catch (InterruptedException e) {
