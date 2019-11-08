@@ -6,6 +6,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import fr.datafilesmanager.DatafilesManager;
+import fr.datafilesmanager.XMLManager;
 import fr.server.p2p.Multiplayer;
 import fr.server.p2p.PData;
 import fr.server.p2p.PData.OP;
@@ -27,7 +29,7 @@ public class LoadingCore implements PDataProcessor {
 
 	Thread sender;
 
-	public LoadingCore(Multiplayer m, int myId, List<Integer> ids, LoadingRequestor requestor) {
+	public LoadingCore(Multiplayer multiplayer, int myId, List<Integer> ids, LoadingRequestor requestor) {
 		this.ids = ids;
 		this.requestor = requestor;
 
@@ -41,11 +43,22 @@ public class LoadingCore implements PDataProcessor {
 			}
 		}
 
+		DatafilesManager dfm = DatafilesManager.getInstance();
+		XMLManager manager = dfm.getXmlManager();
+
+		Object profileConf = dfm.getFile("profile");
+
+		String username = (String) manager.getParam(profileConf, "username", "");
+		String colorHex = (String) manager.getParam(profileConf, "color", "#000000");
+		Color color = Color.decode(colorHex);
+
 		this.players = new HashMap<>();
+		// TODO Generer les positions des joueurs
+		this.players.put(myId, new PlayerData(myId, username, new Point(), color));
 
 		this.myId = myId;
 
-		this.multiplayer = m;
+		this.multiplayer = multiplayer;
 		this.multiplayer.setPDataProcessor(this);
 	}
 
@@ -59,8 +72,8 @@ public class LoadingCore implements PDataProcessor {
 
 				int i = 0;
 
-				this.players.put(pdata.getId(), new PlayerData(pdata.getId(), (String) data[i++], (Point) data[i++],
-						(Point) data[i++], (Color) data[i++]));
+				this.players.put(pdata.getId(),
+						new PlayerData(pdata.getId(), (String) data[i++], (Point) data[i++], (Color) data[i++]));
 
 				if (this.waitingIds != null) {
 					this.waitingIds.remove((Object) pdata.getId());
@@ -79,10 +92,10 @@ public class LoadingCore implements PDataProcessor {
 			@Override
 			public void run() {
 				PDataFactory factory = new PDataFactory();
-				// PlayerData myPlayer = LoadingCore.this.players.get(0);
+				PlayerData myPlayer = LoadingCore.this.players.get(LoadingCore.this.myId);
 				while (Thread.currentThread().isInterrupted() == false) {
-					PData data = factory.createPlayerState(LoadingCore.this.myId, "username", new Point(), new Point(),
-							Color.black);
+					PData data = factory.createPlayerState(LoadingCore.this.myId, myPlayer.getUsername(),
+							myPlayer.getPos(), myPlayer.getColor());
 
 					LoadingCore.this.multiplayer.send(data);
 

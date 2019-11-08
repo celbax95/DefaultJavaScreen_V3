@@ -18,9 +18,9 @@ public class PDataFactory {
 		return new PData(this.getPDataId(), PData.OP.MOVE, playerId, false, new Object[] { pos.ix(), pos.iy() });
 	}
 
-	public PData createPlayerState(int playerId, String username, Point pos, Point size, Color color) {
+	public PData createPlayerState(int playerId, String username, Point pos, Color color) {
 		return new PData(this.getPDataId(), PData.OP.PLAYER_STATE, playerId, false,
-				new Object[] { username, pos, size, color });
+				new Object[] { username, pos, color });
 	}
 
 	private int getPDataId() {

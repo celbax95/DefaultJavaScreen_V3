@@ -8,7 +8,7 @@ public class PlayerData {
 
 	private int id;
 
-	private Point pos, size;
+	private Point pos;
 
 	private String username;
 
@@ -20,12 +20,11 @@ public class PlayerData {
 	 * @param color
 	 * @param ready
 	 */
-	public PlayerData(int id, String username, Point pos, Point size, Color color) {
+	public PlayerData(int id, String username, Point pos, Color color) {
 		super();
 		this.id = id;
 		this.username = username;
 		this.pos = new Point(pos);
-		this.size = new Point(size);
 		this.color = color;
 	}
 
@@ -45,13 +44,6 @@ public class PlayerData {
 	 */
 	public Point getPos() {
 		return this.pos;
-	}
-
-	/**
-	 * @return the size
-	 */
-	public Point getSize() {
-		return this.size;
 	}
 
 	public String getUsername() {
@@ -74,13 +66,6 @@ public class PlayerData {
 	 */
 	public void setPos(Point pos) {
 		this.pos = pos;
-	}
-
-	/**
-	 * @param size the size to set
-	 */
-	public void setSize(Point size) {
-		this.size = size;
 	}
 
 	public void setUsername(String username) {
