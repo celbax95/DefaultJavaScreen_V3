@@ -72,7 +72,7 @@ public class MenuGameSettings implements MenuPage {
 
 	@Override
 	public void load() {
-		new Thread(new Runnable() {
+		Thread thread = new Thread(new Runnable() {
 			@Override
 			public void run() {
 				MenuGameSettings.this.widgets = new Vector<>();
@@ -94,7 +94,9 @@ public class MenuGameSettings implements MenuPage {
 
 				MenuGameSettings.this.loaded = true;
 			}
-		}).start();
+		});
+		thread.setName("MenuGameSettings/load");
+		thread.start();
 	}
 
 	private void loadResources() {

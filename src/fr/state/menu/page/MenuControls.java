@@ -173,7 +173,7 @@ public class MenuControls implements MenuPage {
 
 	@Override
 	public void load() {
-		new Thread(new Runnable() {
+		Thread thread = new Thread(new Runnable() {
 			@Override
 			public void run() {
 				MenuControls.this.widgets = new Vector<>();
@@ -206,7 +206,9 @@ public class MenuControls implements MenuPage {
 
 				MenuControls.this.loaded = true;
 			}
-		}).start();
+		});
+		thread.setName("MenuControls/load");
+		thread.start();
 	}
 
 	private void loadResources() {

@@ -129,14 +129,16 @@ public class StatePanel extends JPanel {
 
 		IAppState oldState = this.state;
 
-		new Thread(new Runnable() {
+		Thread thread = new Thread(new Runnable() {
 			@Override
 			public void run() {
 				if (oldState != null) {
 					oldState.stop();
 				}
 			}
-		}).start();
+		});
+		thread.setName("StatePanel/oldStateStop");
+		thread.start();
 
 		this.state = state;
 		this.state.start(this);

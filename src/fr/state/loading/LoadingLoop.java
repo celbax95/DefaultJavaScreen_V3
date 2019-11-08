@@ -8,6 +8,7 @@ public class LoadingLoop implements Runnable {
 
 	public LoadingLoop(LoadingState state) {
 		this.loop = new Thread(this);
+		this.loop.setName("LoadingLoop/loop");
 		this.state = state;
 	}
 

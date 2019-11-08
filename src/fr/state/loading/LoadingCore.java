@@ -106,6 +106,7 @@ public class LoadingCore implements PDataProcessor {
 				}
 			}
 		});
+		this.sender.setName("LoadingCore/sender");
 	}
 
 	public void start() {

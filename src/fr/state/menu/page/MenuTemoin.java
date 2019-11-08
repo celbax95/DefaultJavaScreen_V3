@@ -52,7 +52,7 @@ public class MenuTemoin implements MenuPage {
 
 	@Override
 	public void load() {
-		new Thread(new Runnable() {
+		Thread thread = new Thread(new Runnable() {
 			@Override
 			public void run() {
 				MenuTemoin.this.widgets = new Vector<>();
@@ -69,7 +69,9 @@ public class MenuTemoin implements MenuPage {
 
 				MenuTemoin.this.loaded = true;
 			}
-		}).start();
+		});
+		thread.setName("MenuTemoin/load");
+		thread.start();
 	}
 
 	@Override

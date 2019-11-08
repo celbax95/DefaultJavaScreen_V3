@@ -86,6 +86,7 @@ public class Searcher {
 				}
 			}
 		});
+		this.receiver.setName("Searcher/receiver");
 	}
 
 	private void setSender() {
@@ -108,6 +109,7 @@ public class Searcher {
 				}
 			}
 		});
+		this.receiver.setName("Searcher/sender");
 	}
 
 	public void start() {

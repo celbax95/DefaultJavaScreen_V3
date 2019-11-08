@@ -41,7 +41,7 @@ public class Confirmer {
 	}
 
 	public void start() {
-		new Thread(new Runnable() {
+		Thread thread = new Thread(new Runnable() {
 			@Override
 			public void run() {
 				while (!Thread.currentThread().isInterrupted()) {
@@ -74,6 +74,8 @@ public class Confirmer {
 					}
 				}
 			}
-		}).start();
+		});
+		thread.setName("Confirmer");
+		thread.start();
 	}
 }

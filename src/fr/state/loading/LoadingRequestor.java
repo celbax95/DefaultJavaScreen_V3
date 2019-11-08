@@ -72,6 +72,7 @@ public class LoadingRequestor {
 				}
 			}
 		});
+		this.sender.setName("LoadingRequestor/sender");
 	}
 
 	public void start() {

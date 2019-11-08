@@ -124,6 +124,7 @@ public class Linker {
 				Linker.this.reqListener.close();
 			}
 		});
+		this.listener.setName("Linker/listener");
 	}
 
 	public void start() {

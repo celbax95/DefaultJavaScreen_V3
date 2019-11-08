@@ -82,7 +82,7 @@ public class MenuSettings implements MenuPage {
 
 	@Override
 	public void load() {
-		new Thread(new Runnable() {
+		Thread thread = new Thread(new Runnable() {
 			@Override
 			public void run() {
 				MenuSettings.this.widgets = new Vector<>();
@@ -98,7 +98,9 @@ public class MenuSettings implements MenuPage {
 
 				MenuSettings.this.loaded = true;
 			}
-		}).start();
+		});
+		thread.setName("MenuSettings/load");
+		thread.start();
 	}
 
 	private void loadResources() {

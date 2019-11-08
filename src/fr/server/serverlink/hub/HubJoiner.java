@@ -177,6 +177,7 @@ public abstract class HubJoiner implements IdSetter {
 				}
 			}
 		});
+		this.addRequestor.setName("HubJoiner/addRequestor");
 	}
 
 	private void setDataReceiver() {
@@ -200,6 +201,7 @@ public abstract class HubJoiner implements IdSetter {
 				}
 			}
 		});
+		this.dataReceiver.setName("HubJoiner/dataReceiver");
 	}
 
 	@Override
@@ -245,6 +247,7 @@ public abstract class HubJoiner implements IdSetter {
 				}
 			}
 		});
+		this.pinger.setName("HubJoiner/pinger");
 	}
 
 	public void setReady(boolean ready) {
@@ -287,6 +290,7 @@ public abstract class HubJoiner implements IdSetter {
 				}
 			}
 		});
+		this.updateTester.setName("HubJoiner/updateTester");
 	}
 
 	public void start() {
@@ -304,6 +308,7 @@ public abstract class HubJoiner implements IdSetter {
 	}
 
 	public void stop() {
+
 		if (this.dataReceiver != null) {
 			this.dataReceiver.interrupt();
 		}

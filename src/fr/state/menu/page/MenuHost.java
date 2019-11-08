@@ -132,7 +132,7 @@ public class MenuHost implements MenuPage {
 
 	@Override
 	public void load() {
-		new Thread(new Runnable() {
+		Thread thread = new Thread(new Runnable() {
 			@Override
 			public void run() {
 				MenuHost.this.widgets = new Vector<>();
@@ -170,7 +170,9 @@ public class MenuHost implements MenuPage {
 
 				MenuHost.this.loaded = true;
 			}
-		}).start();
+		});
+		thread.setName("MenuHost/load");
+		thread.start();
 	}
 
 	private void loadResources() {

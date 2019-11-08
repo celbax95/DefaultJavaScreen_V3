@@ -112,7 +112,7 @@ public class MenuGraphics implements MenuPage {
 
 	@Override
 	public void load() {
-		new Thread(new Runnable() {
+		Thread thread = new Thread(new Runnable() {
 			@Override
 			public void run() {
 				MenuGraphics.this.loadResources();
@@ -159,7 +159,9 @@ public class MenuGraphics implements MenuPage {
 
 				MenuGraphics.this.loaded = true;
 			}
-		}).start();
+		});
+		thread.setName("MenuGraphics/load");
+		thread.start();
 	}
 
 	private void loadResources() {

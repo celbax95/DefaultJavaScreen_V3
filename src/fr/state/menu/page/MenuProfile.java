@@ -93,7 +93,7 @@ public class MenuProfile implements MenuPage {
 
 	@Override
 	public void load() {
-		new Thread(new Runnable() {
+		Thread thread = new Thread(new Runnable() {
 			@Override
 			public void run() {
 
@@ -125,7 +125,9 @@ public class MenuProfile implements MenuPage {
 
 				MenuProfile.this.loaded = true;
 			}
-		}).start();
+		});
+		thread.setName("MenuProfile/load");
+		thread.start();
 	}
 
 	private void loadResources() {

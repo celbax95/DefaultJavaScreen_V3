@@ -100,7 +100,7 @@ public class MenuServerSettings implements MenuPage {
 
 	@Override
 	public void load() {
-		new Thread(new Runnable() {
+		Thread thread = new Thread(new Runnable() {
 			@Override
 			public void run() {
 				MenuServerSettings.this.returnPage = MenuServerSettings.this.returnPage;
@@ -126,7 +126,9 @@ public class MenuServerSettings implements MenuPage {
 
 				MenuServerSettings.this.loaded = true;
 			}
-		}).start();
+		});
+		thread.setName("MenuServerSettings/load");
+		thread.start();
 	}
 
 	private void loadResources() {

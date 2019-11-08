@@ -8,6 +8,7 @@ public class MenuLoop implements Runnable {
 
 	public MenuLoop(MenuState state) {
 		this.loop = new Thread(this);
+		this.loop.setName("MenuLoop/loop");
 		this.state = state;
 	}
 

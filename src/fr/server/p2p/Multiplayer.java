@@ -140,6 +140,7 @@ public class Multiplayer {
 				}
 			}
 		});
+		this.receiver.setName("Multiplayer/receiver");
 	}
 
 	public void start() {

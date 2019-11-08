@@ -116,7 +116,7 @@ public class MenuJoin implements MenuPage {
 
 	@Override
 	public void load() {
-		new Thread(new Runnable() {
+		Thread thread = new Thread(new Runnable() {
 			@Override
 			public void run() {
 				MenuJoin.this.widgets = new Vector<>();
@@ -151,7 +151,9 @@ public class MenuJoin implements MenuPage {
 
 				MenuJoin.this.loaded = true;
 			}
-		}).start();
+		});
+		thread.setName("MenuJoin/load");
+		thread.start();
 	}
 
 	private void loadingState() {

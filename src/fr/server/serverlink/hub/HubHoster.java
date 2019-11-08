@@ -192,6 +192,7 @@ public abstract class HubHoster {
 				}
 			}
 		});
+		this.dataReceiver.setName("hubHoster/dataReceiver");
 	}
 
 	private void setDataUpdater() {
@@ -221,6 +222,7 @@ public abstract class HubHoster {
 				}
 			}
 		});
+		this.dataUpdater.setName("HubHoster/dataUpdater");
 	}
 
 	private void setPingTester() {
@@ -264,6 +266,7 @@ public abstract class HubHoster {
 				}
 			}
 		});
+		this.pingTester.setName("HubHoster/pingTester");
 	}
 
 	public void start() {
