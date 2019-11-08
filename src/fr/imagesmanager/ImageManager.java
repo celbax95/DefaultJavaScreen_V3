@@ -18,6 +18,21 @@ public class ImageManager {
 	 */
 	private static volatile ImageManager instance;
 
+	/**
+	 * Return a singleton instance of ImageManager.
+	 */
+	public static ImageManager getInstance() {
+		// Double lock for thread safety.
+		if (instance == null) {
+			synchronized (ImageManager.class) {
+				if (instance == null) {
+					instance = new ImageManager();
+				}
+			}
+		}
+		return instance;
+	}
+
 	private Map<String, Image> images;
 
 	/**
@@ -82,17 +97,11 @@ public class ImageManager {
 	}
 
 	/**
-	 * Return a singleton instance of ImageManager.
+	 * Supprime toutes les images dont le nom contient node
+	 *
+	 * @param node : par exemple "stateName/other" supprimera stateName/other/\*
 	 */
-	public static ImageManager getInstance() {
-		// Double lock for thread safety.
-		if (instance == null) {
-			synchronized (ImageManager.class) {
-				if (instance == null) {
-					instance = new ImageManager();
-				}
-			}
-		}
-		return instance;
+	public void removeStartWith(String node) {
+		this.images.keySet().removeIf((k) -> k.indexOf(node) == 0);
 	}
 }

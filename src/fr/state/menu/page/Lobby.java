@@ -21,8 +21,8 @@ import fr.util.point.Point;
 
 public class Lobby {
 
-	private static final String NAME2 = "lobby";
-	private static final String RES_FOLDER2 = "/resources/menu/lobby/";
+	private static final String PAGE_NAME = "menu/lobby";
+	private static final String RES_FOLDER = "/resources/menu/lobby/";
 	private static final String RES_EXTENSION = ".png";
 
 	private static final Point USERNAME_SIZE = new Point(254, 37);
@@ -48,12 +48,16 @@ public class Lobby {
 
 	static {
 		for (int i = 0; i < RES_NAMES2.length; i++) {
-			RES_NAMES2[i] = NAME2 + "/" + RES_NAMES2[i];
+			RES_NAMES2[i] = PAGE_NAME + "/" + RES_NAMES2[i];
 		}
 
 		for (int i = 0; i < RES_PATHS2.length; i++) {
-			RES_PATHS2[i] = RES_FOLDER2 + RES_PATHS2[i] + RES_EXTENSION;
+			RES_PATHS2[i] = RES_FOLDER + RES_PATHS2[i] + RES_EXTENSION;
 		}
+	}
+
+	public static String getPageName() {
+		return PAGE_NAME;
 	}
 
 	private int maxPlayer;
@@ -249,7 +253,7 @@ public class Lobby {
 			this.ready[playerPad].setVisible(true);
 			DEImage i = (DEImage) this.ready[playerPad].getDrawElement().clone();
 
-			i.setImage(ready ? im.get("lobby/readyCell") : im.get("lobby/notReadyCell"));
+			i.setImage(ready ? im.get(PAGE_NAME + "/readyCell") : im.get(PAGE_NAME + "/notReadyCell"));
 
 			this.ready[playerPad].setDrawElement(i);
 
@@ -313,7 +317,7 @@ public class Lobby {
 
 		DEImage i = new DEImage();
 
-		i.setImage(im.get("lobby/playerPadEmpty"));
+		i.setImage(im.get(PAGE_NAME + "/playerPadEmpty"));
 
 		w.setDrawElement(i);
 		w.setPos(pos.clone());
@@ -331,7 +335,7 @@ public class Lobby {
 
 		DEImage i = new DEImage();
 
-		i.setImage(im.get("lobby/notReadyCell"));
+		i.setImage(im.get(PAGE_NAME + "/notReadyCell"));
 
 		w.setDrawElement(i);
 		w.setPos(pos.clone());

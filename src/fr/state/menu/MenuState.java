@@ -49,8 +49,6 @@ public class MenuState implements IAppState {
 	public void start(StatePanel panel) {
 		this.sp = panel;
 
-		ImageManager.getInstance().removeAll();
-
 		this.m = new Menu(this);
 		this.m.applyDefautPage();
 
@@ -78,6 +76,8 @@ public class MenuState implements IAppState {
 		this.sp = null;
 		this.input = null;
 		this.loop = null;
+
+		ImageManager.getInstance().removeStartWith("menu");
 	}
 
 	@Override

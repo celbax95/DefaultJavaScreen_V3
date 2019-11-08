@@ -79,10 +79,10 @@ public class LoadingCore implements PDataProcessor {
 			@Override
 			public void run() {
 				PDataFactory factory = new PDataFactory();
-				PlayerData myPlayer = LoadingCore.this.players.get(0);
+				// PlayerData myPlayer = LoadingCore.this.players.get(0);
 				while (Thread.currentThread().isInterrupted() == false) {
-					PData data = factory.createPlayerState(LoadingCore.this.myId, myPlayer.getUsername(),
-							myPlayer.getPos(), myPlayer.getSize(), Color.black);
+					PData data = factory.createPlayerState(LoadingCore.this.myId, "username", new Point(), new Point(),
+							Color.black);
 
 					LoadingCore.this.multiplayer.send(data);
 

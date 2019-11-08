@@ -57,7 +57,7 @@ public class MenuGraphics implements MenuPage {
 	private static final String RES_FOLDER = "/resources/menu/menuGraphics/";
 	private static final String RES_EXTENSION = ".png";
 
-	private static final String PAGE_NAME = "menuGraphics";
+	private static final String PAGE_NAME = "menu/graphics";
 
 	private static final Point res853 = new Point(853, 480);
 	private static final Point res1280 = new Point(1280, 720);
@@ -206,9 +206,9 @@ public class MenuGraphics implements MenuPage {
 		ImageManager im = ImageManager.getInstance();
 
 		DEImage std = new DEImage();
-		std.setImage(im.get("menuGraphics/1280Std"));
+		std.setImage(im.get(PAGE_NAME + "/1280Std"));
 		DEImage sel = new DEImage();
-		sel.setImage(im.get("menuGraphics/1280Sel"));
+		sel.setImage(im.get(PAGE_NAME + "/1280Sel"));
 
 		b.setStdDrawElement(std);
 		b.setPressedDrawElement(sel);
@@ -268,9 +268,9 @@ public class MenuGraphics implements MenuPage {
 		ImageManager im = ImageManager.getInstance();
 
 		DEImage std = new DEImage();
-		std.setImage(im.get("menuGraphics/1920Std"));
+		std.setImage(im.get(PAGE_NAME + "/1920Std"));
 		DEImage sel = new DEImage();
-		sel.setImage(im.get("menuGraphics/1920Sel"));
+		sel.setImage(im.get(PAGE_NAME + "/1920Sel"));
 
 		b.setStdDrawElement(std);
 		b.setPressedDrawElement(sel);

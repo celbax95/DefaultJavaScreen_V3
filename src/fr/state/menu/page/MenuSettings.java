@@ -46,7 +46,7 @@ public class MenuSettings implements MenuPage {
 	private static final String RES_FOLDER = "/resources/menu/menuSettings/";
 	private static final String RES_EXTENSION = ".png";
 
-	private static final String PAGE_NAME = "menuSettings";
+	private static final String PAGE_NAME = "menu/settings";
 
 	static {
 		for (int i = 0; i < RES_NAMES.length; i++) {

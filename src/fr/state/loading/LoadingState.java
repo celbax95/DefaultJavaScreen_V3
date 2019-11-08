@@ -7,7 +7,6 @@ import java.util.Map;
 
 import fr.datafilesmanager.DatafilesManager;
 import fr.datafilesmanager.XMLManager;
-import fr.imagesmanager.ImageManager;
 import fr.inputs.Input;
 import fr.logger.Logger;
 import fr.server.GlobalServerData;
@@ -91,8 +90,6 @@ public class LoadingState implements IAppState {
 		LoadingCore lc = new LoadingCore(m, myId, ids, lr);
 
 		this.sp = panel;
-
-		ImageManager.getInstance().removeAll();
 
 		this.sp.setBackground(/* this.BACKGROUND */Color.pink);
 

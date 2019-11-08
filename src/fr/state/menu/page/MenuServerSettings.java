@@ -44,7 +44,7 @@ public class MenuServerSettings implements MenuPage {
 	private static final String RES_FOLDER = "/resources/menu/menuServerSettings/";
 	private static final String RES_EXTENSION = ".png";
 
-	private static final String PAGE_NAME = "menuSeverSettings";
+	private static final String PAGE_NAME = "menu/severSettings";
 
 	private static final int NB_EXCLUSIVE_BTN = GlobalServerData.getIPAmount();
 

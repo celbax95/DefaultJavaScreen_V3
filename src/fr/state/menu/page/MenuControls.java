@@ -46,7 +46,7 @@ public class MenuControls implements MenuPage {
 	private static final String RES_FOLDER = "/resources/menu/menuControls/";
 	private static final String RES_EXTENSION = ".png";
 
-	private static final String PAGE_NAME = "menuControls";
+	private static final String PAGE_NAME = "menu/controls";
 
 	private static final String PARAM_NAME_LEFT = "leftMovement";
 	private static final String PARAM_NAME_RIGHT = "rightMovement";

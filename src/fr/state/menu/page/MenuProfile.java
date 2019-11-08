@@ -47,7 +47,7 @@ public class MenuProfile implements MenuPage {
 	private static final String RES_FOLDER = "/resources/menu/menuProfile/";
 	private static final String RES_EXTENSION = ".png";
 
-	private static final String PAGE_NAME = "menuProfile";
+	private static final String PAGE_NAME = "menu/profile";
 
 	private static final String PARAM_NAME_USERNAME = "username";
 	private static final String PARAM_NAME_COLOR = "color";

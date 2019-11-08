@@ -30,7 +30,7 @@ public class MenuGameSettings implements MenuPage {
 
 	private static final String RES_EXTENSION = ".png";
 
-	private static final String PAGE_NAME = "menuGameSettings";
+	private static final String PAGE_NAME = "menu/gameSettings";
 	private static final String PARAM_NAME_ITEM = "itemFreq";
 
 	static {

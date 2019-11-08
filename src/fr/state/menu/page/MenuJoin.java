@@ -167,12 +167,7 @@ public class MenuJoin implements MenuPage {
 		IAppState nextState = sp.getAppStateManager().getState("loading");
 		nextState.setInitData(initData);
 
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				MenuJoin.this.stop();
-			}
-		}).start();
+		MenuJoin.this.stop();
 
 		sp.setState(nextState);
 	}
@@ -362,11 +357,11 @@ public class MenuJoin implements MenuPage {
 		ImageManager im = ImageManager.getInstance();
 
 		DEImage i = new DEImage();
-		i.setImage(im.get("lobby/refreshStd"));
+		i.setImage(im.get(Lobby.getPageName() + "/refreshStd"));
 
 		w.setStdDrawElement(i.clone());
 
-		i.setImage(im.get("lobby/refreshPressed"));
+		i.setImage(im.get(Lobby.getPageName() + "/refreshPressed"));
 		w.setPressedDrawElement(i);
 
 		w.setPos(new Point(168, 958));
@@ -387,11 +382,11 @@ public class MenuJoin implements MenuPage {
 		ImageManager im = ImageManager.getInstance();
 
 		DEImage i = new DEImage();
-		i.setImage(im.get("lobby/serverSettingsStd"));
+		i.setImage(im.get(Lobby.getPageName() + "/serverSettingsStd"));
 
 		w.setStdDrawElement(i.clone());
 
-		i.setImage(im.get("lobby/serverSettingsPressed"));
+		i.setImage(im.get(Lobby.getPageName() + "/serverSettingsPressed"));
 		w.setPressedDrawElement(i);
 
 		w.setPos(new Point(42, 938));

@@ -44,7 +44,7 @@ public class MenuMain implements MenuPage {
 	private static final String RES_FOLDER = "/resources/menu/menuMain/";
 	private static final String RES_EXTENSION = ".png";
 
-	private static final String PAGE_NAME = "menuMain";
+	private static final String PAGE_NAME = "menu/main";
 
 	static {
 		for (int i = 0; i < RES_NAMES.length; i++) {
