@@ -170,10 +170,10 @@ public class MenuJoin implements MenuPage {
 		nextState.setInitData(initData);
 
 		MenuJoin.this.stop();
+		sp.setState(nextState);
+
 		this.hub.closeSockets();
 		this.searcher.closeSockets();
-
-		sp.setState(nextState);
 	}
 
 	private void loadResources() {
