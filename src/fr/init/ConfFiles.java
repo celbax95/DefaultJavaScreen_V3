@@ -2,7 +2,12 @@ package fr.init;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.LinkOption;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -10,7 +15,8 @@ import fr.datafilesmanager.DatafilesManager;
 
 public class ConfFiles {// String name, String path
 
-	private static final String DIR_NAME = "conf/";
+	private static final String DIR_NAME = ".conf/";
+	private static final String RES_DIR_NAME = "conf/";
 
 	private static final Map<String, String> FILES = new HashMap<String, String>() {
 		private static final long serialVersionUID = 1L;
@@ -30,19 +36,30 @@ public class ConfFiles {// String name, String path
 	}
 
 	private static void createConfIfNotSet() {
-		if (!dirExists(DIR_NAME)) {
-			new File(DIR_NAME).mkdir();
+		File dir = new File(DIR_NAME);
+		if (!dirExists(dir)) {
+			dir.mkdir();
+		}
+
+		if (!dir.isHidden()) {
+			Path p = Paths.get(dir.getPath());
+			try {
+				Files.setAttribute(p, "dos:hidden", true, LinkOption.NOFOLLOW_LINKS);
+			} catch (IOException e) {
+				// e.printStackTrace();
+			}
 		}
 
 		for (String name : FILES.keySet()) {
 			try {
 				String path = DIR_NAME + FILES.get(name);
+				String resPath = RES_DIR_NAME + FILES.get(name);
 
 				File f = new File(path);
 
 				if (f == null || !f.exists()) {
 
-					InputStream is = ConfFiles.class.getResourceAsStream("/" + path);
+					InputStream is = ConfFiles.class.getResourceAsStream("/" + resPath);
 
 					int read;
 					byte[] buffer = new byte[1024];
@@ -60,10 +77,8 @@ public class ConfFiles {// String name, String path
 		}
 	}
 
-	public static boolean dirExists(String name) {
-		File f = new File(DIR_NAME);
-
-		return f != null && f.exists() && f.isDirectory();
+	public static boolean dirExists(File dir) {
+		return dir != null && dir.exists() && dir.isDirectory();
 	}
 
 	public static void initConfFiles(DatafilesManager dfm) {
