@@ -85,6 +85,9 @@ public class ConfInitializer {
 			Font customFont = Font.createFont(Font.TRUETYPE_FONT,
 					this.getClass().getResourceAsStream("/resources/font/ITCKRIST.ttf"));
 			GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(customFont);
+			customFont = Font.createFont(Font.TRUETYPE_FONT,
+					this.getClass().getResourceAsStream("/resources/font/Copperplate Gothic.ttf"));
+			GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(customFont);
 		} catch (IOException | FontFormatException e) {
 			e.printStackTrace();
 		}

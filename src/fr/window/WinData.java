@@ -8,25 +8,32 @@ import fr.util.point.Point;
 
 public class WinData {
 
-	private static final Object[] antialiasingValues = { RenderingHints.VALUE_ANTIALIAS_OFF,
-			RenderingHints.VALUE_INTERPOLATION_BICUBIC, RenderingHints.VALUE_INTERPOLATION_BILINEAR,
+	private static final Object[] antialiasingValues = {
+			RenderingHints.VALUE_ANTIALIAS_OFF,
+			RenderingHints.VALUE_INTERPOLATION_BICUBIC,
+			RenderingHints.VALUE_INTERPOLATION_BILINEAR,
 			RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR };
 
-	private static final Object[] renderingValues = { RenderingHints.VALUE_RENDER_DEFAULT,
-			RenderingHints.VALUE_RENDER_SPEED, RenderingHints.VALUE_RENDER_QUALITY };
+	private static final Object[] renderingValues = {
+			RenderingHints.VALUE_RENDER_DEFAULT,
+			RenderingHints.VALUE_RENDER_SPEED,
+			RenderingHints.VALUE_RENDER_QUALITY };
 
-	private static final Object[] colorRenderingValues = { RenderingHints.VALUE_COLOR_RENDER_DEFAULT,
-			RenderingHints.VALUE_COLOR_RENDER_SPEED, RenderingHints.VALUE_COLOR_RENDER_QUALITY };
+	private static final Object[] colorRenderingValues = {
+			RenderingHints.VALUE_COLOR_RENDER_DEFAULT,
+			RenderingHints.VALUE_COLOR_RENDER_SPEED,
+			RenderingHints.VALUE_COLOR_RENDER_QUALITY };
 
 	private static final Object[] alphaInterpolationValues = {
-			RenderingHints.VALUE_ALPHA_INTERPOLATION_DEFAULT, RenderingHints.VALUE_ALPHA_INTERPOLATION_SPEED,
+			RenderingHints.VALUE_ALPHA_INTERPOLATION_DEFAULT,
+			RenderingHints.VALUE_ALPHA_INTERPOLATION_SPEED,
 			RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY };
 
-	private static final Point defaultWindowSize = new Point(1920, 1080);
+	private static final Point DEFAULT_WINDOW_SIZE = new Point(1920, 1080);
 
 	private Point windowRatio;
-	private Point invWindowRatio;
 
+	private Point invWindowRatio;
 	private Point windowSize;
 
 	private Point tmpWindowSize;
@@ -34,13 +41,13 @@ public class WinData {
 	private Point halfWindowSize;
 
 	private Point screenSize;
-	private Point fullscreenPadding;
 
+	private Point fullscreenPadding;
 	private int margin, marginLeft, marginRight, marginTop, marginBottom;
 
 	private boolean fullscreen;
-	private boolean borderless;
 
+	private boolean borderless;
 	private int antialiasing;
 
 	private int rendering;
@@ -60,11 +67,11 @@ public class WinData {
 
 		Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
 		Point t = new Point(d.width, d.height);
-		if (Math.abs(t.x / t.y - defaultWindowSize.x / defaultWindowSize.y) > 0.1) {
-			if (defaultWindowSize.x / t.x < defaultWindowSize.y / t.y) {
-				t.x = t.y * defaultWindowSize.x / defaultWindowSize.y;
+		if (Math.abs(t.x / t.y - DEFAULT_WINDOW_SIZE.x / DEFAULT_WINDOW_SIZE.y) > 0.1) {
+			if (DEFAULT_WINDOW_SIZE.x / t.x < DEFAULT_WINDOW_SIZE.y / t.y) {
+				t.x = t.y * DEFAULT_WINDOW_SIZE.x / DEFAULT_WINDOW_SIZE.y;
 			} else {
-				t.y = t.x * defaultWindowSize.y / defaultWindowSize.x;
+				t.y = t.x * DEFAULT_WINDOW_SIZE.y / DEFAULT_WINDOW_SIZE.x;
 			}
 		}
 		this.fullscreenPadding = new Point(d.width - t.ix(), d.getHeight() - t.iy()).div(2);
@@ -96,6 +103,10 @@ public class WinData {
 
 	public Object getColorRendering() {
 		return colorRenderingValues[this.colorRendering];
+	}
+
+	public Point getDefaultWindowSize() {
+		return DEFAULT_WINDOW_SIZE;
 	}
 
 	/**
@@ -221,14 +232,14 @@ public class WinData {
 		if (fullScreen != this.fullscreen) {
 			this.fullscreen = fullScreen;
 			if (fullScreen) {
-				this.windowRatio = this.screenSize.clone().div(defaultWindowSize);
+				this.windowRatio = this.screenSize.clone().div(DEFAULT_WINDOW_SIZE);
 				this.setInvWindowRatio();
 				this.tmpWindowSize.set(this.windowSize);
 				this.windowSize.set(this.screenSize);
 				this.halfWindowSize.set(this.windowSize.clone().div(2));
 			} else {
 				this.windowSize.set(this.tmpWindowSize);
-				this.windowRatio = this.windowSize.clone().div(defaultWindowSize);
+				this.windowRatio = this.windowSize.clone().div(DEFAULT_WINDOW_SIZE);
 				this.setInvWindowRatio();
 			}
 		}
@@ -290,7 +301,7 @@ public class WinData {
 		this.tmpWindowSize.set(windowSize);
 		if (!this.fullscreen) {
 			this.windowSize.set(this.tmpWindowSize);
-			this.windowRatio.set(this.windowSize.clone().div(defaultWindowSize));
+			this.windowRatio.set(this.windowSize.clone().div(DEFAULT_WINDOW_SIZE));
 			this.setInvWindowRatio();
 			this.halfWindowSize.set(this.windowSize.clone().div(2));
 		}

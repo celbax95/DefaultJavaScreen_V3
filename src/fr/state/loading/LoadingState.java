@@ -28,12 +28,19 @@ public class LoadingState implements IAppState {
 
 	private final Color BACKGROUND = new Color(this.GRAY, this.GRAY, this.GRAY);
 
+	private LoadingTemplate template;
+
+	private LoadingCore loadingCore;
+
 	public LoadingState() {
 		this.initData = null;
 	}
 
 	@Override
 	public void draw(Graphics2D g) {
+		if (this.template != null) {
+			this.template.draw(g);
+		}
 	}
 
 	public void getInput() {
@@ -87,7 +94,9 @@ public class LoadingState implements IAppState {
 
 		Multiplayer m = new Multiplayer(groupIP, GlobalServerData.getP2PPort(serverID), ids);
 
-		LoadingCore lc = new LoadingCore(m, myId, ids, lr);
+		this.loadingCore = new LoadingCore(m, myId, ids, lr);
+
+		this.template = new LoadingTemplate(panel.getWinData());
 
 		this.sp = panel;
 
@@ -98,7 +107,7 @@ public class LoadingState implements IAppState {
 		this.loop = new LoadingLoop(this);
 		this.loop.start();
 
-		lc.start();
+		this.loadingCore.start();
 	}
 
 	@Override
