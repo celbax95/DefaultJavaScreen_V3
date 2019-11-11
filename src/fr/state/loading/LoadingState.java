@@ -94,13 +94,13 @@ public class LoadingState implements IAppState {
 
 		Multiplayer m = new Multiplayer(groupIP, GlobalServerData.getP2PPort(serverID), ids);
 
-		this.loadingCore = new LoadingCore(m, myId, ids, lr);
+		this.template = new LoadingTemplate(panel.getWinData(), 1);
 
-		this.template = new LoadingTemplate(panel.getWinData());
+		this.loadingCore = new LoadingCore(m, myId, ids, lr, this.template);
 
 		this.sp = panel;
 
-		this.sp.setBackground(/* this.BACKGROUND */Color.pink);
+		this.sp.setBackground(this.BACKGROUND);
 
 		this.input = new Input(this.sp.getWinData());
 

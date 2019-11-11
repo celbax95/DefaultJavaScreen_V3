@@ -29,7 +29,10 @@ public class LoadingCore implements PDataProcessor {
 
 	Thread sender;
 
-	public LoadingCore(Multiplayer multiplayer, int myId, List<Integer> ids, LoadingRequestor requestor) {
+	LoadingTemplate template;
+
+	public LoadingCore(Multiplayer multiplayer, int myId, List<Integer> ids, LoadingRequestor requestor,
+			LoadingTemplate template) {
 		this.ids = ids;
 		this.requestor = requestor;
 
@@ -60,6 +63,9 @@ public class LoadingCore implements PDataProcessor {
 
 		this.multiplayer = multiplayer;
 		this.multiplayer.setPDataProcessor(this);
+
+		this.template = template;
+		this.template.setMaxSteps(ids.size());
 	}
 
 	@Override
@@ -72,11 +78,15 @@ public class LoadingCore implements PDataProcessor {
 
 				int i = 0;
 
-				this.players.put(pdata.getId(),
-						new PlayerData(pdata.getId(), (String) data[i++], (Point) data[i++], (Color) data[i++]));
+				if (!this.players.containsKey(pdata.getId())) {
+					this.players.put(pdata.getId(),
+							new PlayerData(pdata.getId(), (String) data[i++], (Point) data[i++], (Color) data[i++]));
+					this.template.addSteps(1);
+				}
 
 				if (this.waitingIds != null) {
 					this.waitingIds.remove((Object) pdata.getId());
+
 					if (this.waitingIds.isEmpty()) {
 						this.requestor.stop();
 						this.waitingIds = null;
