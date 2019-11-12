@@ -1,7 +1,8 @@
-package fr.state.loading;
+package fr.state.game;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -14,32 +15,34 @@ import fr.server.p2p.Multiplayer;
 import fr.statepanel.IAppState;
 import fr.statepanel.StatePanel;
 
-public class LoadingState implements IAppState {
+public class GameState implements IAppState {
+
+	private Game game;
 
 	private StatePanel sp;
 
 	private Input input;
 
-	private LoadingLoop loop;
+	private GameLoop loop;
 
 	private final int GRAY = 40;
 
-	private Map<String, Object> initData;
-
 	private final Color BACKGROUND = new Color(this.GRAY, this.GRAY, this.GRAY);
 
-	private LoadingTemplate template;
+	private double repaintDt;
 
-	private LoadingCore loadingCore;
+	private Map<String, Object> initData;
 
-	public LoadingState() {
+	private Multiplayer multiplayer;
+
+	public GameState() {
 		this.initData = null;
 	}
 
 	@Override
 	public void draw(Graphics2D g) {
-		if (this.template != null) {
-			this.template.draw(g);
+		if (this.game != null) {
+			this.game.draw(g, this.repaintDt);
 		}
 	}
 
@@ -49,11 +52,15 @@ public class LoadingState implements IAppState {
 
 	@Override
 	public String getName() {
-		return "loading";
+		return "game";
 	}
 
 	public StatePanel getStatePanel() {
 		return this.sp;
+	}
+
+	public void setDt(double dt) {
+		this.repaintDt = dt;
 	}
 
 	@Override
@@ -69,16 +76,9 @@ public class LoadingState implements IAppState {
 			System.exit(0);
 		}
 
-		@SuppressWarnings("unchecked")
-		List<Integer> ids = (List<Integer>) this.initData.get("ids");
-		@SuppressWarnings("unchecked")
-		List<Integer> ports = (List<Integer>) this.initData.get("ports");
-		int myId = (int) this.initData.get("myId");
-
 		DatafilesManager dfm = DatafilesManager.getInstance();
 
 		Object serverConf = dfm.getFile("serverConf");
-		// Object profileConf = dfm.getFile("profile");
 
 		XMLManager xml = dfm.getXmlManager();
 
@@ -86,27 +86,40 @@ public class LoadingState implements IAppState {
 
 		String groupIP = GlobalServerData.getGroup(serverID);
 
-		LoadingRequestor lr = null;
-		if (ports != null) {
-			lr = new LoadingRequestor(groupIP, ports);
-		}
+		int myId = (int) this.initData.get("myId");
 
-		Multiplayer m = new Multiplayer(groupIP, GlobalServerData.getP2PPort(serverID), ids);
+		@SuppressWarnings("unchecked")
+		Map<Integer, Map<String, Object>> playersData = (Map<Integer, Map<String, Object>>) this.initData
+				.get("playersData");
 
-		this.template = new LoadingTemplate(panel.getWinData(), 1);
-
-		this.loadingCore = new LoadingCore(this, m, myId, ids, lr, this.template);
+		int port = GlobalServerData.getP2PPort(serverID);
 
 		this.sp = panel;
+
+		List<Integer> ids = new ArrayList<>();
+
+		for (Integer id : playersData.keySet()) {
+			ids.add(id);
+		}
+
+		this.multiplayer = new Multiplayer(groupIP, port, ids);
+
+		this.game = new Game(this, this.multiplayer, myId, ids);
+		this.multiplayer.setPDataProcessor(this.game);
 
 		this.sp.setBackground(this.BACKGROUND);
 
 		this.input = new Input(this.sp.getWinData());
 
-		this.loop = new LoadingLoop(this);
+		this.sp.addKeyboardListener(this.input.getKeyboardEventListener());
+		this.sp.addKeyboardListener(this.input.getKeyboardMirrorListener());
+		this.sp.addMouseListener(this.input.getMouseEventListener());
+		this.sp.addMouseListener(this.input.getMouseMirrorListener());
+
+		this.loop = new GameLoop(this);
 		this.loop.start();
 
-		this.loadingCore.start();
+		this.multiplayer.start();
 	}
 
 	@Override
@@ -115,16 +128,23 @@ public class LoadingState implements IAppState {
 		this.sp.removeKeyboardListener(this.input.getKeyboardMirrorListener());
 		this.sp.removeMouseListener(this.input.getMouseEventListener());
 		this.sp.removeMouseListener(this.input.getMouseMirrorListener());
+		this.game = null;
 		this.sp = null;
 		this.input = null;
 		this.loop.stop();
 		this.loop = null;
-		this.loadingCore.stop();
-		this.loadingCore.closeSockets();
-		this.loadingCore = null;
+		this.multiplayer.stop();
+		this.multiplayer = null;
+
+		System.gc();
 	}
 
 	@Override
 	public void update() {
+	}
+
+	public void update(double dt) {
+		this.game.resetForces();
+		this.game.update(this.input, dt);
 	}
 }

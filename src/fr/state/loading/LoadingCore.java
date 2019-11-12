@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import fr.datafilesmanager.DatafilesManager;
 import fr.datafilesmanager.XMLManager;
@@ -13,6 +14,8 @@ import fr.server.p2p.PData;
 import fr.server.p2p.PData.OP;
 import fr.server.p2p.PDataFactory;
 import fr.server.p2p.PDataProcessor;
+import fr.statepanel.AppStateManager;
+import fr.statepanel.IAppState;
 import fr.util.point.Point;
 
 public class LoadingCore implements PDataProcessor {
@@ -31,8 +34,15 @@ public class LoadingCore implements PDataProcessor {
 
 	LoadingTemplate template;
 
-	public LoadingCore(Multiplayer multiplayer, int myId, List<Integer> ids, LoadingRequestor requestor,
-			LoadingTemplate template) {
+	int step, maxSteps;
+
+	LoadingState state;
+
+	public LoadingCore(LoadingState state, Multiplayer multiplayer, int myId, List<Integer> ids,
+			LoadingRequestor requestor, LoadingTemplate template) {
+
+		this.state = state;
+
 		this.ids = ids;
 		this.requestor = requestor;
 
@@ -57,15 +67,46 @@ public class LoadingCore implements PDataProcessor {
 
 		this.players = new HashMap<>();
 		// TODO Generer les positions des joueurs
-		this.players.put(myId, new PlayerData(myId, username, new Point(), color));
+		this.players.put(myId, new PlayerData(myId, username,
+				new Point(new Random().nextDouble() * 900, new Random().nextDouble() * 500), color));
 
 		this.myId = myId;
 
 		this.multiplayer = multiplayer;
 		this.multiplayer.setPDataProcessor(this);
 
+		this.step = 0;
+		this.maxSteps = ids.size();
+
 		this.template = template;
-		this.template.setMaxSteps(ids.size());
+		this.template.setMaxSteps(this.maxSteps);
+	}
+
+	public void closeSockets() {
+		synchronized (this.multiplayer) {
+			this.multiplayer.closeSockets();
+		}
+	}
+
+	private void loadGame() {
+		Map<Integer, Map<String, Object>> playersData = new HashMap<>();
+
+		for (Integer id : this.ids) {
+			playersData.put(id, null);
+		}
+
+		Map<String, Object> initData = new HashMap<>();
+
+		initData.put("myId", this.myId);
+
+		initData.put("playersData", playersData);
+
+		AppStateManager asm = this.state.getStatePanel().getAppStateManager();
+
+		IAppState nextState = asm.getState("game");
+		nextState.setInitData(initData);
+
+		this.state.getStatePanel().setState(nextState);
 	}
 
 	@Override
@@ -81,7 +122,11 @@ public class LoadingCore implements PDataProcessor {
 				if (!this.players.containsKey(pdata.getId())) {
 					this.players.put(pdata.getId(),
 							new PlayerData(pdata.getId(), (String) data[i++], (Point) data[i++], (Color) data[i++]));
-					this.template.addSteps(1);
+					this.step++;
+					this.template.setStep(this.step);
+					if (this.step == this.maxSteps) {
+						this.loadGame();
+					}
 				}
 
 				if (this.waitingIds != null) {
@@ -103,15 +148,17 @@ public class LoadingCore implements PDataProcessor {
 			public void run() {
 				PDataFactory factory = new PDataFactory();
 				PlayerData myPlayer = LoadingCore.this.players.get(LoadingCore.this.myId);
-				while (Thread.currentThread().isInterrupted() == false) {
-					PData data = factory.createPlayerState(LoadingCore.this.myId, myPlayer.getUsername(),
-							myPlayer.getPos(), myPlayer.getColor());
+				synchronized (LoadingCore.this.multiplayer) {
+					while (Thread.currentThread().isInterrupted() == false) {
+						PData data = factory.createPlayerState(LoadingCore.this.myId, myPlayer.getUsername(),
+								myPlayer.getPos(), myPlayer.getColor());
 
-					LoadingCore.this.multiplayer.send(data);
+						LoadingCore.this.multiplayer.send(data);
 
-					try {
-						Thread.sleep(1000);
-					} catch (InterruptedException e) {
+						try {
+							Thread.sleep(1000);
+						} catch (InterruptedException e) {
+						}
 					}
 				}
 			}

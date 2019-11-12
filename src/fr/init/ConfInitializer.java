@@ -7,6 +7,7 @@ import java.io.IOException;
 
 import fr.datafilesmanager.DatafilesManager;
 import fr.datafilesmanager.XMLManager;
+import fr.state.game.GameState;
 import fr.state.loading.LoadingState;
 import fr.state.menu.MenuState;
 import fr.statepanel.AppStateManager;
@@ -78,6 +79,7 @@ public class ConfInitializer {
 	private void initStates(AppStateManager asm) {
 		asm.addState(new MenuState());
 		asm.addState(new LoadingState());
+		asm.addState(new GameState());
 	}
 
 	private void loadFonts() {

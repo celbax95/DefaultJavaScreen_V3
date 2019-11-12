@@ -17,6 +17,10 @@ public class LoadingLoop implements Runnable {
 		while (!this.loop.isInterrupted()) {
 			synchronized (this) {
 				try {
+					if (this.loop.isInterrupted()) {
+						break;
+					}
+
 					this.state.update();
 
 					if (this.state != null && this.state.getStatePanel() != null) {
@@ -25,9 +29,8 @@ public class LoadingLoop implements Runnable {
 
 					Thread.sleep(32);
 				} catch (InterruptedException | NullPointerException e) {
-					e.printStackTrace();
+					// e.printStackTrace();
 					Thread.currentThread().interrupt();
-					System.exit(0);
 				}
 			}
 		}
