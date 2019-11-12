@@ -15,7 +15,10 @@ public class KeyboardMirror implements Keyboard {
 
 	public KeyboardMirror() {
 		this.keys = new Vector<>();
-		this.keys.setSize(KEYCODE_AMOUNT);
+
+		for (int i = 0; i < KEYCODE_AMOUNT; i++) {
+			this.keys.add(false);
+		}
 
 		this.reset();
 	}
