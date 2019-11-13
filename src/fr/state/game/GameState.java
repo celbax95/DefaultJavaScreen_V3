@@ -104,7 +104,7 @@ public class GameState implements IAppState {
 
 		this.multiplayer = new Multiplayer(groupIP, port, ids);
 
-		this.game = new Game(this, this.multiplayer, myId, ids);
+		this.game = new Game(this, this.multiplayer, myId, playersData);
 		this.multiplayer.setPDataProcessor(this.game);
 
 		this.sp.setBackground(this.BACKGROUND);

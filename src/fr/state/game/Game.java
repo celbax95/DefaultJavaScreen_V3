@@ -1,9 +1,9 @@
 package fr.state.game;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -33,38 +33,38 @@ public class Game implements PDataProcessor {
 
 	private int currentPDataID;
 
-	private int playerID;
+	private int myId;
 
 	private Player myPlayer;
 
-	public Game(GameState gameState, Multiplayer multiplayer, int playerID, List<Integer> playerIDs) {
+	public Game(GameState gameState, Multiplayer multiplayer, int myId, Map<Integer, Map<String, Object>> playersData) {
 		this.gameState = gameState;
 
 		this.multiplayer = multiplayer;
 
-		this.playerID = playerID;
+		this.myId = myId;
 
 		this.currentPDataID = -1;
 
 		this.players = new HashMap<>();
 
-		this.myPlayer = new MyPlayer(playerID, this.multiplayer);
-		this.myPlayer.setPos(new Point(200, 200));
+		this.myPlayer = new MyPlayer(myId, this.multiplayer);
+		this.myPlayer.setPos((Point) playersData.get(myId).get("pos"));
+		this.myPlayer.setColor((Color) playersData.get(myId).get("color"));
 		this.myPlayer.setSize(new Point(200, 200));
 
-		for (int id : playerIDs) {
-			if (id == playerID) {
+		for (int id : playersData.keySet()) {
+			if (id == myId) {
 				continue;
 			}
 			OtherPlayer p = new OtherPlayer(id);
+			p.setPos((Point) playersData.get(id).get("pos"));
+			p.setColor((Color) playersData.get(id).get("color"));
 			p.setSize(new Point(200, 200));
 			this.players.put(id, p);
 		}
 
-		this.players.put(playerID, this.myPlayer);
-
-		this.players.get(playerID).setPos(new Point(200, 200));
-		this.players.get(playerID).setSize(new Point(200, 200));
+		this.players.put(myId, this.myPlayer);
 
 		this.missingPData = new LinkedList<>();
 
@@ -88,7 +88,7 @@ public class Game implements PDataProcessor {
 
 	private void processPData(PData pdata) {
 		// On ignore nos propres messages
-		if (pdata.getPlayerId() == this.playerID)
+		if (pdata.getPlayerId() == this.myId)
 			return;
 
 		int id = pdata.getId();

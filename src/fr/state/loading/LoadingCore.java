@@ -92,7 +92,13 @@ public class LoadingCore implements PDataProcessor {
 		Map<Integer, Map<String, Object>> playersData = new HashMap<>();
 
 		for (Integer id : this.ids) {
-			playersData.put(id, null);
+
+			Map<String, Object> data = new HashMap<>();
+			data.put("pos", this.players.get(id).getPos());
+			data.put("username", this.players.get(id).getUsername());
+			data.put("color", this.players.get(id).getColor());
+
+			playersData.put(id, data);
 		}
 
 		Map<String, Object> initData = new HashMap<>();
@@ -119,9 +125,9 @@ public class LoadingCore implements PDataProcessor {
 
 				int i = 0;
 
-				if (!this.players.containsKey(pdata.getId())) {
-					this.players.put(pdata.getId(),
-							new PlayerData(pdata.getId(), (String) data[i++], (Point) data[i++], (Color) data[i++]));
+				if (/* !this.players.containsKey(pdata.getId()) */ true) {
+					this.players.put(pdata.getPlayerId(), new PlayerData(pdata.getPlayerId(), (String) data[i++],
+							(Point) data[i++], (Color) data[i++]));
 					this.step++;
 					this.template.setStep(this.step);
 					if (this.step == this.maxSteps) {
