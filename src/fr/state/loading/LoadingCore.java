@@ -66,7 +66,7 @@ public class LoadingCore implements PDataProcessor {
 		Color color = Color.decode(colorHex);
 
 		this.players = new HashMap<>();
-		// TODO Generer les positions des joueurs
+
 		this.players.put(myId, new PlayerData(myId, username,
 				new Point(new Random().nextDouble() * 900, new Random().nextDouble() * 500), color));
 
@@ -75,11 +75,14 @@ public class LoadingCore implements PDataProcessor {
 		this.multiplayer = multiplayer;
 		this.multiplayer.setPDataProcessor(this);
 
-		this.step = 0;
+		this.step = 1;
 		this.maxSteps = ids.size();
 
 		this.template = template;
 		this.template.setMaxSteps(this.maxSteps);
+		template.setAction(() -> {
+			this.loadGame();
+		});
 	}
 
 	public void closeSockets() {
@@ -92,13 +95,18 @@ public class LoadingCore implements PDataProcessor {
 		Map<Integer, Map<String, Object>> playersData = new HashMap<>();
 
 		for (Integer id : this.ids) {
+			try {
 
-			Map<String, Object> data = new HashMap<>();
-			data.put("pos", this.players.get(id).getPos());
-			data.put("username", this.players.get(id).getUsername());
-			data.put("color", this.players.get(id).getColor());
+				Map<String, Object> data = new HashMap<>();
+				data.put("pos", this.players.get(id).getPos());
+				data.put("username", this.players.get(id).getUsername());
+				data.put("color", this.players.get(id).getColor());
 
-			playersData.put(id, data);
+				playersData.put(id, data);
+			} catch (Exception e) {
+				e.printStackTrace();
+				System.out.println("problem id : " + id);
+			}
 		}
 
 		Map<String, Object> initData = new HashMap<>();
@@ -125,16 +133,17 @@ public class LoadingCore implements PDataProcessor {
 
 				int i = 0;
 
-				if (/* !this.players.containsKey(pdata.getId()) */ true) {
-					this.players.put(pdata.getPlayerId(), new PlayerData(pdata.getPlayerId(), (String) data[i++],
-							(Point) data[i++], (Color) data[i++]));
+				// On recoit le joueur pour la premiere fois
+				if (this.ids.contains(pdata.getPlayerId()) && !this.players.containsKey(pdata.getPlayerId())) {
 					this.step++;
 					this.template.setStep(this.step);
-					if (this.step == this.maxSteps) {
-						this.loadGame();
-					}
 				}
 
+				// On met a jour le joueur
+				this.players.put(pdata.getPlayerId(),
+						new PlayerData(pdata.getPlayerId(), (String) data[i++], (Point) data[i++], (Color) data[i++]));
+
+				// Le host verifie s'il y a encore besoin du requestor
 				if (this.waitingIds != null) {
 					this.waitingIds.remove((Object) pdata.getId());
 

@@ -11,6 +11,10 @@ import fr.window.WinData;
 
 public class LoadingTemplate {
 
+	interface Action {
+		void action();
+	}
+
 	private WinData windata;
 
 	private String title;
@@ -20,8 +24,12 @@ public class LoadingTemplate {
 
 	private ProgressBar progress;
 
+	private Action actionner;
+
 	public LoadingTemplate(WinData windata, int steps) {
 		this.windata = windata;
+
+		this.actionner = null;
 
 		this.setTitle(this.windata.getDefaultWindowSize().y / 3);
 
@@ -55,6 +63,10 @@ public class LoadingTemplate {
 		this.progress.draw(g);
 	}
 
+	public void setAction(Action a) {
+		this.actionner = a;
+	}
+
 	public void setMaxSteps(int x) {
 		this.progress.setMaxSteps(x);
 	}
@@ -63,7 +75,14 @@ public class LoadingTemplate {
 
 		Point pos = new Point((this.windata.getDefaultWindowSize().x - size.x) / 2, d);
 
-		this.progress = new ProgressBar(pos, size, steps, Color.LIGHT_GRAY, new Color(0, 120, 0), 1, Color.WHITE);
+		this.progress = new ProgressBar(pos, size, steps, Color.LIGHT_GRAY, new Color(0, 120, 0), 1, Color.WHITE) {
+			@Override
+			void onFilledUp() {
+				if (LoadingTemplate.this.actionner != null) {
+					LoadingTemplate.this.actionner.action();
+				}
+			}
+		};
 	}
 
 	public void setStep(int x) {

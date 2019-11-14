@@ -5,7 +5,7 @@ import java.awt.Graphics2D;
 
 import fr.util.point.Point;
 
-public class ProgressBar {
+public abstract class ProgressBar {
 
 	private double fillingSpeed; // (px / secondes);
 
@@ -86,8 +86,13 @@ public class ProgressBar {
 	}
 
 	private void moveSeparator() {
-		if (this.aimedSeparatorX == this.realSeparatorX)
+		if (this.aimedSeparatorX == this.realSeparatorX) {
+
+			if (this.current == this.max) {
+				this.onFilledUp();
+			}
 			return;
+		}
 
 		long call = System.currentTimeMillis();
 		long elapsed = call - this.lastCall;
@@ -101,6 +106,8 @@ public class ProgressBar {
 
 		this.lastCall = call;
 	}
+
+	abstract void onFilledUp();
 
 	private void setAimedSeparatorX() {
 		this.lastSeparatorX = this.aimedSeparatorX;
