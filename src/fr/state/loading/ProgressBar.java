@@ -60,8 +60,6 @@ public abstract class ProgressBar {
 	}
 
 	public void draw(Graphics2D g) {
-		this.moveSeparator();
-
 		// Border
 		g.setColor(this.borderColor);
 		g.fillRect(this.pos.ix() - this.borderSize, this.pos.iy() - this.borderSize,
@@ -149,5 +147,9 @@ public abstract class ProgressBar {
 		this.lastCall = System.currentTimeMillis();
 		this.current = 0;
 		this.max = x;
+	}
+
+	public void update() {
+		this.moveSeparator();
 	}
 }

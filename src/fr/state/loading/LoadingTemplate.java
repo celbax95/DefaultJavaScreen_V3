@@ -105,4 +105,8 @@ public class LoadingTemplate {
 
 		this.titlePos = new Point(this.windata.getDefaultWindowSize().x / 2D - this.titleSize.x / 2D, d);
 	}
+
+	public void update() {
+		this.progress.update();
+	}
 }
