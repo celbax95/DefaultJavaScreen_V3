@@ -21,7 +21,7 @@ import fr.util.point.Point;
 public class LoadingCore implements PDataProcessor {
 
 	private static final int TIMEOUT_TIME = 5000;
-	protected static final long SEND_RATE = 500;
+	private static final long SEND_RATE = 500;
 	private static final long TIME_BEFORE_LOAD_GAME = 1000;
 
 	private List<Integer> ids;
