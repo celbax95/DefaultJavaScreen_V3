@@ -118,9 +118,9 @@ public class MenuProfile implements MenuPage {
 				MenuProfile.this.wBack();
 				MenuProfile.this.wFrame();
 				MenuProfile.this.wUsernameInput().setData(username);
-				MenuProfile.this.wColorRed().setValue(MenuProfile.this.color.getRed());
-				MenuProfile.this.wColorGreen().setValue(MenuProfile.this.color.getGreen());
-				MenuProfile.this.wColorBlue().setValue(MenuProfile.this.color.getBlue());
+				MenuProfile.this.wColorRed().setValue(MenuProfile.this.color.getRed() - MIN_COLOR);
+				MenuProfile.this.wColorGreen().setValue(MenuProfile.this.color.getGreen() - MIN_COLOR);
+				MenuProfile.this.wColorBlue().setValue(MenuProfile.this.color.getBlue() - MIN_COLOR);
 				MenuProfile.this.colorBlock = MenuProfile.this.wColorBlock();
 				MenuProfile.this.wColorSelect();
 				MenuProfile.this.setColor(MenuProfile.this.color);
