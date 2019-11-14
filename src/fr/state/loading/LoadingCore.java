@@ -38,6 +38,14 @@ public class LoadingCore implements PDataProcessor {
 
 	LoadingState state;
 
+	private long lastNewPlayerReceived;
+
+	private Thread timeoutTester;
+
+	private final int TIMEOUT_TIME = 5000;
+
+	private boolean timeout;
+
 	public LoadingCore(LoadingState state, Multiplayer multiplayer, int myId, List<Integer> ids,
 			LoadingRequestor requestor, LoadingTemplate template) {
 
@@ -78,6 +86,10 @@ public class LoadingCore implements PDataProcessor {
 		this.step = 1;
 		this.maxSteps = ids.size();
 
+		this.timeoutTester = null;
+		this.lastNewPlayerReceived = System.currentTimeMillis();
+		this.timeout = false;
+
 		this.template = template;
 		this.template.setMaxSteps(this.maxSteps);
 		template.setAction(() -> {
@@ -108,18 +120,24 @@ public class LoadingCore implements PDataProcessor {
 		} catch (InterruptedException e) {
 		}
 
+		AppStateManager asm = this.state.getStatePanel().getAppStateManager();
+
 		Map<String, Object> initData = new HashMap<>();
 
 		initData.put("myId", this.myId);
 
 		initData.put("playersData", playersData);
 
-		AppStateManager asm = this.state.getStatePanel().getAppStateManager();
-
 		IAppState nextState = asm.getState("game");
 		nextState.setInitData(initData);
 
 		this.state.getStatePanel().setState(nextState);
+	}
+
+	private void loadMenu() {
+		AppStateManager asm = this.state.getStatePanel().getAppStateManager();
+
+		this.state.getStatePanel().setState(asm.getState("menu"));
 	}
 
 	@Override
@@ -128,14 +146,13 @@ public class LoadingCore implements PDataProcessor {
 
 		if (pdata.getId() != this.myId) {
 			if (op == OP.PLAYER_STATE) {
-				System.out.println("receive");
 
 				Object[] data = pdata.getData();
 
 				int i = 0;
 
-				// On recoit le joueur pour la premiere fois
 				if (this.ids.contains(pdata.getPlayerId()) && !this.players.containsKey(pdata.getPlayerId())) {
+					this.lastNewPlayerReceived = System.currentTimeMillis();
 					this.step++;
 					this.template.setStep(this.step);
 				}
@@ -170,10 +187,9 @@ public class LoadingCore implements PDataProcessor {
 								myPlayer.getPos(), myPlayer.getColor());
 
 						LoadingCore.this.multiplayer.send(data);
-						System.out.println("send");
 
 						try {
-							Thread.sleep(1000);
+							Thread.sleep(500);
 						} catch (InterruptedException e) {
 						}
 					}
@@ -181,6 +197,27 @@ public class LoadingCore implements PDataProcessor {
 			}
 		});
 		this.sender.setName("LoadingCore/sender");
+	}
+
+	private void setTimeoutTester() {
+		this.timeoutTester = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				while (Thread.currentThread().isInterrupted() == false) {
+					if (LoadingCore.this.players.size() < LoadingCore.this.ids.size()) {
+						if (System.currentTimeMillis() > LoadingCore.this.lastNewPlayerReceived
+								+ LoadingCore.this.TIMEOUT_TIME) {
+							LoadingCore.this.timeout = true;
+						}
+					}
+
+					try {
+						Thread.sleep(1500);
+					} catch (InterruptedException e) {
+					}
+				}
+			}
+		});
 	}
 
 	public void start() {
@@ -191,6 +228,9 @@ public class LoadingCore implements PDataProcessor {
 		}
 		this.setSender();
 		this.sender.start();
+
+		this.setTimeoutTester();
+		this.timeoutTester.start();
 	}
 
 	public void stop() {
@@ -200,6 +240,15 @@ public class LoadingCore implements PDataProcessor {
 		}
 		if (this.sender != null) {
 			this.sender.interrupt();
+		}
+		if (this.timeoutTester != null) {
+			this.timeoutTester.interrupt();
+		}
+	}
+
+	public void update() {
+		if (this.timeout) {
+			this.loadMenu();
 		}
 	}
 }

@@ -126,6 +126,7 @@ public class LoadingState implements IAppState {
 
 	@Override
 	public void update() {
+		this.loadingCore.update();
 		this.template.update();
 	}
 }
