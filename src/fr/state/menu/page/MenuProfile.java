@@ -61,11 +61,21 @@ public class MenuProfile implements MenuPage {
 		}
 	}
 
-	private boolean loaded;
+	private static final int MIN_COLOR = 50;
 
+	private static boolean colorIsValid(Color c) {
+		int red = c.getRed();
+		int green = c.getGreen();
+		int blue = c.getBlue();
+
+		return red <= MIN_COLOR && green <= MIN_COLOR && blue <= MIN_COLOR;
+	}
+
+	private boolean loaded;
 	private List<Widget> widgets;
 
 	private Menu m;
+
 	private Object profileConf;
 
 	private XMLManager manager;
@@ -205,10 +215,17 @@ public class MenuProfile implements MenuPage {
 		WSlider s = new WSlider(this) {
 			@Override
 			public void valueChanged(int value, boolean pressed) {
-				MenuProfile.this
-						.setColor(new Color(MenuProfile.this.color.getRed(), MenuProfile.this.color.getGreen(), value));
-				if (!pressed) {
-					MenuProfile.this.saveColor();
+				int oldColor = MenuProfile.this.color.getGreen();
+
+				Color newColor = new Color(MenuProfile.this.color.getRed(), MenuProfile.this.color.getGreen(), value);
+
+				if (!colorIsValid(newColor)) {
+					this.setValue(oldColor);
+				} else {
+					MenuProfile.this.setColor(newColor);
+					if (!pressed) {
+						MenuProfile.this.saveColor();
+					}
 				}
 			}
 		};
@@ -240,10 +257,17 @@ public class MenuProfile implements MenuPage {
 		WSlider s = new WSlider(this) {
 			@Override
 			public void valueChanged(int value, boolean pressed) {
-				MenuProfile.this
-						.setColor(new Color(MenuProfile.this.color.getRed(), value, MenuProfile.this.color.getBlue()));
-				if (!pressed) {
-					MenuProfile.this.saveColor();
+				int oldColor = MenuProfile.this.color.getGreen();
+
+				Color newColor = new Color(MenuProfile.this.color.getRed(), value, MenuProfile.this.color.getBlue());
+
+				if (!colorIsValid(newColor)) {
+					this.setValue(oldColor);
+				} else {
+					MenuProfile.this.setColor(newColor);
+					if (!pressed) {
+						MenuProfile.this.saveColor();
+					}
 				}
 			}
 		};
@@ -275,10 +299,17 @@ public class MenuProfile implements MenuPage {
 		WSlider s = new WSlider(this) {
 			@Override
 			public void valueChanged(int value, boolean pressed) {
-				MenuProfile.this.setColor(
-						new Color(value, MenuProfile.this.color.getGreen(), MenuProfile.this.color.getBlue()));
-				if (!pressed) {
-					MenuProfile.this.saveColor();
+				int oldColor = MenuProfile.this.color.getGreen();
+
+				Color newColor = new Color(value, MenuProfile.this.color.getGreen(), MenuProfile.this.color.getBlue());
+
+				if (!colorIsValid(newColor)) {
+					this.setValue(oldColor);
+				} else {
+					MenuProfile.this.setColor(newColor);
+					if (!pressed) {
+						MenuProfile.this.saveColor();
+					}
 				}
 			}
 		};
