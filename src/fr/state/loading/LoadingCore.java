@@ -95,18 +95,17 @@ public class LoadingCore implements PDataProcessor {
 		Map<Integer, Map<String, Object>> playersData = new HashMap<>();
 
 		for (Integer id : this.ids) {
-			try {
+			Map<String, Object> data = new HashMap<>();
+			data.put("pos", this.players.get(id).getPos());
+			data.put("username", this.players.get(id).getUsername());
+			data.put("color", this.players.get(id).getColor());
 
-				Map<String, Object> data = new HashMap<>();
-				data.put("pos", this.players.get(id).getPos());
-				data.put("username", this.players.get(id).getUsername());
-				data.put("color", this.players.get(id).getColor());
+			playersData.put(id, data);
+		}
 
-				playersData.put(id, data);
-			} catch (Exception e) {
-				e.printStackTrace();
-				System.out.println("problem id : " + id);
-			}
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
 		}
 
 		Map<String, Object> initData = new HashMap<>();
@@ -129,6 +128,8 @@ public class LoadingCore implements PDataProcessor {
 
 		if (pdata.getId() != this.myId) {
 			if (op == OP.PLAYER_STATE) {
+				System.out.println("receive");
+
 				Object[] data = pdata.getData();
 
 				int i = 0;
@@ -169,6 +170,7 @@ public class LoadingCore implements PDataProcessor {
 								myPlayer.getPos(), myPlayer.getColor());
 
 						LoadingCore.this.multiplayer.send(data);
+						System.out.println("send");
 
 						try {
 							Thread.sleep(1000);
