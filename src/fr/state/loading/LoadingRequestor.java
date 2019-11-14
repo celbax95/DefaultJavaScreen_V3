@@ -57,7 +57,7 @@ public class LoadingRequestor {
 		}
 	}
 
-	public void setSender() {
+	private void setSender() {
 		this.sender = new Thread(new Runnable() {
 			@Override
 			public void run() {

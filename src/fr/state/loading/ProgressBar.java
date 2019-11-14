@@ -105,7 +105,7 @@ public abstract class ProgressBar {
 		this.lastCall = call;
 	}
 
-	abstract void onFilledUp();
+	public abstract void onFilledUp();
 
 	private void setAimedSeparatorX() {
 		this.lastSeparatorX = this.aimedSeparatorX;

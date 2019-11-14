@@ -77,7 +77,7 @@ public class LoadingTemplate {
 
 		this.progress = new ProgressBar(pos, size, steps, Color.LIGHT_GRAY, new Color(0, 120, 0), 1, Color.WHITE) {
 			@Override
-			void onFilledUp() {
+			public void onFilledUp() {
 				if (LoadingTemplate.this.actionner != null) {
 					LoadingTemplate.this.actionner.action();
 				}

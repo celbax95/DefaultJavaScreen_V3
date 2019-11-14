@@ -20,29 +20,32 @@ import fr.util.point.Point;
 
 public class LoadingCore implements PDataProcessor {
 
-	List<Integer> ids;
-	Multiplayer multiplayer;
-	int myId;
+	private static final int TIMEOUT_TIME = 5000;
+	protected static final long SEND_RATE = 500;
+	private static final long TIME_BEFORE_LOAD_GAME = 1000;
 
+	private List<Integer> ids;
+	private Multiplayer multiplayer;
+
+	private int myId;
 	// Partie host
-	LoadingRequestor requestor;
-	List<Integer> waitingIds;
+	private LoadingRequestor requestor;
 
-	Map<Integer, PlayerData> players;
+	private List<Integer> waitingIds;
 
-	Thread sender;
+	private Map<Integer, PlayerData> players;
 
-	LoadingTemplate template;
+	private Thread sender;
 
-	int step, maxSteps;
+	private LoadingTemplate template;
 
-	LoadingState state;
+	private int step, maxSteps;
+
+	private LoadingState state;
 
 	private long lastNewPlayerReceived;
 
 	private Thread timeoutTester;
-
-	private final int TIMEOUT_TIME = 5000;
 
 	private boolean timeout;
 
@@ -76,7 +79,7 @@ public class LoadingCore implements PDataProcessor {
 		this.players = new HashMap<>();
 
 		this.players.put(myId, new PlayerData(myId, username,
-				new Point(new Random().nextDouble() * 900, new Random().nextDouble() * 500), color));
+				new Point(new Random().nextDouble() * 1700, new Random().nextDouble() * 800), color));
 
 		this.myId = myId;
 
@@ -116,7 +119,7 @@ public class LoadingCore implements PDataProcessor {
 		}
 
 		try {
-			Thread.sleep(1000);
+			Thread.sleep(TIME_BEFORE_LOAD_GAME);
 		} catch (InterruptedException e) {
 		}
 
@@ -175,7 +178,7 @@ public class LoadingCore implements PDataProcessor {
 		}
 	}
 
-	public void setSender() {
+	private void setSender() {
 		this.sender = new Thread(new Runnable() {
 			@Override
 			public void run() {
@@ -189,7 +192,7 @@ public class LoadingCore implements PDataProcessor {
 						LoadingCore.this.multiplayer.send(data);
 
 						try {
-							Thread.sleep(500);
+							Thread.sleep(SEND_RATE);
 						} catch (InterruptedException e) {
 						}
 					}
@@ -206,7 +209,7 @@ public class LoadingCore implements PDataProcessor {
 				while (Thread.currentThread().isInterrupted() == false) {
 					if (LoadingCore.this.players.size() < LoadingCore.this.ids.size()) {
 						if (System.currentTimeMillis() > LoadingCore.this.lastNewPlayerReceived
-								+ LoadingCore.this.TIMEOUT_TIME) {
+								+ LoadingCore.TIMEOUT_TIME) {
 							LoadingCore.this.timeout = true;
 						}
 					}
