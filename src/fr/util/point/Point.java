@@ -60,10 +60,14 @@ public class Point implements Serializable {
 		return new Point(this);
 	}
 
+	public Point compareTo(Point p) {
+		return new Point(Math.abs(p.x - this.x), Math.abs(p.y - this.y));
+	}
+
 	/**
 	 * Calcul de la distance entre le point courant et le point p
 	 */
-	public double distance(Point p) {
+	public double distanceTo(Point p) {
 		final Point o = new Point(p).sub(this);
 		return Math.sqrt(o.x * o.x + o.y * o.y);
 	}
@@ -227,9 +231,9 @@ public class Point implements Serializable {
 	 * soit egal a 1
 	 */
 	public Point trigNorm() {
-		final double angle = this.getAngle();
-		this.x = Math.cos(angle);
-		this.y = Math.sin(angle);
+		double tmp = Math.sqrt(Math.pow(this.x, 2) + Math.pow(this.y, 2));
+		this.x /= tmp;
+		this.y /= tmp;
 		return this;
 	}
 

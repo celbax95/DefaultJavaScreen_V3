@@ -2,6 +2,8 @@ package fr.state.game;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.event.KeyEvent;
+import java.awt.geom.AffineTransform;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -15,6 +17,7 @@ import fr.server.p2p.PDataProcessor;
 import fr.state.game.elements.players.MyPlayer;
 import fr.state.game.elements.players.OtherPlayer;
 import fr.state.game.elements.players.Player;
+import fr.state.game.elements.utilities.Camera;
 import fr.util.point.Point;
 
 public class Game implements PDataProcessor {
@@ -36,6 +39,8 @@ public class Game implements PDataProcessor {
 	private int myId;
 
 	private Player myPlayer;
+
+	private Camera camera;
 
 	public Game(GameState gameState, Multiplayer multiplayer, int myId, Map<Integer, Map<String, Object>> playersData) {
 		this.gameState = gameState;
@@ -69,9 +74,16 @@ public class Game implements PDataProcessor {
 		this.missingPData = new LinkedList<>();
 
 		this.qPData = new ConcurrentLinkedQueue<>();
+
+		this.camera = new Camera();
 	}
 
 	public void draw(Graphics2D g, double dt) {
+
+		AffineTransform af = g.getTransform();
+
+		g.setTransform(this.camera.getTransform(af));
+
 		for (Player player : this.players.values()) {
 			player.draw(g, dt);
 		}
@@ -155,6 +167,12 @@ public class Game implements PDataProcessor {
 	}
 
 	public void update(Input input, double dt) {
+
+		if (input.keyboardKeys.get(KeyEvent.VK_M)) {
+			this.camera.setAimedPos(new Point(300, 100));
+		}
+
+		this.camera.update(dt);
 
 		while (!this.qPData.isEmpty()) {
 			PData data = this.qPData.poll();
