@@ -63,7 +63,16 @@ public class MenuProfile implements MenuPage {
 
 	private static final int MIN_COLOR = 120;
 
+	private static boolean colorIsValid(Color c) {
+		int r = c.getRed();
+		int g = c.getGreen();
+		int b = c.getBlue();
+
+		return r >= MIN_COLOR || g >= MIN_COLOR || b >= MIN_COLOR;
+	}
+
 	private boolean loaded;
+
 	private List<Widget> widgets;
 
 	private Menu m;
@@ -118,9 +127,9 @@ public class MenuProfile implements MenuPage {
 				MenuProfile.this.wBack();
 				MenuProfile.this.wFrame();
 				MenuProfile.this.wUsernameInput().setData(username);
-				MenuProfile.this.wColorRed().setValue(MenuProfile.this.color.getRed() - MIN_COLOR);
-				MenuProfile.this.wColorGreen().setValue(MenuProfile.this.color.getGreen() - MIN_COLOR);
-				MenuProfile.this.wColorBlue().setValue(MenuProfile.this.color.getBlue() - MIN_COLOR);
+				MenuProfile.this.wColorRed().setValue(MenuProfile.this.color.getRed());
+				MenuProfile.this.wColorGreen().setValue(MenuProfile.this.color.getGreen());
+				MenuProfile.this.wColorBlue().setValue(MenuProfile.this.color.getBlue());
 				MenuProfile.this.colorBlock = MenuProfile.this.wColorBlock();
 				MenuProfile.this.wColorSelect();
 				MenuProfile.this.setColor(MenuProfile.this.color);
@@ -207,12 +216,17 @@ public class MenuProfile implements MenuPage {
 		WSlider s = new WSlider(this) {
 			@Override
 			public void valueChanged(int value, boolean pressed) {
-				Color newColor = new Color(MenuProfile.this.color.getRed(), MenuProfile.this.color.getGreen(),
-						MIN_COLOR + value);
+				int oldValue = MenuProfile.this.color.getBlue();
 
-				MenuProfile.this.setColor(newColor);
-				if (!pressed) {
-					MenuProfile.this.saveColor();
+				Color newColor = new Color(MenuProfile.this.color.getRed(), MenuProfile.this.color.getGreen(), value);
+
+				if (colorIsValid(newColor)) {
+					MenuProfile.this.setColor(newColor);
+					if (!pressed) {
+						MenuProfile.this.saveColor();
+					}
+				} else {
+					this.setValue(oldValue);
 				}
 			}
 		};
@@ -232,7 +246,7 @@ public class MenuProfile implements MenuPage {
 		s.setSlider(slider);
 
 		s.setPos(new Point(1110, 845));
-		s.setScope(255 - MIN_COLOR);
+		s.setScope(255);
 		s.setHitboxFromDrawElement();
 
 		this.widgets.add(s);
@@ -244,12 +258,17 @@ public class MenuProfile implements MenuPage {
 		WSlider s = new WSlider(this) {
 			@Override
 			public void valueChanged(int value, boolean pressed) {
-				Color newColor = new Color(MenuProfile.this.color.getRed(), MIN_COLOR + value,
-						MenuProfile.this.color.getBlue());
+				int oldValue = MenuProfile.this.color.getGreen();
 
-				MenuProfile.this.setColor(newColor);
-				if (!pressed) {
-					MenuProfile.this.saveColor();
+				Color newColor = new Color(MenuProfile.this.color.getRed(), value, MenuProfile.this.color.getBlue());
+
+				if (colorIsValid(newColor)) {
+					MenuProfile.this.setColor(newColor);
+					if (!pressed) {
+						MenuProfile.this.saveColor();
+					}
+				} else {
+					this.setValue(oldValue);
 				}
 			}
 		};
@@ -269,7 +288,7 @@ public class MenuProfile implements MenuPage {
 		s.setSlider(slider);
 
 		s.setPos(new Point(1110, 719));
-		s.setScope(255 - MIN_COLOR);
+		s.setScope(255);
 		s.setHitboxFromDrawElement();
 
 		this.widgets.add(s);
@@ -281,13 +300,17 @@ public class MenuProfile implements MenuPage {
 		WSlider s = new WSlider(this) {
 			@Override
 			public void valueChanged(int value, boolean pressed) {
+				int oldValue = MenuProfile.this.color.getRed();
 
-				Color newColor = new Color(MIN_COLOR + value, MenuProfile.this.color.getGreen(),
-						MenuProfile.this.color.getBlue());
+				Color newColor = new Color(value, MenuProfile.this.color.getGreen(), MenuProfile.this.color.getBlue());
 
-				MenuProfile.this.setColor(newColor);
-				if (!pressed) {
-					MenuProfile.this.saveColor();
+				if (colorIsValid(newColor)) {
+					MenuProfile.this.setColor(newColor);
+					if (!pressed) {
+						MenuProfile.this.saveColor();
+					}
+				} else {
+					this.setValue(oldValue);
 				}
 			}
 		};
@@ -307,7 +330,7 @@ public class MenuProfile implements MenuPage {
 		s.setSlider(slider);
 
 		s.setPos(new Point(1110, 585));
-		s.setScope(255 - MIN_COLOR);
+		s.setScope(255);
 		s.setHitboxFromDrawElement();
 
 		this.widgets.add(s);
