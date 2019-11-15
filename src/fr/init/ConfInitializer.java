@@ -1,9 +1,12 @@
 package fr.init;
 
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontFormatException;
 import java.awt.GraphicsEnvironment;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import fr.datafilesmanager.DatafilesManager;
 import fr.datafilesmanager.XMLManager;
@@ -11,6 +14,7 @@ import fr.state.game.GameState;
 import fr.state.loading.LoadingState;
 import fr.state.menu.MenuState;
 import fr.statepanel.AppStateManager;
+import fr.statepanel.IAppState;
 import fr.statepanel.StatePanel;
 import fr.util.point.Point;
 import fr.window.WinData;
@@ -123,7 +127,35 @@ public class ConfInitializer {
 		mainPanel.init(winData);
 		mainPanel.setAppStateManager(asm);
 
-		mainPanel.setState(asm.getState("menu"));
+		/*
+		 * id
+		 *
+		 * players Data
+		 */
+
+		int nb = 2;
+
+		int myId = 0;
+
+		Map<Integer, Map<String, Object>> playersData = new HashMap<>();
+
+		for (int i = 0; i < nb; i++) {
+			Map<String, Object> p = new HashMap<>();
+			p.put("pos", new Point(200 + 250 * i, 300));
+			p.put("color", Color.red);
+
+			playersData.put(i, p);
+		}
+
+		Map<String, Object> initData = new HashMap<>();
+		initData.put("myId", myId);
+		initData.put("playersData", playersData);
+
+		IAppState state = asm.getState("game");
+
+		state.setInitData(initData);
+
+		mainPanel.setState(state);
 
 		screen.init(mainPanel, winData);
 
