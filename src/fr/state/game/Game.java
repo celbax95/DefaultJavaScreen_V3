@@ -2,7 +2,6 @@ package fr.state.game;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.event.KeyEvent;
 import java.awt.geom.AffineTransform;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -19,6 +18,7 @@ import fr.state.game.elements.players.OtherPlayer;
 import fr.state.game.elements.players.Player;
 import fr.state.game.elements.utilities.Camera;
 import fr.util.point.Point;
+import fr.window.WinData;
 
 public class Game implements PDataProcessor {
 
@@ -42,10 +42,15 @@ public class Game implements PDataProcessor {
 
 	private Camera camera;
 
-	public Game(GameState gameState, Multiplayer multiplayer, int myId, Map<Integer, Map<String, Object>> playersData) {
+	private WinData winData;
+
+	public Game(GameState gameState, Multiplayer multiplayer, WinData winData, int myId,
+			Map<Integer, Map<String, Object>> playersData) {
 		this.gameState = gameState;
 
 		this.multiplayer = multiplayer;
+
+		this.winData = winData;
 
 		this.myId = myId;
 
@@ -75,7 +80,7 @@ public class Game implements PDataProcessor {
 
 		this.qPData = new ConcurrentLinkedQueue<>();
 
-		this.camera = new Camera();
+		this.camera = new Camera(winData);
 	}
 
 	public void draw(Graphics2D g, double dt) {
@@ -168,9 +173,7 @@ public class Game implements PDataProcessor {
 
 	public void update(Input input, double dt) {
 
-		if (input.keyboardKeys.get(KeyEvent.VK_M)) {
-			this.camera.setAimedPos(new Point(300, 100));
-		}
+		this.camera.setAimedCenterPos(this.myPlayer.getPos().clone().add(this.myPlayer.getSize().clone().div(2)));
 
 		this.camera.update(dt);
 
