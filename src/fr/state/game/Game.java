@@ -89,7 +89,7 @@ public class Game implements PDataProcessor {
 
 		AffineTransform origin = g.getTransform();
 
-		g.setTransform(this.camera.getTransform(origin));
+		g.setTransform(this.camera.getTransform(origin, dt));
 
 		for (Player player : this.players.values()) {
 			player.draw(g, dt);
@@ -181,6 +181,7 @@ public class Game implements PDataProcessor {
 		for (Player p : this.players.values()) {
 			p.resetForces();
 		}
+		this.camera.resetForces();
 
 		// Apply forces
 		while (!this.qPData.isEmpty()) {
@@ -200,6 +201,7 @@ public class Game implements PDataProcessor {
 		}
 
 		this.camera.setAimedCenterPos(this.myPlayer.getPos().clone().add(this.myPlayer.getSize().clone().div(2)));
-		this.camera.update(dt);
+		this.camera.update();
+		this.camera.applyForces(dt);
 	}
 }
