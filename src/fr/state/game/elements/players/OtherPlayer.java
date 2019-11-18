@@ -36,7 +36,12 @@ public class OtherPlayer implements Serializable, Player {
 		this.color = COLOR;
 	}
 
-	private void applyForces(double dt) {
+	@Override
+	public void addForce(Point f) {
+		this.forces.add(f);
+	}
+
+	public void applyForces(double dt) {
 
 		// speed
 		int tmpSpeed = (int) Math.round(this.forces.length());
@@ -46,9 +51,6 @@ public class OtherPlayer implements Serializable, Player {
 
 		// move
 		this.pos.add(this.forces.mult(dt));
-
-		// reset
-		// this.forces.set(0, 0);
 	}
 
 	/*
@@ -133,7 +135,7 @@ public class OtherPlayer implements Serializable, Player {
 	 * @see fr.state.game.solo.Player#update(fr.inputs.Input, double)
 	 */
 	@Override
-	public void update(Input input, double dt) {
+	public void update(Input input) {
 
 	}
 }

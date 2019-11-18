@@ -37,28 +37,12 @@ public class Camera {
 	}
 
 	public Point getVectMove() {
-		Point diff = this.aimedPos.sub(this.pos).trigNorm();
-
-		return diff.mult(this.speed);
+		return null;
 	}
 
 	private void move(double dt) {
 		if (this.pos != null && this.aimedPos != null && !this.pos.equals(this.aimedPos)) {
 
-			Point vectMove = this.getVectMove().mult(dt);
-
-			// Deplacement
-			this.pos.add(vectMove);
-
-			// AimedPos depasse
-			Point diff = this.pos.compareTo(this.aimedPos);
-
-			if (diff.x <= this.pixelsTolerence) {
-				this.pos.x = this.aimedPos.x;
-			}
-			if (diff.y <= this.pixelsTolerence) {
-				this.pos.y = this.aimedPos.y;
-			}
 		}
 	}
 
@@ -70,7 +54,11 @@ public class Camera {
 		this.aimedPos = ap.clone();
 	}
 
+	public void setPos(Point p) {
+		this.pos.set(p);
+	}
+
 	public void update(double dt) {
-		this.move(dt);
+		this.setPos(this.aimedPos);
 	}
 }
