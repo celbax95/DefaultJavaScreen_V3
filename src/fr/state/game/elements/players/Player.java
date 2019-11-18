@@ -8,6 +8,10 @@ import fr.util.point.Point;
 
 public interface Player {
 
+	void addForce(Point f);
+
+	void applyForces(double dt);
+
 	void draw(Graphics2D g, double dt);
 
 	/**
@@ -42,6 +46,5 @@ public interface Player {
 	 */
 	void setSize(Point size);
 
-	void update(Input input, double dt);
-
+	void update(Input input);
 }

@@ -135,7 +135,7 @@ public class ConfInitializer {
 
 		int nb = 2;
 
-		int myId = 0;
+		int myId = 1;
 
 		Map<Integer, Map<String, Object>> playersData = new HashMap<>();
 

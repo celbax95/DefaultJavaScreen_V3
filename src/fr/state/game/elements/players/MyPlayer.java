@@ -38,7 +38,13 @@ public class MyPlayer implements Serializable, Player {
 		this.pDataFactory = multiplayer.getPDataFactory();
 	}
 
-	private void applyForces(double dt) {
+	@Override
+	public void addForce(Point f) {
+		this.forces.add(f);
+	}
+
+	@Override
+	public void applyForces(double dt) {
 
 		if (this.forces.x == 0 && this.forces.y == 0)
 			return;
@@ -52,27 +58,18 @@ public class MyPlayer implements Serializable, Player {
 		// move
 		this.setPos(this.pos.add(this.forces.mult(dt)));
 
-		// reset
-		// this.forces.set(0, 0);
+		System.out.println(this.pos);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see fr.state.game.solo.Player#draw(java.awt.Graphics2D, double)
-	 */
 	@Override
 	public void draw(Graphics2D g, double dt) {
 		g.setColor(this.color);
 		Point dtPos = this.forces.clone().mult(dt).add(this.pos);
-		g.fillRect(dtPos.ix(), dtPos.iy(), this.size.ix(), this.size.iy());
+		// g.fillRect(dtPos.ix(), dtPos.iy(), this.size.ix(), this.size.iy());
+
+		g.fillRect(this.pos.ix(), this.pos.iy(), this.size.ix(), this.size.iy());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see fr.state.game.solo.Player#getColor()
-	 */
 	@Override
 	public Color getColor() {
 		return this.color;
@@ -92,21 +89,11 @@ public class MyPlayer implements Serializable, Player {
 		return move;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see fr.state.game.solo.Player#getPos()
-	 */
 	@Override
 	public Point getPos() {
 		return this.pos;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see fr.state.game.solo.Player#getSize()
-	 */
 	@Override
 	public Point getSize() {
 		return this.size;
@@ -117,51 +104,29 @@ public class MyPlayer implements Serializable, Player {
 		this.forces.set(0, 0);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see fr.state.game.solo.Player#setColor(java.awt.Color)
-	 */
 	@Override
 	public void setColor(Color color) {
 		this.color = color;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see fr.state.game.solo.Player#setPos(fr.util.point.Point)
-	 */
 	@Override
 	public void setPos(Point pos) {
 		this.pos.set(pos);
 		this.multiplayer.send(this.pDataFactory.createMove(this.id, pos));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see fr.state.game.solo.Player#setSize(fr.util.point.Point)
-	 */
 	@Override
 	public void setSize(Point size) {
 		this.size = size;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see fr.state.game.solo.Player#update(fr.inputs.Input, double)
-	 */
 	@Override
-	public void update(Input input, double dt) {
+	public void update(Input input) {
 		Point move = this.getMoveFromInput(input.keyboardKeys.get(90), input.keyboardKeys.get(83),
 				input.keyboardKeys.get(81), input.keyboardKeys.get(68));
 
 		move.mult(ACCEL);
 
-		this.forces.add(move);
-
-		this.applyForces(dt);
+		this.addForce(move);
 	}
 }

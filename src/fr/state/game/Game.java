@@ -24,6 +24,8 @@ public class Game implements PDataProcessor {
 
 	private final static int MISSING_PDATA = 50;
 
+	private static final int SIZE = 200;
+
 	private GameState gameState;
 
 	private Map<Integer, Player> players;
@@ -61,7 +63,7 @@ public class Game implements PDataProcessor {
 		this.myPlayer = new MyPlayer(myId, this.multiplayer);
 		this.myPlayer.setPos((Point) playersData.get(myId).get("pos"));
 		this.myPlayer.setColor((Color) playersData.get(myId).get("color"));
-		this.myPlayer.setSize(new Point(200, 200));
+		this.myPlayer.setSize(new Point(SIZE, SIZE));
 
 		for (int id : playersData.keySet()) {
 			if (id == myId) {
@@ -70,7 +72,7 @@ public class Game implements PDataProcessor {
 			OtherPlayer p = new OtherPlayer(id);
 			p.setPos((Point) playersData.get(id).get("pos"));
 			p.setColor((Color) playersData.get(id).get("color"));
-			p.setSize(new Point(200, 200));
+			p.setSize(new Point(SIZE, SIZE));
 			this.players.put(id, p);
 		}
 
@@ -85,13 +87,15 @@ public class Game implements PDataProcessor {
 
 	public void draw(Graphics2D g, double dt) {
 
-		AffineTransform af = g.getTransform();
+		AffineTransform origin = g.getTransform();
 
-		g.setTransform(this.camera.getTransform(af));
+		g.setTransform(this.camera.getTransform(origin));
 
 		for (Player player : this.players.values()) {
 			player.draw(g, dt);
 		}
+
+		g.setTransform(origin);
 	}
 
 	public GameState getGameState() {
@@ -153,6 +157,7 @@ public class Game implements PDataProcessor {
 			Object[] data = pdata.getData();
 			if (data.length != 2)
 				return;
+
 			p.setPos(new Point((int) data[0], (int) data[1]));
 		default:
 			break;
@@ -173,10 +178,11 @@ public class Game implements PDataProcessor {
 
 	public void update(Input input, double dt) {
 
-		this.camera.setAimedCenterPos(this.myPlayer.getPos().clone().add(this.myPlayer.getSize().clone().div(2)));
+		for (Player p : this.players.values()) {
+			p.resetForces();
+		}
 
-		this.camera.update(dt);
-
+		// Apply forces
 		while (!this.qPData.isEmpty()) {
 			PData data = this.qPData.poll();
 			if (data == null) {
@@ -184,7 +190,16 @@ public class Game implements PDataProcessor {
 			}
 			this.processPData(data);
 		}
+		this.myPlayer.update(input);
 
-		this.myPlayer.update(input, dt);
+		// Exec Forces
+		this.myPlayer.getPos();
+
+		for (Player p : this.players.values()) {
+			p.applyForces(dt);
+		}
+
+		this.camera.setAimedCenterPos(this.myPlayer.getPos().clone().add(this.myPlayer.getSize().clone().div(2)));
+		this.camera.update(dt);
 	}
 }
