@@ -32,16 +32,16 @@ public class GameLoop implements Runnable {
 		this.accuFps = 0;
 		this.dtUpdates = getDt(this.updates);
 		this.accuUpdate = 0;
-		this.lastUpdate = System.currentTimeMillis();
+		this.lastUpdate = this.time();
 		this.loop = new Thread(this);
 		this.state = state;
-		this.lastFrame = System.currentTimeMillis();
+		this.lastFrame = this.time();
 	}
 
 	@Override
 	public void run() {
 
-		double currentTime = System.currentTimeMillis();
+		double currentTime = this.time();
 
 		double elapsed = currentTime - this.lastFrame;
 
@@ -49,7 +49,7 @@ public class GameLoop implements Runnable {
 			synchronized (this) {
 				try {
 					// init
-					currentTime = System.currentTimeMillis();
+					currentTime = this.time();
 
 					elapsed = currentTime - this.lastFrame;
 
@@ -79,7 +79,7 @@ public class GameLoop implements Runnable {
 					}
 
 					if (this.accuFps > this.dtFps) {
-						this.state.setDt(this.accuUpdate / this.dtUpdates);
+						this.state.setDt((currentTime - this.lastUpdate) / 1000);
 						this.state.getStatePanel().repaint();
 						this.accuFps -= this.dtFps;
 					}
@@ -101,5 +101,9 @@ public class GameLoop implements Runnable {
 		synchronized (this) {
 			this.loop.interrupt();
 		}
+	}
+
+	public long time() {
+		return System.currentTimeMillis();
 	}
 }

@@ -33,11 +33,15 @@ public class Camera {
 		this.forces.add(f);
 	}
 
-	private void addMoveForce() {
-		if (this.pos != null && this.aimedPos != null && !this.pos.equals(this.aimedPos)) {
+	public void applyForces(double dt) {
+		this.pos.add(this.forces.clone().mult(dt));
+	}
+
+	private Point getMoveForce(Point aim) {
+		if (this.pos != null && aim != null && !this.pos.equals(aim)) {
 			double min = 20, max = 300;
 
-			double dist = this.pos.distanceTo(this.aimedPos);
+			double dist = this.pos.distanceTo(aim);
 
 			if (dist > min) {
 				// Speed
@@ -49,21 +53,18 @@ public class Camera {
 				double speed = this.MAX_SPEED * i;
 
 				// Direction
-				Point dir = this.pos.vectTo(this.aimedPos).trigNorm();
+				Point dir = this.pos.vectTo(aim).trigNorm();
 
-				// Move
-				this.addForce(dir.mult(speed));
+				return dir.mult(speed);
+
 			} else {
-				// Rien
+
 			}
 		}
+		return new Point();
 	}
 
-	public void applyForces(double dt) {
-		this.pos.add(this.forces.clone().mult(dt));
-	}
-
-	public AffineTransform getTransform(AffineTransform origin, double dt) {
+	public AffineTransform getTransform(AffineTransform origin) {
 		AffineTransform af = origin;
 		if (af == null) {
 			af = new AffineTransform();
@@ -74,8 +75,19 @@ public class Camera {
 		return af;
 	}
 
-	public Point getVectMove() {
-		return null;
+	public AffineTransform getTransform(AffineTransform origin, Point interpolatedAimPos, double dt) {
+		AffineTransform af = origin;
+		if (af == null) {
+			af = new AffineTransform();
+		}
+
+		interpolatedAimPos = interpolatedAimPos.clone().sub(this.winData.getDefaultWindowSize().clone().div(2));
+
+		Point interpolatedPos = this.pos.clone().add(this.getMoveForce(interpolatedAimPos).mult(dt));
+
+		af.translate(-interpolatedPos.ix(), -interpolatedPos.iy());
+
+		return af;
 	}
 
 	public void resetForces() {
@@ -95,6 +107,6 @@ public class Camera {
 	}
 
 	public void update() {
-		this.addMoveForce();
+		this.addForce(this.getMoveForce(this.aimedPos));
 	}
 }

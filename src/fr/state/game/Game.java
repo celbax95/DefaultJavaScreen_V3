@@ -40,7 +40,7 @@ public class Game implements PDataProcessor {
 
 	private int myId;
 
-	private Player myPlayer;
+	private MyPlayer myPlayer;
 
 	private Camera camera;
 
@@ -89,7 +89,9 @@ public class Game implements PDataProcessor {
 
 		AffineTransform origin = g.getTransform();
 
-		g.setTransform(this.camera.getTransform(origin, dt));
+		Point interpolatedPlayerPos = this.myPlayer.getInterpolatedPos(dt).add(this.myPlayer.getSize().clone().div(2));
+
+		g.setTransform(this.camera.getTransform(origin, interpolatedPlayerPos, dt));
 
 		for (Player player : this.players.values()) {
 			player.draw(g, dt);
