@@ -20,28 +20,20 @@ public class Camera {
 
 	int pixelsTolerence = 2;
 
+	Point forces;
+
 	public Camera(WinData winData) {
 		this.pos = new Point();
 		this.aimedPos = this.pos.clone();
+		this.forces = new Point();
 		this.winData = winData;
 	}
 
-	public AffineTransform getTransform(AffineTransform origin) {
-		AffineTransform af = origin;
-		if (af == null) {
-			af = new AffineTransform();
-		}
-
-		af.translate(-this.pos.x, -this.pos.y);
-
-		return af;
+	public void addForce(Point f) {
+		this.forces.add(f);
 	}
 
-	public Point getVectMove() {
-		return null;
-	}
-
-	private void move(double dt) {
+	private void addMoveForce() {
 		if (this.pos != null && this.aimedPos != null && !this.pos.equals(this.aimedPos)) {
 			double min = 20, max = 300;
 
@@ -60,11 +52,34 @@ public class Camera {
 				Point dir = this.pos.vectTo(this.aimedPos).trigNorm();
 
 				// Move
-				this.pos.add(dir.mult(speed).mult(dt));
+				this.addForce(dir.mult(speed));
 			} else {
 				// Rien
 			}
 		}
+	}
+
+	public void applyForces(double dt) {
+		this.pos.add(this.forces.clone().mult(dt));
+	}
+
+	public AffineTransform getTransform(AffineTransform origin, double dt) {
+		AffineTransform af = origin;
+		if (af == null) {
+			af = new AffineTransform();
+		}
+
+		af.translate(-this.pos.x, -this.pos.y);
+
+		return af;
+	}
+
+	public Point getVectMove() {
+		return null;
+	}
+
+	public void resetForces() {
+		this.forces.set(0, 0);
 	}
 
 	public void setAimedCenterPos(Point p) {
@@ -79,7 +94,7 @@ public class Camera {
 		this.pos.set(p);
 	}
 
-	public void update(double dt) {
-		this.move(dt);
+	public void update() {
+		this.addMoveForce();
 	}
 }
