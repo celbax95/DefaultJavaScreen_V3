@@ -2,6 +2,7 @@ package fr.state.game.elements.utilities;
 
 import java.awt.geom.AffineTransform;
 
+import fr.util.Util;
 import fr.util.point.Point;
 import fr.window.WinData;
 
@@ -13,7 +14,7 @@ public class Camera {
 
 	Point aimedPos;
 
-	double speed = 500;
+	double MAX_SPEED = 2500;
 
 	double acceleration = 3;
 
@@ -42,7 +43,27 @@ public class Camera {
 
 	private void move(double dt) {
 		if (this.pos != null && this.aimedPos != null && !this.pos.equals(this.aimedPos)) {
+			double min = 20, max = 300;
 
+			double dist = this.pos.distanceTo(this.aimedPos);
+
+			if (dist > min) {
+				// Speed
+				double i = (Util.clamp(dist, min, max) - min) / (max - min);
+
+				// smootherstep
+				i = i * i * i * (i * (i * 6 - 15) + 10);
+
+				double speed = this.MAX_SPEED * i;
+
+				// Direction
+				Point dir = this.pos.vectTo(this.aimedPos).trigNorm();
+
+				// Move
+				this.pos.add(dir.mult(speed).mult(dt));
+			} else {
+				// Rien
+			}
 		}
 	}
 
@@ -59,6 +80,6 @@ public class Camera {
 	}
 
 	public void update(double dt) {
-		this.setPos(this.aimedPos);
+		this.move(dt);
 	}
 }
