@@ -57,15 +57,13 @@ public class MyPlayer implements Serializable, Player {
 
 		// move
 		this.setPos(this.pos.add(this.forces.mult(dt)));
-
-		System.out.println(this.pos);
 	}
 
 	@Override
 	public void draw(Graphics2D g, double dt) {
 		g.setColor(this.color);
 		Point dtPos = this.forces.clone().mult(dt).add(this.pos);
-		// g.fillRect(dtPos.ix(), dtPos.iy(), this.size.ix(), this.size.iy());
+//		g.fillRect(dtPos.ix(), dtPos.iy(), this.size.ix(), this.size.iy());
 
 		g.fillRect(this.pos.ix(), this.pos.iy(), this.size.ix(), this.size.iy());
 	}

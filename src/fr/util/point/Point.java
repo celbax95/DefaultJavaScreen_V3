@@ -237,6 +237,10 @@ public class Point implements Serializable {
 		return this;
 	}
 
+	public Point vectTo(Point aim) {
+		return aim.clone().sub(this);
+	}
+
 	public double x() {
 		return this.x;
 	}
