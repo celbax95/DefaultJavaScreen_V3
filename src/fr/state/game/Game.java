@@ -91,7 +91,11 @@ public class Game implements PDataProcessor {
 
 		Point interpolatedPlayerPos = this.myPlayer.getInterpolatedPos(dt).add(this.myPlayer.getSize().clone().div(2));
 
-		g.setTransform(this.camera.getTransform(origin, interpolatedPlayerPos, dt));
+		this.camera.setAimedCenterPos(interpolatedPlayerPos);
+		this.camera.update();
+		this.camera.applyForces(dt);
+
+		g.setTransform(this.camera.getTransform(origin));
 
 		for (Player player : this.players.values()) {
 			player.draw(g, dt);
