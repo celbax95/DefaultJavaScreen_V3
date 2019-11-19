@@ -9,13 +9,13 @@ import fr.window.WinData;
 
 public class Camera {
 
-	private final double DIST_TO_MOVE = 20, DIST_TO_FULLSPEED = 300;
+	private final double DIST_TO_MOVE = 0.1, DIST_TO_FULLSPEED = 1.5;
 
 	private final double MAX_SCALE = 2, MIN_SCALE = 0.1;
 
 	private final double ZOOM_STEP = 1.5;
 
-	private final double MAX_SPEED = 2500;
+	private final double MAX_SPEED = 12.5;
 
 	private final double DEFAULT_SCALE = 0.8;
 
@@ -31,7 +31,10 @@ public class Camera {
 
 	private Point scalePosAdjust;
 
-	public Camera(WinData winData) {
+	private double sizeUnit;
+
+	public Camera(WinData winData, double sizeUnit) {
+		this.sizeUnit = sizeUnit;
 		this.pos = new Point();
 		this.aimedPos = this.pos.clone();
 		this.forces = new Point();
@@ -54,17 +57,17 @@ public class Camera {
 
 			double dist = this.pos.distanceTo(aim);
 
-			double dtm = this.DIST_TO_MOVE / this.scale;
-			double dtf = this.DIST_TO_FULLSPEED / this.scale;
+			double dtm = this.DIST_TO_MOVE * this.sizeUnit / this.scale;
+			double dtf = this.DIST_TO_FULLSPEED * this.sizeUnit / this.scale;
 
-			if (dist > this.DIST_TO_MOVE) {
+			if (dist > this.DIST_TO_MOVE * this.sizeUnit) {
 				// Speed
 				double i = (Util.clamp(dist, dtm, dtf) - dtm) / (dtf - dtm);
 
 				// smootherstep
 				i = i * i * i * (i * (i * 6 - 15) + 10);
 
-				double speed = this.MAX_SPEED * i;
+				double speed = this.MAX_SPEED * this.sizeUnit * i;
 
 				// Direction
 				Point dir = this.pos.vectTo(aim).trigNorm();

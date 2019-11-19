@@ -24,7 +24,7 @@ public class Game implements PDataProcessor {
 
 	private final static int MISSING_PDATA = 50;
 
-	private static final int SIZE = 200;
+	private static final int SIZE = 1;
 
 	private GameState gameState;
 
@@ -60,7 +60,7 @@ public class Game implements PDataProcessor {
 
 		this.players = new HashMap<>();
 
-		this.myPlayer = new MyPlayer(myId, this.multiplayer);
+		this.myPlayer = new MyPlayer(myId, this.multiplayer, Constants.SIZE_UNIT);
 		this.myPlayer.setPos((Point) playersData.get(myId).get("pos"));
 		this.myPlayer.setColor((Color) playersData.get(myId).get("color"));
 		this.myPlayer.setSize(new Point(SIZE, SIZE));
@@ -69,7 +69,7 @@ public class Game implements PDataProcessor {
 			if (id == myId) {
 				continue;
 			}
-			OtherPlayer p = new OtherPlayer(id);
+			OtherPlayer p = new OtherPlayer(id, Constants.SIZE_UNIT);
 			p.setPos((Point) playersData.get(id).get("pos"));
 			p.setColor((Color) playersData.get(id).get("color"));
 			p.setSize(new Point(SIZE, SIZE));
@@ -82,7 +82,7 @@ public class Game implements PDataProcessor {
 
 		this.qPData = new ConcurrentLinkedQueue<>();
 
-		this.camera = new Camera(winData);
+		this.camera = new Camera(winData, Constants.SIZE_UNIT);
 	}
 
 	public void draw(Graphics2D g, double dt) {

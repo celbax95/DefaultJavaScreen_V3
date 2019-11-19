@@ -46,5 +46,7 @@ public interface Player {
 	 */
 	void setSize(Point size);
 
+	void setSizeUnit(double sizeUnit);
+
 	void update(Input input);
 }

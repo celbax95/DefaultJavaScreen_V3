@@ -232,8 +232,13 @@ public class Point implements Serializable {
 	 */
 	public Point trigNorm() {
 		double tmp = Math.sqrt(Math.pow(this.x, 2) + Math.pow(this.y, 2));
-		this.x /= tmp;
-		this.y /= tmp;
+		if (tmp == 0) {
+			this.x = 0;
+			this.y = 0;
+		} else {
+			this.x /= tmp;
+			this.y /= tmp;
+		}
 		return this;
 	}
 

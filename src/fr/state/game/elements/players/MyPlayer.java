@@ -15,7 +15,7 @@ public class MyPlayer implements Serializable, Player {
 
 	private static final Color COLOR = Color.RED;
 
-	private static final int ACCEL = 100, MAX_SPEED = 1000;
+	private static double ACCEL = 4, MAX_SPEED = 10;
 
 	private final int id;
 
@@ -25,11 +25,14 @@ public class MyPlayer implements Serializable, Player {
 
 	private Color color;
 
+	private double sizeUnit;
+
 	private Multiplayer multiplayer;
 	private PDataFactory pDataFactory;
 
-	public MyPlayer(int id, Multiplayer multiplayer) {
+	public MyPlayer(int id, Multiplayer multiplayer, double sizeUnit) {
 		this.id = id;
+		this.sizeUnit = sizeUnit;
 		this.pos = new Point();
 		this.size = new Point();
 		this.forces = new Point();
@@ -51,8 +54,8 @@ public class MyPlayer implements Serializable, Player {
 
 		// speed
 		int tmpSpeed = (int) Math.round(this.forces.length());
-		if (tmpSpeed > MAX_SPEED) {
-			this.forces.mult((double) MAX_SPEED / tmpSpeed);
+		if (tmpSpeed > MyPlayer.MAX_SPEED * this.sizeUnit) {
+			this.forces.mult(MyPlayer.MAX_SPEED * this.sizeUnit / tmpSpeed);
 		}
 
 		// move
@@ -64,8 +67,6 @@ public class MyPlayer implements Serializable, Player {
 		g.setColor(this.color);
 		Point dtPos = this.forces.clone().mult(dt).add(this.pos);
 		g.fillRect(dtPos.ix(), dtPos.iy(), this.size.ix(), this.size.iy());
-
-//		g.fillRect(this.pos.ix(), this.pos.iy(), this.size.ix(), this.size.iy());
 	}
 
 	@Override
@@ -81,14 +82,14 @@ public class MyPlayer implements Serializable, Player {
 		Point move = new Point(0, 0);
 
 		if (up ^ down) {
-			move.y(up ? -ACCEL : ACCEL);
+			move.y(up ? -1 : 1);
 		}
 
 		if (left ^ right) {
-			move.x(left ? -ACCEL : ACCEL);
+			move.x(left ? -1 : 1);
 		}
 
-		return move;
+		return move.trigNorm();
 	}
 
 	@Override
@@ -119,7 +120,12 @@ public class MyPlayer implements Serializable, Player {
 
 	@Override
 	public void setSize(Point size) {
-		this.size = size;
+		this.size = size.clone().mult(this.sizeUnit);
+	}
+
+	@Override
+	public void setSizeUnit(double sizeUnit) {
+		this.sizeUnit = sizeUnit;
 	}
 
 	@Override
@@ -127,7 +133,7 @@ public class MyPlayer implements Serializable, Player {
 		Point move = this.getMoveFromInput(input.keyboardKeys.get(90), input.keyboardKeys.get(83),
 				input.keyboardKeys.get(81), input.keyboardKeys.get(68));
 
-		move.mult(ACCEL);
+		move.mult(MyPlayer.ACCEL * this.sizeUnit);
 
 		this.addForce(move);
 	}

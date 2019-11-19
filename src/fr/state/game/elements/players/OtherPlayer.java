@@ -5,8 +5,6 @@ import java.awt.Graphics2D;
 import java.io.Serializable;
 
 import fr.inputs.Input;
-import fr.server.p2p.Multiplayer;
-import fr.server.p2p.PDataFactory;
 import fr.util.point.Point;
 
 public class OtherPlayer implements Serializable, Player {
@@ -15,7 +13,7 @@ public class OtherPlayer implements Serializable, Player {
 
 	private static final Color COLOR = Color.RED;
 
-	private static final int ACCEL = 100, MAX_SPEED = 1000;
+	private static final double ACCEL = 0.5, MAX_SPEED = 10;
 
 	private final int id;
 
@@ -25,11 +23,11 @@ public class OtherPlayer implements Serializable, Player {
 
 	private Color color;
 
-	private Multiplayer multiplayer;
-	private PDataFactory pDataFactory;
+	private double sizeUnit;
 
-	public OtherPlayer(int id) {
+	public OtherPlayer(int id, double sizeUnit) {
 		this.id = id;
+		this.sizeUnit = sizeUnit;
 		this.pos = new Point();
 		this.size = new Point();
 		this.forces = new Point();
@@ -41,12 +39,13 @@ public class OtherPlayer implements Serializable, Player {
 		this.forces.add(f);
 	}
 
+	@Override
 	public void applyForces(double dt) {
 
 		// speed
 		int tmpSpeed = (int) Math.round(this.forces.length());
-		if (tmpSpeed > MAX_SPEED) {
-			this.forces.mult((double) MAX_SPEED / tmpSpeed);
+		if (tmpSpeed > MAX_SPEED * this.sizeUnit) {
+			this.forces.mult(MAX_SPEED * this.sizeUnit / tmpSpeed);
 		}
 
 		// move
@@ -126,7 +125,12 @@ public class OtherPlayer implements Serializable, Player {
 	 */
 	@Override
 	public void setSize(Point size) {
-		this.size = size;
+		this.size = size.clone().mult(this.sizeUnit);
+	}
+
+	@Override
+	public void setSizeUnit(double sizeUnit) {
+		this.sizeUnit = sizeUnit;
 	}
 
 	/*
