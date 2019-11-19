@@ -92,7 +92,7 @@ public class Game implements PDataProcessor {
 		Point interpolatedPlayerPos = this.myPlayer.getInterpolatedPos(dt).add(this.myPlayer.getSize().clone().div(2));
 
 		this.camera.setAimedCenterPos(interpolatedPlayerPos);
-		this.camera.update();
+		this.camera.setMoveToAimForce();
 		this.camera.applyForces(dt);
 
 		g.setTransform(this.camera.getTransform(origin));
@@ -207,7 +207,10 @@ public class Game implements PDataProcessor {
 		}
 
 		this.camera.setAimedCenterPos(this.myPlayer.getPos().clone().add(this.myPlayer.getSize().clone().div(2)));
-		this.camera.update();
+		this.camera.setMoveToAimForce();
+
+		this.camera.update(input, dt);
+
 		this.camera.applyForces(dt);
 	}
 }
