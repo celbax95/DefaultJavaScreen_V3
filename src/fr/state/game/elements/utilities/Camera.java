@@ -2,6 +2,7 @@ package fr.state.game.elements.utilities;
 
 import java.awt.geom.AffineTransform;
 
+import fr.inputs.Input;
 import fr.util.Util;
 import fr.util.point.Point;
 import fr.window.WinData;
@@ -102,11 +103,25 @@ public class Camera {
 		this.aimedPos = ap.clone();
 	}
 
+	public void setMoveToAimForce() {
+		this.addForce(this.getMoveForce(this.aimedPos));
+	}
+
 	public void setPos(Point p) {
 		this.pos.set(p);
 	}
 
-	public void update() {
-		this.addForce(this.getMoveForce(this.aimedPos));
+	public void update(Input input, double dt) {
+
+		boolean unzoom = input.keyboardKeys.get(109), zoom = input.keyboardKeys.get(107);
+
+		// OU exclusif
+		if (!(unzoom && zoom) && (unzoom || zoom)) {
+			if (unzoom) {
+				// unzoom
+			} else {
+				// zoom
+			}
+		}
 	}
 }
