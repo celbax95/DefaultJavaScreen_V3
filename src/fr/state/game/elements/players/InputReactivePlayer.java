@@ -48,7 +48,7 @@ public class InputReactivePlayer extends Player {
 		Point move = this.getMoveFromInput(input.keyboardKeys.get(90), input.keyboardKeys.get(83),
 				input.keyboardKeys.get(81), input.keyboardKeys.get(68));
 
-		move.mult(InputReactivePlayer.ACCEL * this.sizeUnit);
+		move.mult(InputReactivePlayer.ACCEL * this.getScaling());
 
 		this.addForces(move);
 	}

@@ -13,8 +13,8 @@ import fr.inputs.Input;
 import fr.server.p2p.Multiplayer;
 import fr.server.p2p.PData;
 import fr.server.p2p.PDataProcessor;
-import fr.state.game.elements.players.InputReactivePlayer;
 import fr.state.game.elements.players.DummyPlayer;
+import fr.state.game.elements.players.InputReactivePlayer;
 import fr.state.game.elements.players.Player;
 import fr.state.game.elements.utilities.Camera;
 import fr.util.point.Point;
@@ -61,6 +61,7 @@ public class Game implements PDataProcessor {
 		this.players = new HashMap<>();
 
 		this.myPlayer = new InputReactivePlayer(myId, this.multiplayer, Constants.SIZE_UNIT);
+		this.myPlayer.setScale(0.5);
 		this.myPlayer.setPos((Point) playersData.get(myId).get("pos"));
 		this.myPlayer.setColor((Color) playersData.get(myId).get("color"));
 		this.myPlayer.setSize(new Point(SIZE, SIZE));

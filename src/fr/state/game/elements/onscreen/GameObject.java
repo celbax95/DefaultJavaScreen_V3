@@ -47,7 +47,7 @@ public abstract class GameObject implements Serializable {
 
 	public void applyForces(double maxSpeed, double dt) {
 
-		maxSpeed *= this.sizeUnit;
+		maxSpeed *= this.getScaling();
 
 		Point forces = this.forces.clone();
 
@@ -71,8 +71,7 @@ public abstract class GameObject implements Serializable {
 	}
 
 	public Point getInterpolatedPos(double dt) {
-		Point dtp = this.pos.clone().add(this.forces.clone().mult(dt));
-		return dtp;
+		return this.pos.clone().add(this.forces.clone().mult(dt));
 	}
 
 	/**
@@ -136,7 +135,7 @@ public abstract class GameObject implements Serializable {
 	 * @param size the size to set
 	 */
 	public void setSize(Point size) {
-		this.size = size.mult(this.sizeUnit);
+		this.size = size.mult(this.getScaling());
 	}
 
 	/**
