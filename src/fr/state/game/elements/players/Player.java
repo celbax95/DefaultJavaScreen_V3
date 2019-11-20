@@ -47,6 +47,10 @@ public abstract class Player extends GameObject {
 		return this.color;
 	}
 
+	public int getPlayerId() {
+		return this.id;
+	}
+
 	/**
 	 * @param color the color to set
 	 */

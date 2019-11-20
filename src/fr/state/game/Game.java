@@ -13,6 +13,8 @@ import fr.inputs.Input;
 import fr.server.p2p.Multiplayer;
 import fr.server.p2p.PData;
 import fr.server.p2p.PDataProcessor;
+import fr.state.game.elements.onscreen.GOTag;
+import fr.state.game.elements.onscreen.GameObject;
 import fr.state.game.elements.players.DummyPlayer;
 import fr.state.game.elements.players.InputReactivePlayer;
 import fr.state.game.elements.players.Player;
@@ -29,6 +31,8 @@ public class Game implements PDataProcessor {
 	private GameState gameState;
 
 	private Map<Integer, Player> players;
+
+	private Map<Integer, GameObject> gameObjects;
 
 	private Multiplayer multiplayer;
 
@@ -59,12 +63,14 @@ public class Game implements PDataProcessor {
 		this.currentPDataID = -1;
 
 		this.players = new HashMap<>();
+		this.gameObjects = new HashMap<>();
 
 		this.myPlayer = new InputReactivePlayer(myId, this.multiplayer, Constants.SIZE_UNIT);
-		this.myPlayer.setScale(0.5);
+		this.myPlayer.setScale(1);
 		this.myPlayer.setPos((Point) playersData.get(myId).get("pos"));
 		this.myPlayer.setColor((Color) playersData.get(myId).get("color"));
 		this.myPlayer.setSize(new Point(SIZE, SIZE));
+		this.myPlayer.addTags(GOTag.PLAYER);
 
 		for (int id : playersData.keySet()) {
 			if (id == myId) {
@@ -74,16 +80,35 @@ public class Game implements PDataProcessor {
 			p.setPos((Point) playersData.get(id).get("pos"));
 			p.setColor((Color) playersData.get(id).get("color"));
 			p.setSize(new Point(SIZE, SIZE));
+			p.addTags(GOTag.PLAYER);
 			this.players.put(id, p);
+			this.addGameObjects(p);
 		}
 
 		this.players.put(myId, this.myPlayer);
+		this.addGameObjects(this.myPlayer);
 
 		this.missingPData = new LinkedList<>();
 
 		this.qPData = new ConcurrentLinkedQueue<>();
 
 		this.camera = new Camera(winData, Constants.SIZE_UNIT);
+	}
+
+	public void addGameObjects(GameObject... gameObjects) {
+		for (GameObject go : gameObjects) {
+			if (this.gameObjects.containsKey(go.getId()) == false) {
+				this.gameObjects.put(go.getId(), go);
+			}
+		}
+	}
+
+	public boolean containsGameObject(GameObject go) {
+		return this.containsGameObject(go.getId());
+	}
+
+	public boolean containsGameObject(int id) {
+		return this.gameObjects.containsKey(id);
 	}
 
 	public void draw(Graphics2D g, double dt) {
@@ -98,8 +123,8 @@ public class Game implements PDataProcessor {
 
 		g.setTransform(this.camera.getTransform(origin));
 
-		for (Player player : this.players.values()) {
-			player.draw(g, dt);
+		for (GameObject go : this.gameObjects.values()) {
+			go.draw(g, dt);
 		}
 
 		g.setTransform(origin);
@@ -171,6 +196,14 @@ public class Game implements PDataProcessor {
 		}
 	}
 
+	public void removeGameObject(GameObject gameObject) {
+		this.gameObjects.remove(gameObject.getId());
+	}
+
+	public void removeGameObject(int id) {
+		this.gameObjects.remove(id);
+	}
+
 	public void resetForces() {
 		this.myPlayer.resetForces();
 	}
@@ -185,12 +218,13 @@ public class Game implements PDataProcessor {
 
 	public void update(Input input, double dt) {
 
+		// Reset des forces du tour de boucle precedent
 		for (Player p : this.players.values()) {
 			p.resetForces();
 		}
 		this.camera.resetForces();
 
-		// Apply forces
+		// Traite des paquets recus entre deux tour de boucle
 		while (!this.qPData.isEmpty()) {
 			PData data = this.qPData.poll();
 			if (data == null) {
@@ -198,13 +232,14 @@ public class Game implements PDataProcessor {
 			}
 			this.processPData(data);
 		}
+
+		// Application des forces relatives aux actions utilisateur au joueur
 		this.myPlayer.update(input, dt);
 
 		// Exec Forces
-		this.myPlayer.getPos();
 
-		for (Player p : this.players.values()) {
-			p.applyForces(dt);
+		for (GameObject go : this.gameObjects.values()) {
+			go.applyForces(dt);
 		}
 
 		this.camera.setAimedCenterPos(this.myPlayer.getPos().clone().add(this.myPlayer.getSize().clone().div(2)));

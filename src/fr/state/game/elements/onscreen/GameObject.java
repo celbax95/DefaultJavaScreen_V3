@@ -2,15 +2,23 @@ package fr.state.game.elements.onscreen;
 
 import java.awt.Graphics2D;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import fr.inputs.Input;
 import fr.util.point.Point;
 
 public abstract class GameObject implements Serializable {
 
+	private static int idCounter = 0;
+
 	private static final long serialVersionUID = 1L;
 
 	protected final double sizeUnit;
+
+	protected final int id;
+
+	protected List<GOTag> tags;
 
 	protected Point pos;
 
@@ -21,9 +29,11 @@ public abstract class GameObject implements Serializable {
 	protected double scale;
 
 	protected GameObject(double sizeUnit) {
+		this.id = idCounter++;
 		this.pos = new Point();
 		this.size = new Point();
 		this.forces = new Point();
+		this.tags = new ArrayList<>();
 		this.scale = 1;
 		this.sizeUnit = sizeUnit;
 	}
@@ -38,6 +48,14 @@ public abstract class GameObject implements Serializable {
 	public void addForces(Point... forces) {
 		for (Point f : forces) {
 			this.forces.add(f);
+		}
+	}
+
+	public void addTags(GOTag... tags) {
+		for (GOTag tag : tags) {
+			if (!this.tags.contains(tag)) {
+				this.tags.add(tag);
+			}
 		}
 	}
 
@@ -68,6 +86,13 @@ public abstract class GameObject implements Serializable {
 	 */
 	public Point getForces() {
 		return this.forces;
+	}
+
+	/**
+	 * @return the id
+	 */
+	public int getId() {
+		return this.id;
 	}
 
 	public Point getInterpolatedPos(double dt) {
@@ -104,6 +129,25 @@ public abstract class GameObject implements Serializable {
 	 */
 	public double getSizeUnit() {
 		return this.sizeUnit;
+	}
+
+	public List<GOTag> getTags() {
+		List<GOTag> returnList = new ArrayList<>();
+		for (GOTag tag : this.tags) {
+			returnList.add(tag);
+		}
+		return returnList;
+	}
+
+	public boolean hasTag(GOTag tag) {
+		return this.tags.contains(tag);
+	}
+
+	public void removeTag(GOTag tag) {
+		int ind = -1;
+		if ((ind = this.tags.indexOf(tag)) != -1) {
+			this.tags.remove(ind);
+		}
 	}
 
 	public void resetForces() {
