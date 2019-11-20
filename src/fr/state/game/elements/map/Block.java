@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 
 import fr.inputs.Input;
+import fr.state.game.elements.onscreen.GOTag;
 import fr.state.game.elements.onscreen.GameObject;
 import fr.util.point.Point;
 
@@ -15,14 +16,16 @@ public class Block extends GameObject {
 
 	private Color color;
 
-	protected Block(double sizeUnit) {
+	public Block(double sizeUnit) {
 		super(sizeUnit);
 		this.color = DEFAULT_COLOR;
+		this.addTags(GOTag.OBSTACLE);
 	}
 
-	protected Block(Point pos, Point size, double sizeUnit, double scale) {
+	public Block(Point pos, Point size, double sizeUnit, double scale) {
 		super(pos, size, sizeUnit, scale);
 		this.color = DEFAULT_COLOR;
+		this.addTags(GOTag.OBSTACLE);
 	}
 
 	@Override

@@ -13,7 +13,7 @@ import fr.inputs.Input;
 import fr.server.p2p.Multiplayer;
 import fr.server.p2p.PData;
 import fr.server.p2p.PDataProcessor;
-import fr.state.game.elements.onscreen.GOTag;
+import fr.state.game.elements.map.Block;
 import fr.state.game.elements.onscreen.GameObject;
 import fr.state.game.elements.players.DummyPlayer;
 import fr.state.game.elements.players.InputReactivePlayer;
@@ -70,7 +70,6 @@ public class Game implements PDataProcessor {
 		this.myPlayer.setPos((Point) playersData.get(myId).get("pos"));
 		this.myPlayer.setColor((Color) playersData.get(myId).get("color"));
 		this.myPlayer.setSize(new Point(SIZE, SIZE));
-		this.myPlayer.addTags(GOTag.PLAYER);
 
 		for (int id : playersData.keySet()) {
 			if (id == myId) {
@@ -80,13 +79,15 @@ public class Game implements PDataProcessor {
 			p.setPos((Point) playersData.get(id).get("pos"));
 			p.setColor((Color) playersData.get(id).get("color"));
 			p.setSize(new Point(SIZE, SIZE));
-			p.addTags(GOTag.PLAYER);
 			this.players.put(id, p);
 			this.addGameObjects(p);
 		}
 
 		this.players.put(myId, this.myPlayer);
 		this.addGameObjects(this.myPlayer);
+
+		Block b = new Block(new Point(-100, 600), new Point(6, 0.5), Constants.SIZE_UNIT, 1);
+		this.addGameObjects(b);
 
 		this.missingPData = new LinkedList<>();
 

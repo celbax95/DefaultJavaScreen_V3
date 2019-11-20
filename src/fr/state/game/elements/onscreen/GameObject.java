@@ -40,9 +40,9 @@ public abstract class GameObject implements Serializable {
 
 	protected GameObject(Point pos, Point size, double sizeUnit, double scale) {
 		this(sizeUnit);
-		this.pos = pos;
-		this.size = size;
 		this.scale = scale;
+		this.pos = pos;
+		this.size = size.clone().mult(this.getScaling());
 	}
 
 	public void addForces(Point... forces) {
