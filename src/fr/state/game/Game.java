@@ -197,7 +197,7 @@ public class Game implements PDataProcessor {
 			}
 			this.processPData(data);
 		}
-		this.myPlayer.update(input);
+		this.myPlayer.update(input, dt);
 
 		// Exec Forces
 		this.myPlayer.getPos();

@@ -3,50 +3,48 @@ package fr.state.game.elements.players;
 import java.awt.Color;
 import java.awt.Graphics2D;
 
-import fr.inputs.Input;
+import fr.state.game.elements.onscreen.GameObject;
 import fr.util.point.Point;
 
-public interface Player {
+public abstract class Player extends GameObject {
 
-	void addForce(Point f);
+	private static final long serialVersionUID = 1L;
 
-	void applyForces(double dt);
+	protected static final double MAX_SPEED = 10;
 
-	void draw(Graphics2D g, double dt);
+	protected Color color;
 
-	/**
-	 * @return the color
-	 */
-	Color getColor();
+	protected Player(double sizeUnit) {
+		super(sizeUnit);
+		this.color = Color.RED;
+	}
 
-	/**
-	 * @return the pos
-	 */
-	Point getPos();
+	protected Player(Point pos, Point size, double sizeUnit, double scale) {
+		super(pos, size, sizeUnit, scale);
+		this.color = Color.RED;
+	}
 
-	/**
-	 * @return the size
-	 */
-	Point getSize();
+	@Override
+	public void applyForces(double dt) {
+		this.applyForces(MAX_SPEED, dt);
+	}
 
-	void resetForces();
+	@Override
+	public void draw(Graphics2D g, double dt) {
+		g.setColor(this.color);
+		Point dtPos = this.getInterpolatedPos(dt);
+
+		g.fillRect(dtPos.ix(), dtPos.iy(), this.size.ix(), this.size.iy());
+	}
+
+	public Color getColor() {
+		return this.color;
+	}
 
 	/**
 	 * @param color the color to set
 	 */
-	void setColor(Color color);
-
-	/**
-	 * @param pos the pos to set
-	 */
-	void setPos(Point pos);
-
-	/**
-	 * @param size the size to set
-	 */
-	void setSize(Point size);
-
-	void setSizeUnit(double sizeUnit);
-
-	void update(Input input);
+	public void setColor(Color color) {
+		this.color = color;
+	}
 }
