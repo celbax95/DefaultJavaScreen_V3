@@ -12,16 +12,22 @@ public abstract class Player extends GameObject {
 
 	protected static final double MAX_SPEED = 10;
 
+	private static final Color DEFAULT_COLOR = Color.RED;
+
+	protected final int id;
+
 	protected Color color;
 
-	protected Player(double sizeUnit) {
+	protected Player(int id, double sizeUnit) {
 		super(sizeUnit);
-		this.color = Color.RED;
+		this.id = id;
+		this.color = DEFAULT_COLOR;
 	}
 
-	protected Player(Point pos, Point size, double sizeUnit, double scale) {
+	protected Player(int id, Point pos, Point size, double sizeUnit, double scale) {
 		super(pos, size, sizeUnit, scale);
-		this.color = Color.RED;
+		this.id = id;
+		this.color = DEFAULT_COLOR;
 	}
 
 	@Override

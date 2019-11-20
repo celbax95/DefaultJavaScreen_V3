@@ -5,22 +5,28 @@ import fr.server.p2p.Multiplayer;
 import fr.server.p2p.PDataFactory;
 import fr.util.point.Point;
 
-public class MyPlayer extends Player {
+public class InputReactivePlayer extends Player {
 
 	private static final long serialVersionUID = 1L;
 
 	private static double ACCEL = 4;
 
-	private final int id;
-
 	private Multiplayer multiplayer;
 	private PDataFactory pDataFactory;
 
-	public MyPlayer(int id, Multiplayer multiplayer, double sizeUnit) {
-		super(sizeUnit);
-		this.id = id;
+	public InputReactivePlayer(int id, Multiplayer multiplayer, double sizeUnit) {
+		super(id, sizeUnit);
 		this.multiplayer = multiplayer;
 		this.pDataFactory = multiplayer.getPDataFactory();
+	}
+
+	@Override
+	public void applyForces(double dt) {
+		if (this.forces.equals(new Point()) == false) {
+			super.applyForces(dt);
+
+			this.multiplayer.send(this.pDataFactory.createMove(this.id, this.pos));
+		}
 	}
 
 	private Point getMoveFromInput(boolean up, boolean down, boolean left, boolean right) {
@@ -38,17 +44,11 @@ public class MyPlayer extends Player {
 	}
 
 	@Override
-	public void setPos(Point pos) {
-		super.setPos(pos);
-		this.multiplayer.send(this.pDataFactory.createMove(this.id, pos));
-	}
-
-	@Override
 	public void update(Input input, double dt) {
 		Point move = this.getMoveFromInput(input.keyboardKeys.get(90), input.keyboardKeys.get(83),
 				input.keyboardKeys.get(81), input.keyboardKeys.get(68));
 
-		move.mult(MyPlayer.ACCEL * this.sizeUnit);
+		move.mult(InputReactivePlayer.ACCEL * this.sizeUnit);
 
 		this.addForces(move);
 	}

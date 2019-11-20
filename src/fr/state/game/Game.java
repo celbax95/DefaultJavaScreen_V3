@@ -13,8 +13,8 @@ import fr.inputs.Input;
 import fr.server.p2p.Multiplayer;
 import fr.server.p2p.PData;
 import fr.server.p2p.PDataProcessor;
-import fr.state.game.elements.players.MyPlayer;
-import fr.state.game.elements.players.OtherPlayer;
+import fr.state.game.elements.players.InputReactivePlayer;
+import fr.state.game.elements.players.DummyPlayer;
 import fr.state.game.elements.players.Player;
 import fr.state.game.elements.utilities.Camera;
 import fr.util.point.Point;
@@ -40,7 +40,7 @@ public class Game implements PDataProcessor {
 
 	private int myId;
 
-	private MyPlayer myPlayer;
+	private InputReactivePlayer myPlayer;
 
 	private Camera camera;
 
@@ -60,7 +60,7 @@ public class Game implements PDataProcessor {
 
 		this.players = new HashMap<>();
 
-		this.myPlayer = new MyPlayer(myId, this.multiplayer, Constants.SIZE_UNIT);
+		this.myPlayer = new InputReactivePlayer(myId, this.multiplayer, Constants.SIZE_UNIT);
 		this.myPlayer.setPos((Point) playersData.get(myId).get("pos"));
 		this.myPlayer.setColor((Color) playersData.get(myId).get("color"));
 		this.myPlayer.setSize(new Point(SIZE, SIZE));
@@ -69,7 +69,7 @@ public class Game implements PDataProcessor {
 			if (id == myId) {
 				continue;
 			}
-			OtherPlayer p = new OtherPlayer(id, Constants.SIZE_UNIT);
+			DummyPlayer p = new DummyPlayer(id, Constants.SIZE_UNIT);
 			p.setPos((Point) playersData.get(id).get("pos"));
 			p.setColor((Color) playersData.get(id).get("color"));
 			p.setSize(new Point(SIZE, SIZE));

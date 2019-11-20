@@ -89,6 +89,10 @@ public abstract class GameObject implements Serializable {
 		return this.scale;
 	}
 
+	protected double getScaling() {
+		return this.scale * this.sizeUnit;
+	}
+
 	/**
 	 * @return the size
 	 */

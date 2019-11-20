@@ -110,6 +110,7 @@ public class Multiplayer {
 			if (data.isNeedConfirm()) {
 				this.needConfirm.put(data.getId(), new Confirmer(data.getId(), this, packet, this.receivers));
 			}
+
 			this.socket.send(packet);
 
 		} catch (Exception e) {
