@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 
 import fr.inputs.Input;
+import fr.state.game.elements.collider.Shape;
 import fr.state.game.elements.onscreen.GOTag;
 import fr.state.game.elements.onscreen.GameObject;
 import fr.util.point.Point;
@@ -39,6 +40,11 @@ public class Block extends GameObject {
 	 */
 	public Color getColor() {
 		return this.color;
+	}
+
+	@Override
+	public Shape getShape() {
+		return null;
 	}
 
 	/**

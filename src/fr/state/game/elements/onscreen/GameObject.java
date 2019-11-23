@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import fr.inputs.Input;
+import fr.state.game.elements.collider.Shape;
 import fr.util.point.Point;
 
 public abstract class GameObject implements Serializable {
@@ -116,6 +117,8 @@ public abstract class GameObject implements Serializable {
 	protected double getScaling() {
 		return this.scale * this.sizeUnit;
 	}
+
+	public abstract Shape getShape();
 
 	/**
 	 * @return the size

@@ -3,6 +3,7 @@ package fr.state.game.elements.players;
 import java.awt.Color;
 import java.awt.Graphics2D;
 
+import fr.state.game.elements.collider.Shape;
 import fr.state.game.elements.onscreen.GOTag;
 import fr.state.game.elements.onscreen.GameObject;
 import fr.util.point.Point;
@@ -52,6 +53,11 @@ public abstract class Player extends GameObject {
 
 	public int getPlayerId() {
 		return this.id;
+	}
+
+	@Override
+	public Shape getShape() {
+		return null;
 	}
 
 	/**

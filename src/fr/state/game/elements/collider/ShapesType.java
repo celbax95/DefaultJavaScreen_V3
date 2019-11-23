@@ -1,5 +1,5 @@
 package fr.state.game.elements.collider;
 
-public enum CollisionTypes {
+public enum ShapesType {
 	AABB,
 }
