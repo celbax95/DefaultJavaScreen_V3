@@ -15,17 +15,21 @@ public abstract class GameObject implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
+	protected double maxSpeed;
+
 	protected final double sizeUnit;
 
 	protected final int id;
 
 	protected List<GOTag> tags;
 
-	protected Point pos;
+	protected final Point pos;
 
-	protected Point size;
+	protected final Point size;
 
-	protected Point forces;
+	protected final Point velocity;
+
+	protected final Point forces;
 
 	protected double scale;
 
@@ -34,16 +38,18 @@ public abstract class GameObject implements Serializable {
 		this.pos = new Point();
 		this.size = new Point();
 		this.forces = new Point();
+		this.velocity = new Point();
 		this.tags = new ArrayList<>();
 		this.scale = 1;
 		this.sizeUnit = sizeUnit;
+		this.maxSpeed = -1;
 	}
 
 	protected GameObject(Point pos, Point size, double sizeUnit, double scale) {
 		this(sizeUnit);
 		this.scale = scale;
-		this.pos = pos;
-		this.size = size.clone().mult(this.getScaling());
+		this.pos.set(pos);
+		this.size.set(size.clone().mult(this.getScaling()));
 	}
 
 	public void addForces(Point... forces) {
@@ -60,24 +66,15 @@ public abstract class GameObject implements Serializable {
 		}
 	}
 
-	public void applyForces(double dt) {
-		this.pos.add(this.forces.clone().mult(dt));
-	}
-
-	public void applyForces(double maxSpeed, double dt) {
-
-		maxSpeed *= this.getScaling();
-
-		Point forces = this.forces.clone();
-
-		// speed
-		int tmpSpeed = (int) Math.round(forces.length());
-		if (tmpSpeed > maxSpeed) {
-			forces.mult(maxSpeed / tmpSpeed);
+	public void applyForces() {
+		this.velocity.add(this.forces);
+		if (this.maxSpeed > 0) {
+			if (this.velocity.length() >= this.maxSpeed) {
+				this.velocity.trigNorm().mult(this.maxSpeed);
+			}
+		} else if (this.maxSpeed == 0) {
+			this.resetVelocity();
 		}
-
-		// move
-		this.pos.add(forces.mult(dt));
 	}
 
 	public abstract void draw(Graphics2D g, double dt);
@@ -97,7 +94,11 @@ public abstract class GameObject implements Serializable {
 	}
 
 	public Point getInterpolatedPos(double dt) {
-		return this.pos.clone().add(this.forces.clone().mult(dt));
+		return this.pos.clone().add(this.velocity.clone().mult(dt));
+	}
+
+	public double getMaxSpeed() {
+		return this.maxSpeed;
 	}
 
 	/**
@@ -142,8 +143,16 @@ public abstract class GameObject implements Serializable {
 		return returnList;
 	}
 
+	public Point getVelocity() {
+		return this.velocity;
+	}
+
 	public boolean hasTag(GOTag tag) {
 		return this.tags.contains(tag);
+	}
+
+	public void move(double dt) {
+		this.pos.add(this.velocity.clone().mult(dt));
 	}
 
 	public void removeTag(GOTag tag) {
@@ -157,18 +166,26 @@ public abstract class GameObject implements Serializable {
 		this.forces.set(0, 0);
 	}
 
+	public void resetVelocity() {
+		this.velocity.set(0, 0);
+	}
+
 	/**
 	 * @param forces the forces to set
 	 */
 	public void setForces(Point forces) {
-		this.forces = forces;
+		this.forces.set(forces);
+	}
+
+	public void setMaxSpeed(double maxSpeed) {
+		this.maxSpeed = maxSpeed;
 	}
 
 	/**
 	 * @param pos the pos to set
 	 */
 	public void setPos(Point pos) {
-		this.pos = pos;
+		this.pos.set(pos);
 	}
 
 	/**
@@ -182,7 +199,7 @@ public abstract class GameObject implements Serializable {
 	 * @param size the size to set
 	 */
 	public void setSize(Point size) {
-		this.size = size.mult(this.getScaling());
+		this.size.set(size.mult(this.getScaling()));
 	}
 
 	/**

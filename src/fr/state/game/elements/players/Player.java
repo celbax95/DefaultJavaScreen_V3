@@ -12,7 +12,7 @@ public abstract class Player extends GameObject {
 
 	private static final long serialVersionUID = 1L;
 
-	protected static final double MAX_SPEED = 10;
+	protected static final double MAX_SPEED = 6;
 
 	private static final Color DEFAULT_COLOR = Color.RED;
 
@@ -23,20 +23,13 @@ public abstract class Player extends GameObject {
 	protected Player(int id, double sizeUnit) {
 		super(sizeUnit);
 		this.id = id;
-		this.color = DEFAULT_COLOR;
-		this.addTags(GOTag.PLAYER);
+		this.init();
 	}
 
 	protected Player(int id, Point pos, Point size, double sizeUnit, double scale) {
 		super(pos, size, sizeUnit, scale);
 		this.id = id;
-		this.color = DEFAULT_COLOR;
-		this.addTags(GOTag.PLAYER);
-	}
-
-	@Override
-	public void applyForces(double dt) {
-		this.applyForces(MAX_SPEED, dt);
+		this.init();
 	}
 
 	@Override
@@ -58,6 +51,12 @@ public abstract class Player extends GameObject {
 	@Override
 	public Shape getShape() {
 		return null;
+	}
+
+	private void init() {
+		this.color = DEFAULT_COLOR;
+		this.addTags(GOTag.PLAYER);
+		this.setMaxSpeed(MAX_SPEED * this.sizeUnit);
 	}
 
 	/**

@@ -9,7 +9,9 @@ public class InputReactivePlayer extends Player {
 
 	private static final long serialVersionUID = 1L;
 
-	private static double ACCEL = 4;
+	private static double ACCEL = 1;
+
+	private static double DRAG = 0.5;
 
 	private Multiplayer multiplayer;
 	private PDataFactory pDataFactory;
@@ -18,15 +20,6 @@ public class InputReactivePlayer extends Player {
 		super(id, sizeUnit);
 		this.multiplayer = multiplayer;
 		this.pDataFactory = multiplayer.getPDataFactory();
-	}
-
-	@Override
-	public void applyForces(double dt) {
-		if (this.forces.equals(new Point()) == false) {
-			super.applyForces(dt);
-
-			this.multiplayer.send(this.pDataFactory.createMove(this.id, this.pos));
-		}
 	}
 
 	private Point getMoveFromInput(boolean up, boolean down, boolean left, boolean right) {
@@ -44,12 +37,38 @@ public class InputReactivePlayer extends Player {
 	}
 
 	@Override
+	public void move(double dt) {
+		super.move(dt);
+		if (this.velocity.equals(new Point()) == false) {
+			this.multiplayer.send(this.pDataFactory.createMove(this.id, this.pos));
+		}
+	}
+
+	@Override
 	public void update(Input input, double dt) {
 		Point move = this.getMoveFromInput(input.keyboardKeys.get(90), input.keyboardKeys.get(83),
 				input.keyboardKeys.get(81), input.keyboardKeys.get(68));
 
 		move.mult(InputReactivePlayer.ACCEL * this.getScaling());
 
+		move.floor();
+
 		this.addForces(move);
+
+//		Point dragInv = this.velocity.clone().trigNorm().mult(DRAG * this.sizeUnit);
+//		Point drag = new Point(-dragInv.x, -dragInv.y);
+//
+//		if (Math.abs(this.velocity.x) - Math.abs(drag.x) <= 0) {
+//			this.velocity.x = 0;
+//			drag.x = 0;
+//		}
+//		if (Math.abs(this.velocity.y) - Math.abs(drag.y) <= 0) {
+//			this.velocity.y = 0;
+//			drag.y = 0;
+//		}
+//
+//		drag.floor();
+//
+//		this.addForces(drag);
 	}
 }

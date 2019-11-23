@@ -55,6 +55,12 @@ public class Point implements Serializable {
 		return this;
 	}
 
+	public Point ceil() {
+		this.x = Math.ceil(this.x);
+		this.y = Math.ceil(this.y);
+		return this;
+	}
+
 	@Override
 	public Point clone() {
 		return new Point(this);
@@ -111,6 +117,12 @@ public class Point implements Serializable {
 		if (Double.doubleToLongBits(this.y) != Double.doubleToLongBits(other.y))
 			return false;
 		return true;
+	}
+
+	public Point floor() {
+		this.x = Math.floor(this.x);
+		this.y = Math.floor(this.y);
+		return this;
 	}
 
 	/* METHODS */

@@ -240,7 +240,8 @@ public class Game implements PDataProcessor {
 		// Exec Forces
 
 		for (GameObject go : this.gameObjects.values()) {
-			go.applyForces(dt);
+			go.applyForces();
+			go.move(dt);
 		}
 
 		this.camera.setAimedCenterPos(this.myPlayer.getPos().clone().add(this.myPlayer.getSize().clone().div(2)));
