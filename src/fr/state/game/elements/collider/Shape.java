@@ -4,14 +4,14 @@ import fr.util.point.Point;
 
 public abstract class Shape {
 
-	Point pos;
+	protected Point pos;
 
 	public abstract double getMass(double density);
 
 	public abstract ShapesType getType();
 
 	public void update(Point pos) {
-		pos = pos.clone();
+		this.pos = pos.clone();
 	}
 
 }
