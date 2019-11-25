@@ -13,6 +13,7 @@ import fr.inputs.Input;
 import fr.server.p2p.Multiplayer;
 import fr.server.p2p.PData;
 import fr.server.p2p.PDataProcessor;
+import fr.state.game.elements.collider.Collider;
 import fr.state.game.elements.map.Block;
 import fr.state.game.elements.onscreen.GameObject;
 import fr.state.game.elements.players.DummyPlayer;
@@ -70,6 +71,7 @@ public class Game implements PDataProcessor {
 		this.myPlayer.setPos((Point) playersData.get(myId).get("pos"));
 		this.myPlayer.setColor((Color) playersData.get(myId).get("color"));
 		this.myPlayer.setSize(new Point(SIZE, SIZE));
+		this.myPlayer.initBody();
 
 		for (int id : playersData.keySet()) {
 			if (id == myId) {
@@ -79,6 +81,7 @@ public class Game implements PDataProcessor {
 			p.setPos((Point) playersData.get(id).get("pos"));
 			p.setColor((Color) playersData.get(id).get("color"));
 			p.setSize(new Point(SIZE, SIZE));
+			p.initBody();
 			this.players.put(id, p);
 			this.addGameObjects(p);
 		}
@@ -87,6 +90,7 @@ public class Game implements PDataProcessor {
 		this.addGameObjects(this.myPlayer);
 
 		Block b = new Block(new Point(-100, 600), new Point(6, 0.5), Constants.SIZE_UNIT, 1);
+		b.initBody();
 		this.addGameObjects(b);
 
 		this.missingPData = new LinkedList<>();
@@ -238,9 +242,20 @@ public class Game implements PDataProcessor {
 
 		// Exec Forces
 
+		Collider c = new Collider();
+
 		for (GameObject go : this.gameObjects.values()) {
 			go.applyForces();
+
+			c.searchCollisions(this.gameObjects.values());
+
+			c.initCollisions();
+
+			c.solveCollisions();
+
 			go.move(dt);
+
+			c.correctPositions();
 		}
 
 		this.camera.setAimedCenterPos(this.myPlayer.getPos().clone().add(this.myPlayer.getSize().clone().div(2)));

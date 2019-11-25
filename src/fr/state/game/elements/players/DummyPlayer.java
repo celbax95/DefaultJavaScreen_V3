@@ -1,6 +1,8 @@
 package fr.state.game.elements.players;
 
 import fr.inputs.Input;
+import fr.state.game.elements.collider.AABB;
+import fr.state.game.elements.collider.Shape;
 
 public class DummyPlayer extends Player {
 
@@ -11,6 +13,12 @@ public class DummyPlayer extends Player {
 	}
 
 	@Override
+	public Shape getShape() {
+		return new AABB(this.pos, this.pos, this.size);
+	}
+
+	@Override
 	public void update(Input input, double dt) {
+		super.update(input, dt);
 	}
 }

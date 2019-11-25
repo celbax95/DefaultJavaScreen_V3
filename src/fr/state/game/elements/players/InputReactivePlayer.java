@@ -3,6 +3,8 @@ package fr.state.game.elements.players;
 import fr.inputs.Input;
 import fr.server.p2p.Multiplayer;
 import fr.server.p2p.PDataFactory;
+import fr.state.game.elements.collider.AABB;
+import fr.state.game.elements.collider.Shape;
 import fr.util.point.Point;
 
 public class InputReactivePlayer extends Player {
@@ -37,6 +39,13 @@ public class InputReactivePlayer extends Player {
 	}
 
 	@Override
+	public Shape getShape() {
+		AABB hb = new AABB(this.pos, this.pos, this.size);
+
+		return hb;
+	}
+
+	@Override
 	public void move(double dt) {
 		super.move(dt);
 		if (this.velocity.equals(new Point()) == false) {
@@ -46,6 +55,7 @@ public class InputReactivePlayer extends Player {
 
 	@Override
 	public void update(Input input, double dt) {
+		super.update(input, dt);
 
 		Point move = this.getMoveFromInput(input.keyboardKeys.get(90), input.keyboardKeys.get(83),
 				input.keyboardKeys.get(81), input.keyboardKeys.get(68));

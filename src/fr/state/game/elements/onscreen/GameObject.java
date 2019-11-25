@@ -46,6 +46,7 @@ public abstract class GameObject implements Serializable {
 		this.scale = 1;
 		this.sizeUnit = sizeUnit;
 		this.maxSpeed = -1;
+		this.initBody();
 	}
 
 	protected GameObject(Point pos, Point size, double sizeUnit, double scale) {
@@ -229,5 +230,9 @@ public abstract class GameObject implements Serializable {
 		this.velocity.set(p);
 	}
 
-	public abstract void update(Input input, double dt);
+	public void update(Input input, double dt) {
+		if (this.body != null) {
+			this.body.update();
+		}
+	}
 }

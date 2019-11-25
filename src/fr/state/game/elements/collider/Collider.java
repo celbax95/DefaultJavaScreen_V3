@@ -24,7 +24,7 @@ public class Collider {
 		}
 	}
 
-	public void init() {
+	public void initCollisions() {
 		for (Manifold m : this.collisions) {
 			m.init();
 		}
@@ -34,8 +34,14 @@ public class Collider {
 		int a1 = 0, a2 = 0;
 		for (GameObject g1 : gameObjects) {
 			a1++;
+			if (g1.getBody() == null) {
+				continue;
+			}
 			for (GameObject g2 : gameObjects) {
 				if (a2++ <= a1) {
+					continue;
+				}
+				if (g2.getBody() == null) {
 					continue;
 				}
 

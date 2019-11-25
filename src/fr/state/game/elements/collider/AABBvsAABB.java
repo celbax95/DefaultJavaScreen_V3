@@ -22,6 +22,7 @@ public class AABBvsAABB implements CollisionType {
 
 		// SAT test on x axis
 		if (xOverlap > 0) {
+
 			// Calculate half extents along x axis for each object
 			aExtent = (s1.getMax().y() - s1.getMin().y()) / 2;
 			bExtent = (s2.getMax().y() - s2.getMin().y()) / 2;

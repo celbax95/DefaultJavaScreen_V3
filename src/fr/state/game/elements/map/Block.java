@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 
 import fr.inputs.Input;
+import fr.state.game.elements.collider.AABB;
 import fr.state.game.elements.collider.Shape;
 import fr.state.game.elements.onscreen.GOTag;
 import fr.state.game.elements.onscreen.GameObject;
@@ -44,7 +45,7 @@ public class Block extends GameObject {
 
 	@Override
 	public Shape getShape() {
-		return null;
+		return new AABB(this.pos, this.pos, this.size);
 	}
 
 	/**
@@ -56,5 +57,6 @@ public class Block extends GameObject {
 
 	@Override
 	public void update(Input input, double dt) {
+		super.update(input, dt);
 	}
 }
