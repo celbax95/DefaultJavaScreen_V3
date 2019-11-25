@@ -4,7 +4,7 @@ import fr.state.game.elements.onscreen.GameObject;
 
 public class Body {
 
-	public double mass, invMass, inertia, invInertia;
+	public double mass, invMass;
 	public double staticFriction;
 	public double dynamicFriction;
 	public double restitution;

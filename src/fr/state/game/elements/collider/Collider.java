@@ -1,5 +1,57 @@
 package fr.state.game.elements.collider;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+import fr.state.game.elements.onscreen.GameObject;
+
 public class Collider {
+
+	private List<Manifold> collisions;
+
+	public Collider() {
+		this.collisions = new ArrayList<>();
+	}
+
+	public void clear() {
+		this.collisions.clear();
+	}
+
+	public void correctPositions() {
+		for (Manifold m : this.collisions) {
+			m.positionalCorrection();
+		}
+	}
+
+	public void init() {
+		for (Manifold m : this.collisions) {
+			m.init();
+		}
+	}
+
+	public void searchCollisions(Collection<GameObject> gameObjects) {
+		int a1 = 0, a2 = 0;
+		for (GameObject g1 : gameObjects) {
+			a1++;
+			for (GameObject g2 : gameObjects) {
+				if (a2++ <= a1) {
+					continue;
+				}
+
+				Manifold m = new Manifold(g1, g2);
+
+				if (m.solve()) {
+					this.collisions.add(m);
+				}
+			}
+		}
+	}
+
+	public void solveCollisions() {
+		for (Manifold m : this.collisions) {
+			m.applyImpulse();
+		}
+	}
 
 }

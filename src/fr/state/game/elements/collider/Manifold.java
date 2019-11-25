@@ -15,13 +15,14 @@ public class Manifold {
 
 	public double penetration;
 	public Point normal = new Point();
-	public Point[] contacts = { new Point(), new Point() };
-	public int contactCount;
 	public double averageRestitution;
 	public double dynamicFriction;
 	public double staticFriction;
 
+	public boolean colliding;
+
 	public Manifold(GameObject g1, GameObject g2) {
+		this.colliding = false;
 		this.g1 = g1;
 		this.g2 = g2;
 		this.b1 = this.g1.getBody();
@@ -113,10 +114,12 @@ public class Manifold {
 		this.g2.setPos(p);
 	}
 
-	public void solve() {
+	public boolean solve() {
 		int i1 = this.b1.shape.getType().ordinal();
 		int i2 = this.b2.shape.getType().ordinal();
 
-		Collisions.collide(this, i1, i2);
+		this.colliding = Collisions.collide(this, i1, i2);
+
+		return this.colliding;
 	}
 }
