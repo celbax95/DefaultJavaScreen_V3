@@ -8,8 +8,10 @@ import java.io.ObjectOutputStream;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 
 public class Multiplayer {
 
@@ -21,6 +23,8 @@ public class Multiplayer {
 
 	private int groupPort;
 
+	private Queue<PData> pDataQueue;
+
 	private List<Integer> receivers; // id des receivers
 
 	private Map<Integer, Confirmer> needConfirm;
@@ -30,6 +34,7 @@ public class Multiplayer {
 	private PDataFactory pDataFactory;
 
 	private Thread receiver;
+	private Thread sender;
 
 	public Multiplayer(String groupIP, int port, List<Integer> receivers) {
 
@@ -44,6 +49,9 @@ public class Multiplayer {
 		this.groupPort = port;
 
 		this.receiver = null;
+		this.sender = null;
+
+		this.pDataQueue = new LinkedList<>();
 
 		this.pDataFactory = new PDataFactory();
 
@@ -94,27 +102,9 @@ public class Multiplayer {
 	}
 
 	public void send(PData data) {
-		try {
-			ByteArrayOutputStream bs = new ByteArrayOutputStream();
-			ObjectOutputStream os = new ObjectOutputStream(bs);
-
-			os.flush();
-			os.writeObject(data);
-			os.flush();
-			os.close();
-
-			byte[] buffer = bs.toByteArray();
-
-			DatagramPacket packet = new DatagramPacket(buffer, buffer.length, this.groupIP, this.groupPort);
-
-			if (data.isNeedConfirm()) {
-				this.needConfirm.put(data.getId(), new Confirmer(data.getId(), this, packet, this.receivers));
-			}
-
-			this.socket.send(packet);
-
-		} catch (Exception e) {
-			e.printStackTrace();
+		this.pDataQueue.add(data);
+		synchronized (this.pDataQueue) {
+			this.pDataQueue.notifyAll();
 		}
 	}
 
@@ -149,15 +139,77 @@ public class Multiplayer {
 		this.receiver.setName("Multiplayer/receiver");
 	}
 
+	public void setSender() {
+		this.sender = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				while (Thread.currentThread().isInterrupted() == false) {
+
+					if (Multiplayer.this.pDataQueue.isEmpty()) {
+						synchronized (Multiplayer.this.pDataQueue) {
+							try {
+								Multiplayer.this.pDataQueue.wait();
+							} catch (InterruptedException e) {
+								Thread.currentThread().interrupt();
+								return;
+							}
+						}
+					}
+
+					PData data = null;
+					synchronized (Multiplayer.this.pDataQueue) {
+						data = Multiplayer.this.pDataQueue.poll();
+					}
+
+					if (data == null) {
+						continue;
+					}
+
+					try {
+						ByteArrayOutputStream bs = new ByteArrayOutputStream();
+						ObjectOutputStream os = new ObjectOutputStream(bs);
+
+						os.flush();
+						os.writeObject(data);
+						os.flush();
+						os.close();
+
+						byte[] buffer = bs.toByteArray();
+
+						DatagramPacket packet = new DatagramPacket(buffer, buffer.length, Multiplayer.this.groupIP,
+								Multiplayer.this.groupPort);
+
+						if (data.isNeedConfirm()) {
+							Multiplayer.this.needConfirm.put(data.getId(),
+									new Confirmer(data.getId(), Multiplayer.this, packet, Multiplayer.this.receivers));
+						}
+
+						Multiplayer.this.socket.send(packet);
+
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		});
+	}
+
 	public void start() {
 		this.stop();
+
 		this.setReceiver();
 		this.receiver.start();
+
+		this.setSender();
+		this.sender.start();
 	}
 
 	public void stop() {
 		if (this.receiver != null) {
 			this.receiver.interrupt();
+		}
+		if (this.sender != null) {
+			this.sender.interrupt();
 		}
 	}
 }

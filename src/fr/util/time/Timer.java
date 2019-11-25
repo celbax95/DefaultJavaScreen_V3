@@ -17,7 +17,7 @@ public class Timer {
 		final long time = System.nanoTime();
 		final long tmp = System.nanoTime() - this.sec;
 		this.sec = time;
-		this.lastTick = (double) tmp / 1000000000;
+		this.lastTick = (double) tmp / 1000000;
 		return this.lastTick;
 	}
 }

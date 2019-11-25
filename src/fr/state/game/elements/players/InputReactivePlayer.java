@@ -46,29 +46,26 @@ public class InputReactivePlayer extends Player {
 
 	@Override
 	public void update(Input input, double dt) {
+
 		Point move = this.getMoveFromInput(input.keyboardKeys.get(90), input.keyboardKeys.get(83),
 				input.keyboardKeys.get(81), input.keyboardKeys.get(68));
 
 		move.mult(InputReactivePlayer.ACCEL * this.getScaling());
 
-		move.floor();
-
 		this.addForces(move);
 
-//		Point dragInv = this.velocity.clone().trigNorm().mult(DRAG * this.sizeUnit);
-//		Point drag = new Point(-dragInv.x, -dragInv.y);
-//
-//		if (Math.abs(this.velocity.x) - Math.abs(drag.x) <= 0) {
-//			this.velocity.x = 0;
-//			drag.x = 0;
-//		}
-//		if (Math.abs(this.velocity.y) - Math.abs(drag.y) <= 0) {
-//			this.velocity.y = 0;
-//			drag.y = 0;
-//		}
-//
-//		drag.floor();
-//
-//		this.addForces(drag);
+		Point dragInv = this.velocity.clone().trigNorm().mult(DRAG * this.sizeUnit);
+		Point drag = new Point(-dragInv.x, -dragInv.y);
+
+		if (Math.abs(this.velocity.x) - Math.abs(drag.x) <= 0) {
+			this.velocity.x = 0;
+			drag.x = 0;
+		}
+		if (Math.abs(this.velocity.y) - Math.abs(drag.y) <= 0) {
+			this.velocity.y = 0;
+			drag.y = 0;
+		}
+
+		this.addForces(drag);
 	}
 }

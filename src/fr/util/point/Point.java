@@ -4,17 +4,10 @@ import java.io.Serializable;
 
 public class Point implements Serializable {
 
-	/**
-	 *
-	 */
 	private static final long serialVersionUID = 1L;
-
-	/* VARIABLES */
 
 	public double x;
 	public double y;
-
-	/* CONSTRUCTORS */
 
 	// Empty
 	public Point() {
@@ -34,8 +27,6 @@ public class Point implements Serializable {
 		this.x = p.x;
 		this.y = p.y;
 	}
-
-	/* METHODS */
 
 	/**
 	 * Calcule la valeur absolue du point
@@ -125,8 +116,6 @@ public class Point implements Serializable {
 		return this;
 	}
 
-	/* METHODS */
-
 	/**
 	 * Calcule l'angle du vecteur forme par les coordonees du Point
 	 */
@@ -199,6 +188,11 @@ public class Point implements Serializable {
 
 		this.x = this.x * cos + this.y * -sin;
 		this.y = this.x * sin + this.y * cos;
+	}
+
+	public void round() {
+		this.x = Math.round(this.x);
+		this.y = Math.round(this.y);
 	}
 
 	/**

@@ -218,7 +218,6 @@ public class Game implements PDataProcessor {
 	}
 
 	public void update(Input input, double dt) {
-
 		// Reset des forces du tour de boucle precedent
 		for (Player p : this.players.values()) {
 			p.resetForces();
