@@ -61,6 +61,11 @@ public class Point implements Serializable {
 		return new Point(Math.abs(p.x - this.x), Math.abs(p.y - this.y));
 	}
 
+	public void cross(double a) {
+		this.y *= -a;
+		this.x *= a;
+	}
+
 	/**
 	 * Calcul de la distance entre le point courant et le point p
 	 */
@@ -175,6 +180,12 @@ public class Point implements Serializable {
 	public Point mult(Point p) {
 		this.x *= p.x;
 		this.y *= p.y;
+		return this;
+	}
+
+	public Point neg() {
+		this.x = -this.x;
+		this.y = -this.y;
 		return this;
 	}
 

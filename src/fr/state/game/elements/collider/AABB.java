@@ -14,6 +14,10 @@ public class AABB extends Shape {
 		this.setMinMax(ref, min, max);
 	}
 
+	public Point getCenter() {
+		return this.getMin().add(this.getSize().div(2));
+	}
+
 	public Point getLength() {
 		Point min = this.getMin();
 		Point max = this.getMax();
@@ -35,6 +39,10 @@ public class AABB extends Shape {
 
 	public Point getMin() {
 		return this.pos.clone().add(this.vectMin);
+	}
+
+	public Point getSize() {
+		return this.getMax().sub(this.getMin());
 	}
 
 	@Override

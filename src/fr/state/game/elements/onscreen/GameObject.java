@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import fr.inputs.Input;
+import fr.state.game.elements.collider.Body;
 import fr.state.game.elements.collider.Shape;
 import fr.util.point.Point;
 
@@ -22,6 +23,8 @@ public abstract class GameObject implements Serializable {
 	protected final int id;
 
 	protected List<GOTag> tags;
+
+	protected Body body;
 
 	protected final Point pos;
 
@@ -79,6 +82,10 @@ public abstract class GameObject implements Serializable {
 
 	public abstract void draw(Graphics2D g, double dt);
 
+	public Body getBody() {
+		return this.body;
+	}
+
 	/**
 	 * @return the forces
 	 */
@@ -119,7 +126,7 @@ public abstract class GameObject implements Serializable {
 		return this.scale * this.sizeUnit;
 	}
 
-	public abstract Shape getShape();
+	protected abstract Shape getShape();
 
 	/**
 	 * @return the size
@@ -149,6 +156,16 @@ public abstract class GameObject implements Serializable {
 
 	public boolean hasTag(GOTag tag) {
 		return this.tags.contains(tag);
+	}
+
+	public void initBody() {
+		Shape shape = this.getShape();
+
+		if (shape != null) {
+			this.body = new Body(this, shape);
+		} else {
+			this.body = null;
+		}
 	}
 
 	public void move(double dt) {
@@ -206,6 +223,10 @@ public abstract class GameObject implements Serializable {
 	 * @param sizeUnit is final !
 	 */
 	public void setSizeUnit(double sizeUnit) {
+	}
+
+	public void setVelocity(Point p) {
+		this.velocity.set(p);
 	}
 
 	public abstract void update(Input input, double dt);
