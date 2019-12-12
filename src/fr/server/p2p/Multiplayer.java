@@ -102,7 +102,9 @@ public class Multiplayer {
 	}
 
 	public void send(PData data) {
-		this.pDataQueue.add(data);
+		synchronized (this.pDataQueue) {
+			this.pDataQueue.add(data);
+		}
 		synchronized (this.pDataQueue) {
 			this.pDataQueue.notifyAll();
 		}

@@ -3,6 +3,7 @@ package fr.state.game;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -222,6 +223,7 @@ public class Game implements PDataProcessor {
 	}
 
 	public void update(Input input, double dt) {
+
 		// Reset des forces du tour de boucle precedent
 		for (Player p : this.players.values()) {
 			p.resetForces();
@@ -244,18 +246,19 @@ public class Game implements PDataProcessor {
 
 		Collider c = new Collider();
 
-		for (GameObject go : this.gameObjects.values()) {
+		Collection<GameObject> gos = this.gameObjects.values();
+
+		for (GameObject go : gos) {
 			go.applyForces();
+		}
 
-			c.searchCollisions(this.gameObjects.values());
+		c.searchCollisions(gos);
+		c.initCollisions();
+		c.solveCollisions();
+		c.correctPositions();
 
-			c.initCollisions();
-
-			c.solveCollisions();
-
+		for (GameObject go : gos) {
 			go.move(dt);
-
-			c.correctPositions();
 		}
 
 		this.camera.setAimedCenterPos(this.myPlayer.getPos().clone().add(this.myPlayer.getSize().clone().div(2)));
@@ -264,5 +267,6 @@ public class Game implements PDataProcessor {
 		this.camera.update(input, dt);
 
 		this.camera.applyForces(dt);
+
 	}
 }
