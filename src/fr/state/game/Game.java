@@ -124,7 +124,7 @@ public class Game implements PDataProcessor {
 
 		this.camera.setAimedCenterPos(interpolatedPlayerPos);
 		this.camera.setMoveToAimForce();
-		this.camera.applyWeakForces(dt * 0.8);
+		this.camera.applyForces(dt);
 
 		g.setTransform(this.camera.getTransform(origin));
 

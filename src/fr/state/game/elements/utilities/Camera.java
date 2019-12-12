@@ -9,8 +9,6 @@ import fr.window.WinData;
 
 public class Camera {
 
-	private static final double WEEK_RATE = 0.8;
-
 	private final double DIST_TO_MOVE = 0.1, DIST_TO_FULLSPEED = 1.5;
 
 	private final double MAX_SCALE = 2, MIN_SCALE = 0.1;
@@ -52,10 +50,6 @@ public class Camera {
 
 	public void applyForces(double dt) {
 		this.pos.add(this.forces.clone().mult(dt));
-	}
-
-	public void applyWeakForces(double dt) {
-		this.applyForces(dt * WEEK_RATE);
 	}
 
 	private Point getMoveForce(Point aim) {
