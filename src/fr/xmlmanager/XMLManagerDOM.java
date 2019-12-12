@@ -7,7 +7,6 @@ import java.net.URLDecoder;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
@@ -32,6 +31,21 @@ public class XMLManagerDOM implements XMLManager {
 	 * static Singleton instance.
 	 */
 	private static volatile XMLManagerDOM instance;
+
+	/**
+	 * Return a singleton instance of XMLReader.
+	 */
+	public static XMLManagerDOM getInstance() {
+		// Double lock for thread safety.
+		if (instance == null) {
+			synchronized (XMLManagerDOM.class) {
+				if (instance == null) {
+					instance = new XMLManagerDOM();
+				}
+			}
+		}
+		return instance;
+	}
 
 	// Utilise pour recuperer le fichier xml
 	private DocumentBuilder builder;
@@ -106,8 +120,8 @@ public class XMLManagerDOM implements XMLManager {
 	@Override
 	public Object getNode(Object doc, String nodeName, int nb) {
 		try {
-			return this.xpath.evaluate("./" + nodeName + "[" + nb + "]",
-					((Document) doc).getDocumentElement(), XPathConstants.NODE);
+			return this.xpath.evaluate("./" + nodeName + "[" + nb + "]", ((Document) doc).getDocumentElement(),
+					XPathConstants.NODE);
 		} catch (XPathExpressionException e) {
 			// e.printStackTrace();
 		}
@@ -218,12 +232,11 @@ public class XMLManagerDOM implements XMLManager {
 		DOMSource source = new DOMSource(((Document) doc).getDocumentElement());
 		StreamResult result = null;
 		try {
-			result = new StreamResult(
-					new File(URLDecoder.decode(document.getBaseURI(), "UTF-8").substring(6)));
+			result = new StreamResult(new File(URLDecoder.decode(document.getBaseURI(), "UTF-8").substring(6)));
 		} catch (UnsupportedEncodingException e1) {
 			// e1.printStackTrace();
 		}
-		this.transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+		// this.transformer.setOutputProperty(OutputKeys.INDENT, "yes");
 		try {
 			this.transformer.transform(source, result);
 		} catch (TransformerException e) {
@@ -239,20 +252,5 @@ public class XMLManagerDOM implements XMLManager {
 
 		((Node) this.getNode(doc, "param", "name", paramName)).getAttributes().getNamedItem("value")
 				.setTextContent(String.valueOf(newValue));
-	}
-
-	/**
-	 * Return a singleton instance of XMLReader.
-	 */
-	public static XMLManagerDOM getInstance() {
-		// Double lock for thread safety.
-		if (instance == null) {
-			synchronized (XMLManagerDOM.class) {
-				if (instance == null) {
-					instance = new XMLManagerDOM();
-				}
-			}
-		}
-		return instance;
 	}
 }

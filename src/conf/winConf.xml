@@ -2,9 +2,9 @@
 
     <!-- Window parameters -->
 
-    <param name="width" type="integer" value="1280"/>
+    <param name="width" type="integer" value="853"/>
 
-    <param name="height" type="integer" value="720"/>
+    <param name="height" type="integer" value="480"/>
 
     <param name="marginTop" type="integer" value="0"/>
 
