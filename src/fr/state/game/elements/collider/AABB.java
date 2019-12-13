@@ -59,9 +59,7 @@ public class AABB extends Shape {
 	}
 
 	public void setMinMax(Point ref, Point min, Point max) {
-		min = min.clone();
-		max = max.clone();
-		this.vectMin = min.sub(ref);
-		this.vectMax = max.sub(ref);
+		this.setMin(min);
+		this.setMax(max);
 	}
 }

@@ -20,10 +20,6 @@ public class AABBvsAABB implements CollisionType {
 		// Calculate overlap on x axis
 		double xOverlap = aExtent + bExtent - Math.abs(n.x());
 
-//		if (manifold.g1.getId() == 0) {
-//			System.out.println(s1.getMin() + " " + s1.getMax());
-//		}
-
 		// SAT test on x axis
 		if (xOverlap > 0) {
 			// Calculate half extents along x axis for each object

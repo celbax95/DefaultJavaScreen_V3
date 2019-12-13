@@ -40,7 +40,7 @@ public class InputReactivePlayer extends Player {
 
 	@Override
 	public Shape getShape() {
-		AABB hb = new AABB(this.pos, this.pos, this.size);
+		AABB hb = new AABB(this.pos, this.pos, this.pos.clone().add(this.size));
 
 		return hb;
 	}

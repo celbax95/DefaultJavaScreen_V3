@@ -33,7 +33,6 @@ public class Collider {
 	public void searchCollisions(Collection<GameObject> gameObjects) {
 		int a1 = 0, a2 = 0;
 		for (GameObject g1 : gameObjects) {
-			a1++;
 			if (g1.getBody() == null) {
 				continue;
 			}
@@ -51,6 +50,8 @@ public class Collider {
 					this.collisions.add(m);
 				}
 			}
+			a1++;
+			a2 = 0;
 		}
 	}
 

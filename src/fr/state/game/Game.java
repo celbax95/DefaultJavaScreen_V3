@@ -92,7 +92,7 @@ public class Game implements PDataProcessor {
 
 		Block b = new Block(new Point(-100, 600), new Point(6, 0.5), Constants.SIZE_UNIT, 1);
 		b.initBody();
-		this.addGameObjects(b);
+		// this.addGameObjects(b);
 
 		this.missingPData = new LinkedList<>();
 
@@ -254,8 +254,8 @@ public class Game implements PDataProcessor {
 
 		c.searchCollisions(gos);
 		c.initCollisions();
-		c.solveCollisions();
-		c.correctPositions();
+//		c.solveCollisions();
+//		c.correctPositions();
 
 		for (GameObject go : gos) {
 			go.move(dt);

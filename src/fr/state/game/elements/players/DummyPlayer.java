@@ -14,7 +14,7 @@ public class DummyPlayer extends Player {
 
 	@Override
 	public Shape getShape() {
-		return new AABB(this.pos, this.pos, this.size);
+		return new AABB(this.pos, this.pos, this.pos.clone().add(this.size));
 	}
 
 	@Override
