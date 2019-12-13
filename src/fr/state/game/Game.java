@@ -254,8 +254,8 @@ public class Game implements PDataProcessor {
 
 		c.searchCollisions(gos);
 		c.initCollisions();
-//		c.solveCollisions();
-//		c.correctPositions();
+		c.solveCollisions();
+		c.correctPositions();
 
 		for (GameObject go : gos) {
 			go.move(dt);

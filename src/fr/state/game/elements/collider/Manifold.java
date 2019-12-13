@@ -47,11 +47,15 @@ public class Manifold {
 
 		Point impulse = this.normal.clone().mult(j);
 
-		Point vel = this.g1.getVelocity();
-		this.g1.setVelocity(vel.add(impulse.clone().neg()));
+		if (this.g1.getId() == 0) {
+			Point vel = this.g1.getVelocity();
+			this.g1.setVelocity(vel.add(impulse));
+		}
 
-		vel = this.g2.getVelocity();
-		this.g2.setVelocity(vel.add(impulse));
+		if (this.g2.getId() == 0) {
+			Point vel = this.g2.getVelocity();
+			this.g2.setVelocity(vel.add(impulse.clone().neg()));
+		}
 
 		// Friction
 
@@ -74,16 +78,24 @@ public class Manifold {
 			tangentImpulse = t.clone().mult(j).mult(-this.dynamicFriction);
 		}
 
-		vel = this.g1.getVelocity();
-		this.g1.setVelocity(vel.add(tangentImpulse.clone().neg()));
+		if (this.g1.getId() == 0) {
+			Point vel = this.g1.getVelocity();
+			this.g1.setVelocity(vel.clone().add(tangentImpulse));
+		}
 
-		vel = this.g2.getVelocity();
-		this.g2.setVelocity(vel.add(tangentImpulse));
+		if (this.g2.getId() == 0) {
+			Point vel = this.g2.getVelocity();
+			this.g2.setVelocity(vel.clone().add(tangentImpulse.clone().neg()));
+		}
 	}
 
 	private void infiniteMassCorrection() {
-		this.g1.setVelocity(new Point());
-		this.g2.setVelocity(new Point());
+		if (this.g1.getId() == 0) {
+			this.g1.setVelocity(new Point());
+		}
+		if (this.g2.getId() == 0) {
+			this.g2.setVelocity(new Point());
+		}
 	}
 
 	public void init() {
@@ -106,12 +118,17 @@ public class Manifold {
 		double correction = Math.max(this.penetration - 2, PENETRATION_ALLOWANCE) / (this.b1.invMass + this.b2.invMass)
 				* PENETRATION_CORRETION;
 
-		Point p = this.g1.getPos();
-		p.add(this.normal.clone().mult(-this.b1.invMass * correction));
-		this.g1.setPos(p);
-		p = this.g2.getPos();
-		p.add(this.normal.clone().mult(-this.b2.invMass * correction));
-		this.g2.setPos(p);
+		if (this.g1.getId() == 0) {
+			Point p = this.g1.getPos();
+			p.add(this.normal.clone().mult(-this.b1.invMass * correction));
+			this.g1.setPos(p);
+		}
+
+		if (this.g2.getId() == 0) {
+			Point p = this.g2.getPos();
+			p.add(this.normal.clone().mult(-this.b2.invMass * correction));
+			this.g2.setPos(p);
+		}
 	}
 
 	public boolean solve() {
