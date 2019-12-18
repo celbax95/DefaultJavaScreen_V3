@@ -6,7 +6,7 @@ import fr.util.point.Point;
 public class Manifold {
 
 	public static final float PENETRATION_ALLOWANCE = 0.05f;
-	public static final float PENETRATION_CORRETION = 0.4f;
+	public static final float PENETRATION_CORRETION = 1f;
 
 	GameObject g1;
 	Body b1;
@@ -43,7 +43,6 @@ public class Manifold {
 			return;
 
 		double j = -(1.0D + this.averageRestitution) * contactVel;
-		j /= this.b1.invMass + this.b2.invMass;
 
 		Point impulse = this.normal.clone().mult(j);
 
@@ -108,6 +107,8 @@ public class Manifold {
 
 		// TODO ya peut etre un problème ici
 		Point rv = new Point(this.g1.getVelocity()).sub(this.g2.getVelocity());
+
+		System.out.println(rv);
 
 		if (rv.lengthSquarred() < 0.001) {
 			this.averageRestitution = 0.0f;

@@ -12,7 +12,7 @@ public class AABBvsAABB implements CollisionType {
 		AABB s1 = (AABB) manifold.b1.shape;
 		AABB s2 = (AABB) manifold.b2.shape;
 
-		Point n = new Point(s1.getCenter()).sub(s2.getCenter());
+		Point n = new Point(s2.getCenter()).sub(s1.getCenter());
 
 		double aExtent = (s1.getMax().x() - s1.getMin().x()) / 2;
 		double bExtent = (s2.getMax().x() - s2.getMin().x()) / 2;

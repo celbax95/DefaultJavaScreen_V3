@@ -23,7 +23,7 @@ public class Body {
 		this.mass = MASS;
 		this.invMass = 1 / this.mass;
 		this.staticFriction = 0.5;
-		this.restitution = 0.2;
+		this.restitution = 0;
 		this.dynamicFriction = 0.3;
 	}
 
