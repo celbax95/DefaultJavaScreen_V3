@@ -39,7 +39,7 @@ public class Manifold {
 
 		double contactVel = rv.clone().dot(this.normal);
 
-		if (contactVel > 0)
+		if (contactVel <= 0)
 			return;
 
 		double j = -(1.0D + this.averageRestitution) * contactVel;
@@ -107,8 +107,6 @@ public class Manifold {
 
 		// TODO ya peut etre un problème ici
 		Point rv = new Point(this.g1.getVelocity()).sub(this.g2.getVelocity());
-
-		System.out.println(rv);
 
 		if (rv.lengthSquarred() < 0.001) {
 			this.averageRestitution = 0.0f;
