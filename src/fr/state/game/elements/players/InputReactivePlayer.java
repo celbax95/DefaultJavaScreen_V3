@@ -54,6 +54,12 @@ public class InputReactivePlayer extends Player {
 	}
 
 	@Override
+	public void setPos(Point pos) {
+		super.setPos(pos);
+		this.multiplayer.send(this.pDataFactory.createMove(this.id, this.pos));
+	}
+
+	@Override
 	public void update(Input input, double dt) {
 		super.update(input, dt);
 

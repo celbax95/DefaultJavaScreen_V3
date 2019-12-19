@@ -204,6 +204,7 @@ public abstract class GameObject implements Serializable {
 	 */
 	public void setPos(Point pos) {
 		this.pos.set(pos);
+		this.body.update();
 	}
 
 	/**
