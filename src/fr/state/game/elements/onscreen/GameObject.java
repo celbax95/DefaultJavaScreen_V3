@@ -15,7 +15,6 @@ public abstract class GameObject implements Serializable {
 	private static int idCounter = 0;
 
 	private static final long serialVersionUID = 1L;
-
 	protected double maxSpeed;
 
 	protected final double sizeUnit;
@@ -167,6 +166,13 @@ public abstract class GameObject implements Serializable {
 		} else {
 			this.body = null;
 		}
+	}
+
+	public void interractWith(GameObject other) {
+	}
+
+	public boolean isAffectedBy(GameObject other) {
+		return true;
 	}
 
 	public void move(double dt) {

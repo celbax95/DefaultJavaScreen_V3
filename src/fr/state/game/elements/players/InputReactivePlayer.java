@@ -5,6 +5,8 @@ import fr.server.p2p.Multiplayer;
 import fr.server.p2p.PDataFactory;
 import fr.state.game.elements.collider.AABB;
 import fr.state.game.elements.collider.Shape;
+import fr.state.game.elements.onscreen.GOTag;
+import fr.state.game.elements.onscreen.GameObject;
 import fr.util.point.Point;
 
 public class InputReactivePlayer extends Player {
@@ -43,6 +45,11 @@ public class InputReactivePlayer extends Player {
 		AABB hb = new AABB(this.pos, this.pos, this.pos.clone().add(this.size));
 
 		return hb;
+	}
+
+	@Override
+	public boolean isAffectedBy(GameObject other) {
+		return false == other.hasTag(GOTag.PLAYER);
 	}
 
 	@Override

@@ -3,6 +3,8 @@ package fr.state.game.elements.players;
 import fr.inputs.Input;
 import fr.state.game.elements.collider.AABB;
 import fr.state.game.elements.collider.Shape;
+import fr.state.game.elements.onscreen.GOTag;
+import fr.state.game.elements.onscreen.GameObject;
 
 public class DummyPlayer extends Player {
 
@@ -15,6 +17,11 @@ public class DummyPlayer extends Player {
 	@Override
 	public Shape getShape() {
 		return new AABB(this.pos, this.pos, this.pos.clone().add(this.size));
+	}
+
+	@Override
+	public boolean isAffectedBy(GameObject other) {
+		return false == other.hasTag(GOTag.PLAYER);
 	}
 
 	@Override

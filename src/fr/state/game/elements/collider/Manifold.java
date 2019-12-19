@@ -13,6 +13,9 @@ public class Manifold {
 	GameObject g2;
 	Body b2;
 
+	public boolean affectG1;
+	public boolean affectG2;
+
 	public double penetration;
 	public Point normal = new Point();
 	public double averageRestitution;
@@ -27,6 +30,8 @@ public class Manifold {
 		this.g2 = g2;
 		this.b1 = this.g1.getBody();
 		this.b2 = this.g2.getBody();
+		this.affectG1 = true;
+		this.affectG2 = true;
 	}
 
 	public void applyImpulse() {
