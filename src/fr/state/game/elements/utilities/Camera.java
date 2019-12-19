@@ -61,11 +61,9 @@ public class Camera {
 
 		Point interCamAimedPos = this.getAimedCenterPos(interpolatedAimedPos);
 
-		Point interForce = this.getMoveForce(interCamAimedPos);
+		Point interForce = this.aimedPos.clone().sub(interCamAimedPos);
 
-		Point scaledInterForce = interForce.clone().mult(dt);
-
-		transform.translate(-scaledInterForce.x, -scaledInterForce.y);
+		transform.translate(interForce.x, interForce.y);
 
 		return transform;
 	}
