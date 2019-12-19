@@ -22,6 +22,7 @@ import fr.state.game.elements.players.InputReactivePlayer;
 import fr.state.game.elements.players.Player;
 import fr.state.game.elements.utilities.Camera;
 import fr.util.point.Point;
+import fr.util.time.Timer;
 import fr.window.WinData;
 
 public class Game implements PDataProcessor {
@@ -123,11 +124,13 @@ public class Game implements PDataProcessor {
 
 		Point interpolatedPlayerPos = this.myPlayer.getInterpolatedPos(dt).add(this.myPlayer.getSize().clone().div(2));
 
-		this.camera.setAimedCenterPos(interpolatedPlayerPos);
-		this.camera.setMoveToAimForce();
-		this.camera.applyForces(dt);
+//		this.camera.setAimedCenterPos(interpolatedPlayerPos);
+//		this.camera.setMoveToAimForce();
+//		this.camera.applyForces(dt);
+//
+//		g.setTransform(this.camera.getTransform(origin));
 
-		g.setTransform(this.camera.getTransform(origin));
+		g.setTransform(this.camera.getInterpolatedTransform(origin, interpolatedPlayerPos, dt));
 
 		for (GameObject go : this.gameObjects.values()) {
 			go.draw(g, dt);
@@ -224,11 +227,25 @@ public class Game implements PDataProcessor {
 
 	public void update(Input input, double dt) {
 
+		boolean displayTimer = false;
+		boolean displayPreciseTimer = false;
+
+		Timer t = new Timer();
+		Timer t2 = new Timer();
+
+		if (displayTimer || displayPreciseTimer) {
+			System.out.println("----");
+		}
+
 		// Reset des forces du tour de boucle precedent
 		for (Player p : this.players.values()) {
 			p.resetForces();
 		}
 		this.camera.resetForces();
+
+		if (displayPreciseTimer) {
+			System.out.println("Reset forces " + t.tick());
+		}
 
 		// Traite des paquets recus entre deux tour de boucle
 		while (!this.qPData.isEmpty()) {
@@ -239,26 +256,49 @@ public class Game implements PDataProcessor {
 			this.processPData(data);
 		}
 
+		if (displayPreciseTimer) {
+			System.out.println("Data " + t.tick());
+		}
+
 		// Application des forces relatives aux actions utilisateur au joueur
 		this.myPlayer.update(input, dt);
 
 		// Exec Forces
 
-		Collider c = new Collider();
+		if (displayPreciseTimer) {
+			System.out.println("Player input " + t.tick());
+		}
 
 		Collection<GameObject> gos = this.gameObjects.values();
+
+		if (displayPreciseTimer) {
+			System.out.println("Get collection " + t.tick());
+		}
 
 		for (GameObject go : gos) {
 			go.applyForces();
 		}
 
+		if (displayPreciseTimer) {
+			System.out.println("Apply forces " + t.tick());
+		}
+
+		Collider c = new Collider();
 		c.searchCollisions(gos);
 		c.initCollisions();
 		c.solveCollisions();
 		c.correctPositions();
 
+		if (displayPreciseTimer) {
+			System.out.println("Collisions " + t.tick());
+		}
+
 		for (GameObject go : gos) {
 			go.move(dt);
+		}
+
+		if (displayPreciseTimer) {
+			System.out.println("Movements " + t.tick());
 		}
 
 		this.camera.setAimedCenterPos(this.myPlayer.getPos().clone().add(this.myPlayer.getSize().clone().div(2)));
@@ -268,5 +308,11 @@ public class Game implements PDataProcessor {
 
 		this.camera.applyForces(dt);
 
+		if (displayPreciseTimer) {
+			System.out.println("Camera update " + t.tick());
+		}
+		if (displayTimer) {
+			System.out.println("All update " + t2.tick());
+		}
 	}
 }

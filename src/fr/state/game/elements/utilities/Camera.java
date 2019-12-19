@@ -52,6 +52,24 @@ public class Camera {
 		this.pos.add(this.forces.clone().mult(dt));
 	}
 
+	private Point getAimedCenterPos(Point aimedObjectPos) {
+		return aimedObjectPos.clone().sub(this.winData.getDefaultWindowSize().clone().div(2));
+	}
+
+	public AffineTransform getInterpolatedTransform(AffineTransform origin, Point interpolatedAimedPos, double dt) {
+		AffineTransform transform = this.getTransform(origin);
+
+		Point interCamAimedPos = this.getAimedCenterPos(interpolatedAimedPos);
+
+		Point interForce = this.getMoveForce(interCamAimedPos);
+
+		Point scaledInterForce = interForce.clone().mult(dt);
+
+		transform.translate(-scaledInterForce.x, -scaledInterForce.y);
+
+		return transform;
+	}
+
 	private Point getMoveForce(Point aim) {
 		if (this.pos != null && aim != null && !this.pos.equals(aim)) {
 
@@ -105,7 +123,7 @@ public class Camera {
 	}
 
 	public void setAimedCenterPos(Point p) {
-		this.setAimedPos(p.clone().sub(this.winData.getDefaultWindowSize().clone().div(2)));
+		this.setAimedPos(this.getAimedCenterPos(p));
 	}
 
 	public void setAimedPos(Point ap) {
