@@ -102,9 +102,11 @@ public class Camera {
 	}
 
 	public AffineTransform getTransform(AffineTransform origin) {
-		AffineTransform af = origin;
-		if (af == null) {
+		AffineTransform af;
+		if (origin == null) {
 			af = new AffineTransform();
+		} else {
+			af = new AffineTransform(origin);
 		}
 
 		af.scale(this.scale, this.scale);
