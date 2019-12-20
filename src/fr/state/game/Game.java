@@ -3,9 +3,10 @@ package fr.state.game;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -38,15 +39,17 @@ public class Game implements PDataProcessor {
 
 	private GameState gameState;
 
-	private Map<Integer, Player> players;
+	private final Map<Integer, Player> players;
 
-	private Map<Integer, GameObject> gameObjects;
+	private final Map<Integer, GameObject> gameObjects;
+
+	private final List<GameObject> gameObjectsList;
 
 	private Multiplayer multiplayer;
 
-	private Queue<PData> qPData;
+	private final Queue<PData> qPData;
 
-	private LinkedList<Integer> missingPData;
+	private final LinkedList<Integer> missingPData;
 
 	private int currentPDataID;
 
@@ -80,6 +83,7 @@ public class Game implements PDataProcessor {
 
 		this.players = new HashMap<>();
 		this.gameObjects = new HashMap<>();
+		this.gameObjectsList = new ArrayList<>();
 
 		this.myPlayer = new InputReactivePlayer(myId, this.multiplayer, Constants.SIZE_UNIT);
 		this.myPlayer.setScale(1);
@@ -119,6 +123,7 @@ public class Game implements PDataProcessor {
 		for (GameObject go : gameObjects) {
 			if (this.gameObjects.containsKey(go.getId()) == false) {
 				this.gameObjects.put(go.getId(), go);
+				this.gameObjectsList.add(go);
 			}
 		}
 	}
@@ -219,7 +224,10 @@ public class Game implements PDataProcessor {
 	}
 
 	public void removeGameObject(int id) {
-		this.gameObjects.remove(id);
+		if (this.gameObjects.containsKey(id)) {
+			GameObject go = this.gameObjects.remove(id);
+			this.gameObjectsList.remove(go);
+		}
 	}
 
 	public void resetForces() {
@@ -247,8 +255,8 @@ public class Game implements PDataProcessor {
 		}
 
 		// Reset des forces du tour de boucle precedent
-		for (Player p : this.players.values()) {
-			p.resetForces();
+		for (GameObject go : this.gameObjectsList) {
+			go.resetForces();
 		}
 		this.camera.resetForces();
 
@@ -278,14 +286,12 @@ public class Game implements PDataProcessor {
 			System.out.println("Player input " + t.tick());
 		}
 
-		Collection<GameObject> gos = this.gameObjects.values();
-
 		if (displayPreciseTimer) {
 			System.out.println("Get collection " + t.tick());
 		}
 
 		// Gravity
-		for (GameObject go : gos) {
+		for (GameObject go : this.gameObjectsList) {
 			if (go.hasTag(GOTag.GRAVITY)) {
 				go.addForces(new Point(0, GRAVITY));
 			}
@@ -295,7 +301,7 @@ public class Game implements PDataProcessor {
 			System.out.println("Gravity " + t.tick());
 		}
 
-		for (GameObject go : gos) {
+		for (GameObject go : this.gameObjectsList) {
 			go.applyForces();
 		}
 
@@ -304,7 +310,7 @@ public class Game implements PDataProcessor {
 		}
 
 		this.collider.clear();
-		this.collider.searchCollisions(gos);
+		this.collider.searchCollisions(this.gameObjectsList);
 		this.collider.initCollisions();
 		this.collider.solveCollisions();
 		this.collider.correctPositions();
@@ -313,7 +319,7 @@ public class Game implements PDataProcessor {
 			System.out.println("Collisions " + t.tick());
 		}
 
-		for (GameObject go : gos) {
+		for (GameObject go : this.gameObjectsList) {
 			go.move(dt);
 		}
 
