@@ -1,5 +1,7 @@
 package fr.inputs;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.List;
 
 import fr.inputs.keyboard.Keyboard;
@@ -83,5 +85,63 @@ public class Input {
 
 	public Mouse getMouseMirrorListener() {
 		return this.mouse;
+	}
+
+	public boolean print(OutputStream out) {
+		boolean keyboard = this.keyboardEvents.size() != 0;
+		boolean mouse = this.mouseEvents.size() != 0;
+
+		if (keyboard || mouse) {
+
+			String s = "-- Input --\n";
+
+			boolean first = true;
+
+			// Keyboard
+			if (keyboard) {
+				s += "Keyboard :\n";
+
+				for (KeyboardEvent e : this.keyboardEvents) {
+					if (!first) {
+						s += " ";
+					}
+					first = false;
+					s += e.key;
+				}
+			}
+
+			// Mouse
+			if (mouse) {
+				s += "\nMouse :\n";
+
+				first = true;
+
+				for (MouseEvent e : this.mouseEvents) {
+					if (!first) {
+						s += " ";
+					}
+					first = false;
+					s += e.id;
+				}
+			}
+
+			try {
+				out.write(s.getBytes());
+			} catch (IOException e) {
+			}
+			return true;
+		}
+		return false;
+	}
+
+	public boolean println(OutputStream out) {
+		if (this.print(out)) {
+			try {
+				out.write("\n".getBytes());
+			} catch (IOException e) {
+			}
+			return true;
+		}
+		return false;
 	}
 }
