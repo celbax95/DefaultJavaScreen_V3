@@ -8,11 +8,11 @@ public class GameLoop implements Runnable {
 		return 1000 / t;
 	}
 
-	private double fps;
-	private double updates;
+	private final double fps;
+	private final double updates;
 
-	private double dtFps;
-	private double dtUpdates;
+	private final double dtFps;
+	private final double dtUpdates;
 
 	private double accuFps;
 	private double accuUpdate;
@@ -36,6 +36,10 @@ public class GameLoop implements Runnable {
 		this.loop = new Thread(this);
 		this.state = state;
 		this.lastFrame = this.time();
+	}
+
+	public double getDtUpdate() {
+		return this.updates / 1000.;
 	}
 
 	@Override

@@ -34,6 +34,8 @@ public class Game implements PDataProcessor {
 
 	private static final double GRAVITY = Constants.SIZE_UNIT * 1;
 
+	private final double AVERAGE_GRAVITY_PER_UPDATE;
+
 	private GameState gameState;
 
 	private Map<Integer, Player> players;
@@ -54,10 +56,15 @@ public class Game implements PDataProcessor {
 
 	private Camera camera;
 
+	private final Collider collider;
+
 	private WinData winData;
 
 	public Game(GameState gameState, Multiplayer multiplayer, WinData winData, int myId,
-			Map<Integer, Map<String, Object>> playersData) {
+			Map<Integer, Map<String, Object>> playersData, double averageDtUpdate) {
+
+		this.AVERAGE_GRAVITY_PER_UPDATE = GRAVITY * averageDtUpdate;
+
 		this.gameState = gameState;
 
 		this.multiplayer = multiplayer;
@@ -67,6 +74,9 @@ public class Game implements PDataProcessor {
 		this.myId = myId;
 
 		this.currentPDataID = -1;
+
+		this.collider = new Collider();
+		this.collider.setAvergaeGravity(this.AVERAGE_GRAVITY_PER_UPDATE);
 
 		this.players = new HashMap<>();
 		this.gameObjects = new HashMap<>();
@@ -293,11 +303,11 @@ public class Game implements PDataProcessor {
 			System.out.println("Apply forces " + t.tick());
 		}
 
-		Collider c = new Collider();
-		c.searchCollisions(gos);
-		c.initCollisions();
-		c.solveCollisions();
-		c.correctPositions();
+		this.collider.clear();
+		this.collider.searchCollisions(gos);
+		this.collider.initCollisions();
+		this.collider.solveCollisions();
+		this.collider.correctPositions();
 
 		if (displayPreciseTimer) {
 			System.out.println("Collisions " + t.tick());

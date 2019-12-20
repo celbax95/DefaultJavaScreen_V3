@@ -22,9 +22,15 @@ public class Manifold {
 	public double dynamicFriction;
 	public double staticFriction;
 
+	public double averageGravity;
+
 	public boolean colliding;
 
 	public Manifold(GameObject g1, GameObject g2) {
+		this(g1, g2, 0);
+	}
+
+	public Manifold(GameObject g1, GameObject g2, double averageGravity) {
 		this.colliding = false;
 		this.g1 = g1;
 		this.g2 = g2;
@@ -32,6 +38,7 @@ public class Manifold {
 		this.b2 = this.g2.getBody();
 		this.affectG1 = true;
 		this.affectG2 = true;
+		this.averageGravity = averageGravity;
 	}
 
 	public void applyImpulse() {
@@ -113,7 +120,7 @@ public class Manifold {
 		// TODO ya peut etre un problème ici
 		Point rv = new Point(this.g1.getVelocity()).sub(this.g2.getVelocity());
 
-		if (rv.lengthSquarred() < 0.001) {
+		if (rv.lengthSquarred() < this.averageGravity) {
 			this.averageRestitution = 0.0f;
 		}
 	}

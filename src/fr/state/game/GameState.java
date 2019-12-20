@@ -104,7 +104,9 @@ public class GameState implements IAppState {
 
 		this.multiplayer = new Multiplayer(groupIP, port, ids);
 
-		this.game = new Game(this, this.multiplayer, panel.getWinData(), myId, playersData);
+		this.loop = new GameLoop(this);
+
+		this.game = new Game(this, this.multiplayer, panel.getWinData(), myId, playersData, this.loop.getDtUpdate());
 		this.multiplayer.setPDataProcessor(this.game);
 
 		this.sp.setBackground(this.BACKGROUND);
@@ -116,7 +118,6 @@ public class GameState implements IAppState {
 		this.sp.addMouseListener(this.input.getMouseEventListener());
 		this.sp.addMouseListener(this.input.getMouseMirrorListener());
 
-		this.loop = new GameLoop(this);
 		this.loop.start();
 
 		this.multiplayer.start();

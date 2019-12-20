@@ -8,10 +8,15 @@ import fr.state.game.elements.onscreen.GameObject;
 
 public class Collider {
 
+	private static final double EPSILON = 0.0001;
+
 	private List<Manifold> collisions;
+
+	private double averageGravity;
 
 	public Collider() {
 		this.collisions = new ArrayList<>();
+		this.averageGravity = 0;
 	}
 
 	public void clear() {
@@ -53,6 +58,10 @@ public class Collider {
 			a1++;
 			a2 = 0;
 		}
+	}
+
+	public void setAvergaeGravity(double averageGravity) {
+		this.averageGravity = averageGravity + EPSILON;
 	}
 
 	public void solveCollisions() {
