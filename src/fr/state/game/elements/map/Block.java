@@ -20,14 +20,12 @@ public class Block extends GameObject {
 
 	public Block(double sizeUnit) {
 		super(sizeUnit);
-		this.color = DEFAULT_COLOR;
-		this.addTags(GOTag.OBSTACLE);
+		this.init();
 	}
 
 	public Block(Point pos, Point size, double sizeUnit, double scale) {
 		super(pos, size, sizeUnit, scale);
-		this.color = DEFAULT_COLOR;
-		this.addTags(GOTag.OBSTACLE);
+		this.init();
 	}
 
 	@Override
@@ -46,6 +44,11 @@ public class Block extends GameObject {
 	@Override
 	public Shape getShape() {
 		return new AABB(this.pos, this.pos, this.pos.clone().add(this.size));
+	}
+
+	private void init() {
+		this.color = DEFAULT_COLOR;
+		this.addTags(GOTag.PLATEFORM, GOTag.GRIP_SURFACE);
 	}
 
 	/**

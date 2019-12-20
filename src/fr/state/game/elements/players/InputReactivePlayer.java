@@ -14,30 +14,50 @@ public class InputReactivePlayer extends Player {
 	private static final long serialVersionUID = 1L;
 
 	private static double ACCEL = 1;
+	private static double JUMP_FORCE = 9;
+
+	private static double TIME_TO_REJUMP = 500; // ms
 
 	private static double DRAG = 0.5;
+
+	private static int MAX_JUMPS = 2;
+
+	private double nextJump;
+
+	private int availableJumps;
 
 	private Multiplayer multiplayer;
 	private PDataFactory pDataFactory;
 
 	public InputReactivePlayer(int id, Multiplayer multiplayer, double sizeUnit) {
 		super(id, sizeUnit);
+		this.addTags(GOTag.GRAVITY);
 		this.multiplayer = multiplayer;
 		this.pDataFactory = multiplayer.getPDataFactory();
+		this.resetJumps();
 	}
 
-	private Point getMoveFromInput(boolean up, boolean down, boolean left, boolean right) {
+	private Point getMoveFromInput(boolean left, boolean right, boolean jump) {
 		Point move = new Point(0, 0);
 
-		if (up ^ down) {
-			move.y(up ? -1 : 1);
-		}
+		final double scaling = this.getScaling();
 
 		if (left ^ right) {
-			move.x(left ? -1 : 1);
+			move.x((left ? -1 : 1) * ACCEL * scaling);
 		}
 
-		return move.trigNorm();
+		if (jump && this.availableJumps > 0) {
+			long time = System.currentTimeMillis();
+			if (time >= this.nextJump) {
+				if (this.velocity.y > 0) {
+					this.velocity.y = 0;
+				}
+				move.y(-JUMP_FORCE * scaling);
+				this.availableJumps--;
+				this.nextJump = time + TIME_TO_REJUMP;
+			}
+		}
+		return move;
 	}
 
 	@Override
@@ -45,6 +65,13 @@ public class InputReactivePlayer extends Player {
 		AABB hb = new AABB(this.pos, this.pos, this.pos.clone().add(this.size));
 
 		return hb;
+	}
+
+	@Override
+	public void interractWith(GameObject other) {
+		if (other.hasTag(GOTag.GRIP_SURFACE)) {
+			this.resetJumps();
+		}
 	}
 
 	@Override
@@ -60,6 +87,11 @@ public class InputReactivePlayer extends Player {
 		}
 	}
 
+	private void resetJumps() {
+		this.availableJumps = MAX_JUMPS;
+		this.nextJump = 0;
+	}
+
 	@Override
 	public void setPos(Point pos) {
 		super.setPos(pos);
@@ -70,10 +102,8 @@ public class InputReactivePlayer extends Player {
 	public void update(Input input, double dt) {
 		super.update(input, dt);
 
-		Point move = this.getMoveFromInput(input.keyboardKeys.get(90), input.keyboardKeys.get(83),
-				input.keyboardKeys.get(81), input.keyboardKeys.get(68));
-
-		move.mult(InputReactivePlayer.ACCEL * this.getScaling());
+		Point move = this.getMoveFromInput(input.keyboardKeys.get(81), input.keyboardKeys.get(68),
+				input.keyboardKeys.get(32));
 
 		this.addForces(move);
 

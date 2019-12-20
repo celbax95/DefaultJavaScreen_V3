@@ -12,7 +12,11 @@ public abstract class Player extends GameObject {
 
 	private static final long serialVersionUID = 1L;
 
-	protected static final double MAX_SPEED = 6;
+	protected static final double MAX_HORIZONTAL_SPEED = 6;
+
+	protected static final double MAX_DOWN_SPEED = 6;
+
+	protected static final double MAX_UP_SPEED = 20;
 
 	private static final Color DEFAULT_COLOR = Color.RED;
 
@@ -30,6 +34,26 @@ public abstract class Player extends GameObject {
 		super(pos, size, sizeUnit, scale);
 		this.id = id;
 		this.init();
+	}
+
+	@Override
+	public void applyForces() {
+		super.applyForces();
+
+		final double scaling = this.getScaling();
+		final double maxHorizontalSpeed = MAX_HORIZONTAL_SPEED * scaling;
+		final double maxDownSpeed = MAX_DOWN_SPEED * scaling;
+		final double maxUpSpeed = MAX_UP_SPEED * scaling;
+
+		if (Math.abs(this.velocity.x) > maxHorizontalSpeed) {
+			this.velocity.x = Math.signum(this.velocity.x) * maxHorizontalSpeed;
+		}
+
+		if (this.velocity.y > maxDownSpeed) {
+			this.velocity.y = maxDownSpeed;
+		} else if (this.velocity.y < -maxUpSpeed) {
+			this.velocity.y = -maxUpSpeed;
+		}
 	}
 
 	@Override
@@ -56,7 +80,8 @@ public abstract class Player extends GameObject {
 	private void init() {
 		this.color = DEFAULT_COLOR;
 		this.addTags(GOTag.PLAYER);
-		this.setMaxSpeed(MAX_SPEED * this.sizeUnit);
+		// infinite maxSpeed
+		this.setMaxSpeed(-1);
 	}
 
 	/**

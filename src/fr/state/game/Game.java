@@ -16,6 +16,7 @@ import fr.server.p2p.PData;
 import fr.server.p2p.PDataProcessor;
 import fr.state.game.elements.collider.Collider;
 import fr.state.game.elements.map.Block;
+import fr.state.game.elements.onscreen.GOTag;
 import fr.state.game.elements.onscreen.GameObject;
 import fr.state.game.elements.players.DummyPlayer;
 import fr.state.game.elements.players.InputReactivePlayer;
@@ -30,6 +31,8 @@ public class Game implements PDataProcessor {
 	private final static int MISSING_PDATA = 50;
 
 	private static final int SIZE = 1;
+
+	private static final double GRAVITY = Constants.SIZE_UNIT * 1;
 
 	private GameState gameState;
 
@@ -269,6 +272,17 @@ public class Game implements PDataProcessor {
 
 		if (displayPreciseTimer) {
 			System.out.println("Get collection " + t.tick());
+		}
+
+		// Gravity
+		for (GameObject go : gos) {
+			if (go.hasTag(GOTag.GRAVITY)) {
+				go.addForces(new Point(0, GRAVITY));
+			}
+		}
+
+		if (displayPreciseTimer) {
+			System.out.println("Gravity " + t.tick());
 		}
 
 		for (GameObject go : gos) {
