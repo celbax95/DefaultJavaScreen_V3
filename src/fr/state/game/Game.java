@@ -9,6 +9,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
+import java.util.Random;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import fr.inputs.Input;
@@ -108,6 +109,20 @@ public class Game implements PDataProcessor {
 		this.players.put(myId, this.myPlayer);
 		this.addGameObjects(this.myPlayer);
 
+		int nbPlateforms = 50;
+		int spreadX = 3500;
+		int spreadY = 7000;
+
+		Random r = new Random(5000);
+
+		for (int i = 1; i <= nbPlateforms; i++) {
+			Block b = new Block(
+					new Point(-100 + (r.nextBoolean() ? 1 : -1) * (double) r.nextInt(spreadX),
+							600. - (r.nextBoolean() ? 1 : -1) * (double) r.nextInt(spreadY)),
+					new Point(6, 0.5), Constants.SIZE_UNIT, 1);
+			b.initBody();
+			this.addGameObjects(b);
+		}
 		Block b = new Block(new Point(-100, 600), new Point(6, 0.5), Constants.SIZE_UNIT, 1);
 		b.initBody();
 		this.addGameObjects(b);

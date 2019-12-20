@@ -17,7 +17,7 @@ public class Camera {
 
 	private final double MAX_SPEED = 12.5;
 
-	private final double DEFAULT_SCALE = 0.8;
+	private final double DEFAULT_SCALE = 0.3;
 
 	private WinData winData;
 

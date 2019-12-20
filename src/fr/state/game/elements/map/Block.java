@@ -51,6 +51,11 @@ public class Block extends GameObject {
 		this.addTags(GOTag.PLATEFORM, GOTag.GRIP_SURFACE);
 	}
 
+	@Override
+	public boolean isAffectedBy(GameObject other) {
+		return !other.hasTag(GOTag.PLATEFORM);
+	}
+
 	/**
 	 * @param color the color to set
 	 */
