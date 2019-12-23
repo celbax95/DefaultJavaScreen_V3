@@ -32,7 +32,7 @@ public class Game implements PDataProcessor {
 
 	private final static int MISSING_PDATA = 50;
 
-	private static final int SIZE = 1;
+	private static final double SIZE = 0.95;
 
 	private static final double GRAVITY = Constants.SIZE_UNIT * 1;
 
@@ -119,11 +119,11 @@ public class Game implements PDataProcessor {
 			Block b = new Block(
 					new Point(-100 + (r.nextBoolean() ? 1 : -1) * (double) r.nextInt(spreadX),
 							600. - (r.nextBoolean() ? 1 : -1) * (double) r.nextInt(spreadY)),
-					new Point(6, 0.5), Constants.SIZE_UNIT, 1);
+					new Point(6, 1), Constants.SIZE_UNIT, 1);
 			b.initBody();
 			this.addGameObjects(b);
 		}
-		Block b = new Block(new Point(-100, 600), new Point(6, 0.5), Constants.SIZE_UNIT, 1);
+		Block b = new Block(new Point(-100, 600), new Point(6, 1), Constants.SIZE_UNIT, 1);
 		b.initBody();
 		this.addGameObjects(b);
 

@@ -14,7 +14,7 @@ public abstract class Player extends GameObject {
 
 	protected static final double MAX_HORIZONTAL_SPEED = 6;
 
-	protected static final double MAX_DOWN_SPEED = 6;
+	protected static final double MAX_DOWN_SPEED = 10;
 
 	protected static final double MAX_UP_SPEED = 20;
 
