@@ -4,30 +4,40 @@ public class GameLoop implements Runnable {
 
 	private static int MS_TO_SLEEP = 2; // > 0
 
+	private static boolean displayMeanUpdate = false;
+
+	private static boolean displayMeanDraw = false;
+
+	private static int meanPrecision = 20;
+
 	private static double getDt(double t) {
 		return 1000 / t;
 	}
 
 	private final double fps;
-	private final double updates;
 
+	private final double updates;
 	private final double dtFps;
+
 	private final double dtUpdates;
 
 	private double accuFps;
+
 	private double accuUpdate;
 
 	private double lastUpdate;
+	private double lastDraw;
 
 	double lastFrame;
-
 	private Thread loop;
 
 	private GameState state;
+	private double meanUpdate;
+	private double meanDraw;
 
 	public GameLoop(GameState state) {
 		this.fps = 60;
-		this.updates = 30;
+		this.updates = 60;
 		this.dtFps = getDt(this.fps);
 		this.accuFps = 0;
 		this.dtUpdates = getDt(this.updates);
@@ -36,6 +46,10 @@ public class GameLoop implements Runnable {
 		this.loop = new Thread(this);
 		this.state = state;
 		this.lastFrame = this.time();
+		this.lastUpdate = this.time();
+		this.lastDraw = this.time();
+		this.meanDraw = 0;
+		this.meanUpdate = 0;
 	}
 
 	public double getDtUpdate() {
@@ -77,12 +91,25 @@ public class GameLoop implements Runnable {
 
 					while (this.accuUpdate > this.dtUpdates) {
 						this.state.getInput();
-						this.state.update((currentTime - this.lastUpdate) / 1000);
+						double dtms = currentTime - this.lastUpdate;
+						this.state.update(dtms / 1000);
 						this.accuUpdate -= this.dtUpdates;
 						this.lastUpdate = currentTime;
+
+						if (displayMeanUpdate) {
+							this.meanUpdate = (this.meanUpdate * (meanPrecision - 1) + dtms) / meanPrecision;
+							System.out.println("  " + 1000 / this.meanUpdate + " updates / sec");
+						}
 					}
 
 					if (this.accuFps > this.dtFps) {
+						if (displayMeanDraw) {
+							double dtDrawMs = currentTime - this.lastDraw;
+							this.meanDraw = (this.meanDraw * (meanPrecision - 1) + dtDrawMs) / meanPrecision;
+							System.out.println("  " + 1000 / this.meanDraw + " draw / sec");
+							this.lastDraw = currentTime;
+						}
+
 						this.state.setDt((currentTime - this.lastUpdate) / 1000);
 						this.state.getStatePanel().repaint();
 						this.accuFps -= this.dtFps;
@@ -108,6 +135,6 @@ public class GameLoop implements Runnable {
 	}
 
 	public long time() {
-		return System.currentTimeMillis();
+		return System.nanoTime() / 1000000;
 	}
 }
