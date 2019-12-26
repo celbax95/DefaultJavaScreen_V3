@@ -18,7 +18,7 @@ public class InputReactivePlayer extends Player {
 
 	private static double TIME_TO_REJUMP = 500; // ms
 
-	private static double DRAG = 0.5;
+	private static double DRAG = 10;
 
 	private static int MAX_JUMPS = 2;
 
@@ -105,24 +105,20 @@ public class InputReactivePlayer extends Player {
 		Point move = this.getMoveFromInput(input.keyboardKeys.get(81), input.keyboardKeys.get(68),
 				input.keyboardKeys.get(32), dt);
 
-		System.out.println(this.velocity);
-
 		this.addForces(move);
 
-//		System.out.println(this.velocity);
+		Point dragInv = this.velocity.clone().trigNorm().mult(DRAG * dt * this.sizeUnit);
+		Point drag = new Point(-dragInv.x, -dragInv.y);
 
-//		Point dragInv = this.velocity.clone().trigNorm().mult(DRAG * this.sizeUnit);
-//		Point drag = new Point(-dragInv.x, -dragInv.y);
-//
-//		if (Math.abs(this.velocity.x) - Math.abs(drag.x) <= 0) {
-//			this.velocity.x = 0;
-//			drag.x = 0;
-//		}
-//		if (Math.abs(this.velocity.y) - Math.abs(drag.y) <= 0) {
-//			this.velocity.y = 0;
-//			drag.y = 0;
-//		}
-//
-//		this.addForces(drag);
+		if (Math.abs(this.velocity.x) + Math.abs(drag.x) <= 0) {
+			this.velocity.x = 0;
+			drag.x = 0;
+		}
+		if (Math.abs(this.velocity.y) + Math.abs(drag.y) <= 0) {
+			this.velocity.y = 0;
+			drag.y = 0;
+		}
+
+		this.addForces(drag);
 	}
 }
