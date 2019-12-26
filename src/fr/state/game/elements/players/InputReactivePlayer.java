@@ -13,7 +13,7 @@ public class InputReactivePlayer extends Player {
 
 	private static final long serialVersionUID = 1L;
 
-	private static double ACCEL = 1;
+	private static double ACCEL = 18; // tiles / secondes
 	private static double JUMP_FORCE = 9;
 
 	private static double TIME_TO_REJUMP = 500; // ms
@@ -37,13 +37,13 @@ public class InputReactivePlayer extends Player {
 		this.resetJumps();
 	}
 
-	private Point getMoveFromInput(boolean left, boolean right, boolean jump) {
+	private Point getMoveFromInput(boolean left, boolean right, boolean jump, double dt) {
 		Point move = new Point(0, 0);
 
 		final double scaling = this.getScaling();
 
 		if (left ^ right) {
-			move.x((left ? -1 : 1) * ACCEL * scaling);
+			move.x((left ? -1 : 1) * ACCEL * dt * scaling);
 		}
 
 		if (jump && this.availableJumps > 0) {
@@ -103,22 +103,26 @@ public class InputReactivePlayer extends Player {
 		super.update(input, dt);
 
 		Point move = this.getMoveFromInput(input.keyboardKeys.get(81), input.keyboardKeys.get(68),
-				input.keyboardKeys.get(32));
+				input.keyboardKeys.get(32), dt);
+
+		System.out.println(this.velocity);
 
 		this.addForces(move);
 
-		Point dragInv = this.velocity.clone().trigNorm().mult(DRAG * this.sizeUnit);
-		Point drag = new Point(-dragInv.x, -dragInv.y);
+//		System.out.println(this.velocity);
 
-		if (Math.abs(this.velocity.x) - Math.abs(drag.x) <= 0) {
-			this.velocity.x = 0;
-			drag.x = 0;
-		}
-		if (Math.abs(this.velocity.y) - Math.abs(drag.y) <= 0) {
-			this.velocity.y = 0;
-			drag.y = 0;
-		}
-
-		this.addForces(drag);
+//		Point dragInv = this.velocity.clone().trigNorm().mult(DRAG * this.sizeUnit);
+//		Point drag = new Point(-dragInv.x, -dragInv.y);
+//
+//		if (Math.abs(this.velocity.x) - Math.abs(drag.x) <= 0) {
+//			this.velocity.x = 0;
+//			drag.x = 0;
+//		}
+//		if (Math.abs(this.velocity.y) - Math.abs(drag.y) <= 0) {
+//			this.velocity.y = 0;
+//			drag.y = 0;
+//		}
+//
+//		this.addForces(drag);
 	}
 }

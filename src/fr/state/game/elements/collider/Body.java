@@ -24,7 +24,7 @@ public class Body {
 		this.invMass = 1 / this.mass;
 		this.staticFriction = 0.5;
 		this.restitution = 0;
-		this.dynamicFriction = 0.1;
+		this.dynamicFriction = 00.001;
 	}
 
 	public void update() {

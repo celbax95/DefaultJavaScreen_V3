@@ -77,7 +77,6 @@ public class Manifold {
 		t.trigNorm();
 
 		double jt = -(1.0D + this.averageRestitution) * contactVel;
-		jt /= this.b1.invMass + this.b2.invMass;
 
 		if (jt == 0)
 			return;
@@ -86,7 +85,7 @@ public class Manifold {
 		if (StrictMath.abs(jt) < j * this.staticFriction) {
 			tangentImpulse = t.clone().mult(jt);
 		} else {
-			tangentImpulse = t.clone().mult(j).mult(-this.dynamicFriction);
+			tangentImpulse = t.clone().mult(j).mult(this.dynamicFriction);
 		}
 
 		if (this.g1.getId() == 0) {
