@@ -34,7 +34,7 @@ public class Game implements PDataProcessor {
 
 	private static final double SIZE = 0.95;
 
-	private static final double GRAVITY = Constants.SIZE_UNIT * 1;
+	private static final double GRAVITY = Constants.SIZE_UNIT * 52;
 
 	private final double AVERAGE_GRAVITY_PER_UPDATE;
 
@@ -308,7 +308,7 @@ public class Game implements PDataProcessor {
 		// Gravity
 		for (GameObject go : this.gameObjectsList) {
 			if (go.hasTag(GOTag.GRAVITY)) {
-				go.addForces(new Point(0, GRAVITY));
+				go.addForces(new Point(0, GRAVITY * dt));
 			}
 		}
 

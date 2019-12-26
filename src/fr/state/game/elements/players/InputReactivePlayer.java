@@ -14,9 +14,9 @@ public class InputReactivePlayer extends Player {
 	private static final long serialVersionUID = 1L;
 
 	private static double ACCEL = 18; // tiles / secondes
-	private static double JUMP_FORCE = 9;
+	private static double JUMP_FORCE = 20;
 
-	private static double TIME_TO_REJUMP = 500; // ms
+	private static double TIME_TO_REJUMP = 300; // ms
 
 	private static double DRAG = 10;
 
@@ -70,7 +70,13 @@ public class InputReactivePlayer extends Player {
 	@Override
 	public void interractWith(GameObject other) {
 		if (other.hasTag(GOTag.GRIP_SURFACE)) {
-			this.resetJumps();
+
+			Point relativeVelocity = this.velocity.clone().sub(other.getVelocity());
+
+			if (this.pos.y + this.size.y > other.getPos().y
+					&& this.pos.y + this.size.y < other.getPos().y + other.getSize().y && relativeVelocity.y > 0) {
+				this.resetJumps();
+			}
 		}
 	}
 
